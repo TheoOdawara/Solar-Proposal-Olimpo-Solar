@@ -400,41 +400,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </h2>
 
             {/* Projects Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[...Array(9)].map((_, i) => <div key={i} className="relative bg-gray-200 h-48 rounded-lg overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400"></div>
-                  <div className="absolute top-2 left-2 bg-yellow-400 px-2 py-1 rounded text-xs font-bold">
-                    ✓ MAIS UM PROJETO ENTREGUE
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-slate-800 text-white p-3">
-                    <div className="text-yellow-400 font-bold text-sm mb-1">
-                      PROJETO {i % 2 === 0 ? 'RESIDENCIAL' : 'COMERCIAL'}
-                    </div>
-                    <div className="flex items-center gap-4 text-xs">
-                      <div className="flex items-center gap-1">
-                        <Zap className="h-3 w-3" />
-                        <span>{18 + i} Painéis</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Battery className="h-3 w-3" />
-                        <span>{(6 + i * 0.5).toFixed(1)} kWp</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs mt-1">
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className="h-3 w-3" />
-                        <span>{500 + i * 100} kWh/Mês</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3" />
-                        <span>R$ {(400 + i * 50).toLocaleString()}/Ano</span>
-                      </div>
-                    </div>
-                    <div className="absolute bottom-2 right-2">
-                      <img src={olimpoLogo} alt="Olimpo" className="h-6 w-auto brightness-0 invert" />
-                    </div>
-                  </div>
-                </div>)}
+            <div className="mb-16">
+              <img 
+                src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" 
+                alt="Grid de projetos da Olimpo Solar" 
+                className="w-full h-auto rounded-lg shadow-lg"
+              />
             </div>
 
             {/* Footer contact */}
