@@ -29,7 +29,7 @@ const Footer = () => {
                 <span className="font-semibold">Contato</span>
               </div>
               <div className="text-sm text-muted-foreground space-y-1">
-                <p>(67) 3333-4444</p>
+                <p>(67) 99668-0242</p>
                 <p>(67) 99999-8888</p>
                 <div className="flex items-center justify-center md:justify-start gap-1">
                   <Mail className="h-3 w-3" />
