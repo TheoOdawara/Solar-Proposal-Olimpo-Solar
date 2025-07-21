@@ -71,24 +71,42 @@ const ProposalForm = () => {
   useEffect(() => {
     const { systemPower, moduleQuantity } = formData;
     
-    // Geração mensal: 5,5 kWh/m²/dia × 0,80 × 30 dias × potência em kWp
-    const monthlyGeneration = systemPower * 5.5 * 0.8 * 30;
-    
-    // Economia mensal: geração × R$1,27/kWh
-    const monthlySavings = monthlyGeneration * 1.27;
-    
-    // Área necessária: quantidade de módulos × 2,8 m²
-    const requiredArea = moduleQuantity * 2.8;
-    
-    // Valor total: potência × R$1.850/kWp
-    const totalValue = systemPower * 1850;
+    if (systemPower > 0) {
+      // 1. Geração mensal estimada (kWh/mês)
+      // Formula: potencia_kwp × 5.5 × 30 × 0.80
+      // Irradiação solar média de Campo Grande-MS (5,5 kWh/m²/dia) e fator de perdas de 20%
+      const monthlyGeneration = systemPower * 5.5 * 30 * 0.80;
+      
+      // 2. Economia mensal estimada (R$)
+      // Formula: geracao_mensal × 1.27
+      // Valor médio do kWh = R$1,27
+      const monthlySavings = monthlyGeneration * 1.27;
+      
+      // 3. Área mínima necessária (m²)
+      // Formula: qtd_modulos × 2.8
+      // Cada módulo ocupa 2,8 m²
+      const requiredArea = moduleQuantity * 2.8;
+      
+      // 4. Valor total do projeto (R$)
+      // Formula: potencia_kwp × 1850
+      // Valor fixo por kWp = R$1.850
+      const totalValue = systemPower * 1850;
 
-    setCalculations({
-      monthlyGeneration: Math.round(monthlyGeneration),
-      monthlySavings: Math.round(monthlySavings),
-      requiredArea: Math.round(requiredArea * 10) / 10,
-      totalValue: Math.round(totalValue)
-    });
+      setCalculations({
+        monthlyGeneration: Math.round(monthlyGeneration),
+        monthlySavings: Math.round(monthlySavings),
+        requiredArea: Math.round(requiredArea * 10) / 10, // Uma casa decimal
+        totalValue: Math.round(totalValue)
+      });
+    } else {
+      // Reset dos cálculos quando não há potência definida
+      setCalculations({
+        monthlyGeneration: 0,
+        monthlySavings: 0,
+        requiredArea: 0,
+        totalValue: 0
+      });
+    }
   }, [formData.systemPower, formData.moduleQuantity]);
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
