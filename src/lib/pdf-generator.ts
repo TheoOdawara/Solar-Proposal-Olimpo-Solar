@@ -20,7 +20,7 @@ interface FormData {
   modulePower: number;
   moduleBrand: string;
   inverterBrand: string;
-  inverterModel: string;
+  inverterPower: number;
   paymentMethod: string;
   observations: string;
 }
@@ -174,7 +174,7 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
     ['Potência do Sistema', `${formData.systemPower} kWp`],
     ['Módulos', `${formData.moduleQuantity} módulos de ${formData.modulePower}W`],
     ['Marca dos Módulos', formData.moduleBrand],
-    ['Inversor', `${formData.inverterBrand} ${formData.inverterModel}`],
+    ['Inversor', `${formData.inverterBrand} - ${formData.inverterPower}W`],
     ['Geração Mensal Estimada', `${calculations.monthlyGeneration} kWh/mês`],
     ['Economia Mensal Estimada', formatCurrency(calculations.monthlySavings)],
     ['Área Mínima Necessária', `${calculations.requiredArea} m²`],

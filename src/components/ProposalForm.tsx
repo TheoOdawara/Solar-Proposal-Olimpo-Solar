@@ -27,7 +27,7 @@ interface FormData {
   modulePower: number;
   moduleBrand: string;
   inverterBrand: string;
-  inverterModel: string;
+  inverterPower: number;
   
   // Complementos
   paymentMethod: string;
@@ -67,7 +67,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     modulePower: 0,
     moduleBrand: '',
     inverterBrand: '',
-    inverterModel: '',
+    inverterPower: 0,
     paymentMethod: '',
     observations: ''
   });
@@ -166,7 +166,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     const requiredFields = [
       'clientName', 'address', 'number', 'neighborhood', 'city', 'phone',
       'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand',
-      'inverterBrand', 'inverterModel', 'paymentMethod'
+      'inverterBrand', 'inverterPower', 'paymentMethod'
     ];
 
     for (const field of requiredFields) {
@@ -415,12 +415,13 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
               </div>
               
               <div>
-                <Label htmlFor="inverterModel">Modelo do Inversor *</Label>
+                <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
                 <Input
-                  id="inverterModel"
-                  value={formData.inverterModel}
-                  onChange={(e) => handleInputChange('inverterModel', e.target.value)}
-                  placeholder="Primo 5.0-1"
+                  id="inverterPower"
+                  type="number"
+                  value={formData.inverterPower || ''}
+                  onChange={(e) => handleInputChange('inverterPower', parseInt(e.target.value) || 0)}
+                  placeholder="5000"
                 />
               </div>
             </div>
