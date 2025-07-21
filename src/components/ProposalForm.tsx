@@ -6,12 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History } from "lucide-react";
+import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { generateProposalPDF } from "@/lib/pdf-generator";
 import { useProposals, ProposalData } from "@/hooks/useProposals";
 import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
+import ProposalPreview from "@/components/ProposalPreview";
+import html2pdf from 'html2pdf.js';
 
 interface FormData {
   // Dados do cliente
@@ -57,6 +59,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
   const { user } = useAuth();
   const { saveProposal } = useProposals();
   const [showHistory, setShowHistory] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     clientName: '',
     address: '',
@@ -186,9 +189,36 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
 
   const generateProposal = () => {
     if (!validateForm()) return;
-    
+    setShowPreview(true);
+  };
+
+  const generatePDFFromHTML = async () => {
     try {
-      generateProposalPDF(formData, calculations);
+      const element = document.getElementById('proposal-content');
+      if (!element) {
+        throw new Error('Elemento de proposta não encontrado');
+      }
+
+      const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+      const options = {
+        margin: 0,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          allowTaint: true
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait' 
+        }
+      };
+
+      await html2pdf().set(options).from(element).save();
       
       toast({
         title: "Proposta gerada com sucesso!",
@@ -254,6 +284,18 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       description: "Os dados foram preenchidos automaticamente.",
     });
   };
+
+  // Se está no modo preview, mostra o componente de visualização
+  if (showPreview) {
+    return (
+      <ProposalPreview
+        formData={formData}
+        calculations={calculations}
+        onEdit={() => setShowPreview(false)}
+        onGeneratePDF={generatePDFFromHTML}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 p-4">
@@ -530,8 +572,8 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
               variant="hero"
               className="px-8 py-3 text-lg font-semibold"
             >
-              <FileDown className="mr-2 h-5 w-5" />
-              Gerar PDF
+              <Eye className="mr-2 h-5 w-5" />
+              Pré-visualizar Proposta
             </Button>
           </div>
         </div>
