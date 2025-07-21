@@ -160,7 +160,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         totalValue: calculations.totalValue
       });
     }
-  }, [formData.clientName, formData.systemPower, calculations, onProposalDataChange]);
+  }, [formData.clientName, formData.systemPower, calculations.monthlyGeneration, calculations.monthlySavings, calculations.totalValue, onProposalDataChange]);
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({

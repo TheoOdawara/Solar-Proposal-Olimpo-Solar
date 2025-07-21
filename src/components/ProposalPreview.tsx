@@ -550,17 +550,28 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
               {/* Chart Bars */}
               <div className="flex justify-between items-end h-40 border-b-2 border-gray-300">
-                {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Média'].map((month, i) => <div key={month} className="flex flex-col items-center gap-1">
-                    <div className="flex gap-1">
-                      <div className="w-6 bg-yellow-400 rounded-t" style={{
-                    height: `${120 + Math.random() * 20}px`
-                  }}></div>
-                      <div className="w-6 bg-gray-400 rounded-t" style={{
-                    height: `${100 + Math.random() * 15}px`
-                  }}></div>
+                {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Média'].map((month, i) => {
+                  // Simular variação sazonal baseada no mês (valores fixos)
+                  const seasonalFactors = [0.85, 0.9, 1.0, 1.1, 1.15, 1.2, 1.25, 1.2, 1.1, 1.0, 0.9, 0.8, 1.0];
+                  const generationHeight = Math.round(100 + (seasonalFactors[i] * 20));
+                  const consumptionHeight = Math.round(90 + (seasonalFactors[i] * 10));
+                  
+                  return (
+                    <div key={month} className="flex flex-col items-center gap-1">
+                      <div className="flex gap-1">
+                        <div 
+                          className="w-6 bg-yellow-400 rounded-t" 
+                          style={{ height: `${generationHeight}px` }}
+                        ></div>
+                        <div 
+                          className="w-6 bg-gray-400 rounded-t" 
+                          style={{ height: `${consumptionHeight}px` }}
+                        ></div>
+                      </div>
+                      <span className="text-xs text-slate-600 transform -rotate-45">{month}</span>
                     </div>
-                    <span className="text-xs text-slate-600 transform -rotate-45">{month}</span>
-                  </div>)}
+                  );
+                })}
               </div>
 
               <div className="grid grid-cols-4 gap-4 mt-6 text-center">
