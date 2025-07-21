@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings } from "lucide-react";
+import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { generateProposalPDF } from "@/lib/pdf-generator";
+import { useProposals, ProposalData } from "@/hooks/useProposals";
+import ProposalsHistory from "@/components/ProposalsHistory";
 
 interface FormData {
   // Dados do cliente
@@ -52,6 +54,8 @@ interface ProposalFormProps {
 
 const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
   const { toast } = useToast();
+  const { saveProposal } = useProposals();
+  const [showHistory, setShowHistory] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     clientName: '',
     address: '',
@@ -198,6 +202,55 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         variant: "destructive"
       });
     }
+  };
+
+  const saveCurrentProposal = async () => {
+    if (!validateForm()) return;
+
+    try {
+      await saveProposal({
+        client_name: formData.clientName,
+        system_power: formData.systemPower,
+        monthly_generation: calculations.monthlyGeneration,
+        monthly_savings: calculations.monthlySavings,
+        total_value: calculations.totalValue
+      });
+    } catch (error) {
+      // Error handling is done in the hook
+    }
+  };
+
+  const loadProposal = (proposal: ProposalData) => {
+    setFormData(prev => ({
+      ...prev,
+      clientName: proposal.client_name,
+      systemPower: proposal.system_power
+    }));
+    
+    // Trigger calculations update
+    setCalculations({
+      monthlyGeneration: proposal.monthly_generation,
+      monthlySavings: proposal.monthly_savings,
+      requiredArea: Math.round((proposal.system_power * 12) * 2.8 * 10) / 10, // Estimated
+      totalValue: proposal.total_value
+    });
+
+    // Update parent component
+    if (onProposalDataChange) {
+      onProposalDataChange({
+        clientName: proposal.client_name,
+        systemPower: proposal.system_power,
+        monthlyGeneration: proposal.monthly_generation,
+        monthlySavings: proposal.monthly_savings,
+        totalValue: proposal.total_value
+      });
+    }
+
+    setShowHistory(false);
+    toast({
+      title: "Proposta carregada!",
+      description: "Os dados foram preenchidos automaticamente.",
+    });
   };
 
   return (
@@ -457,18 +510,47 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
           </CardContent>
         </Card>
 
-        {/* Botão de Ação */}
-        <div className="text-center pb-8">
-          <Button
-            onClick={generateProposal}
-            size="lg"
-            variant="hero"
-            className="px-12 py-6 text-lg font-semibold"
-          >
-            <FileDown className="mr-2 h-5 w-5" />
-            Gerar Proposta em PDF
-          </Button>
+        {/* Ações */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              onClick={() => setShowHistory(!showHistory)}
+              size="lg"
+              variant="outline"
+              className="px-6 py-3"
+            >
+              <History className="mr-2 h-5 w-5" />
+              {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
+            </Button>
+            
+            <Button
+              onClick={saveCurrentProposal}
+              size="lg"
+              variant="secondary"
+              className="px-6 py-3"
+            >
+              <Save className="mr-2 h-5 w-5" />
+              Salvar Proposta
+            </Button>
+            
+            <Button
+              onClick={generateProposal}
+              size="lg"
+              variant="hero"
+              className="px-8 py-3 text-lg font-semibold"
+            >
+              <FileDown className="mr-2 h-5 w-5" />
+              Gerar PDF
+            </Button>
+          </div>
         </div>
+
+        {/* Histórico de Propostas */}
+        {showHistory && (
+          <ProposalsHistory onLoadProposal={loadProposal} />
+        )}
+
+        <div className="pb-8"></div>
       </div>
     </div>
   );
