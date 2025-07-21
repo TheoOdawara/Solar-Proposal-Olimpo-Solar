@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
-import olimpoLogo from "@/assets/olimpo-solar-logo.png";
+import olimpoLogo from "/lovable-uploads/acaace7f-261e-46a7-a12b-9135ad05ca28.png";
 interface FormData {
   clientName: string;
   address: string;
