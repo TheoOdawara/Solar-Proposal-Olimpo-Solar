@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
 import olimpoLogo from "@/assets/olimpo-solar-logo.png";
-
 interface FormData {
   clientName: string;
   address: string;
@@ -20,21 +19,18 @@ interface FormData {
   paymentMethod: string;
   observations: string;
 }
-
 interface Calculations {
   monthlyGeneration: number;
   monthlySavings: number;
   requiredArea: number;
   totalValue: number;
 }
-
 interface ProposalPreviewProps {
   formData: FormData;
   calculations: Calculations;
   onEdit: () => void;
   onGeneratePDF: () => void;
 }
-
 const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   formData,
   calculations,
@@ -47,7 +43,6 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       currency: 'BRL'
     }).format(value);
   };
-
   const formatDate = () => {
     return new Date().toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -55,12 +50,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       year: 'numeric'
     });
   };
-
   const calculateYearlySavings = () => calculations.monthlySavings * 12;
   const calculateCurrentBill = () => calculations.monthlySavings;
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Navegação */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
@@ -93,9 +85,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           {/* Padrão de pontos no lado esquerdo */}
           <div className="absolute left-8 top-1/2 -translate-y-1/2">
             <div className="grid grid-cols-3 gap-3">
-              {[...Array(9)].map((_, i) => (
-                <div key={i} className="w-3 h-3 bg-white rounded-full opacity-80"></div>
-              ))}
+              {[...Array(9)].map((_, i) => <div key={i} className="w-3 h-3 bg-white rounded-full opacity-80"></div>)}
             </div>
           </div>
 
@@ -104,7 +94,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             {/* Main Title */}
             <div className="max-w-xl">
               <h1 className="text-7xl font-bold text-white leading-none mb-4">
-                PROPOSTA<br/>
+                PROPOSTA<br />
                 COMERCIAL
               </h1>
               <p className="text-xl text-gray-300 font-light">
@@ -129,11 +119,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Logo */}
             <div className="absolute bottom-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-24 w-auto brightness-0 invert"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-24 w-auto brightness-0 invert" />
             </div>
           </div>
         </section>
@@ -143,11 +129,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
@@ -172,7 +154,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
               <div className="mt-16">
                 <h3 className="text-3xl font-bold text-slate-800 text-center mb-12">
-                  Por que escolher a<br/>
+                  Por que escolher a<br />
                   Olimpo Energia Renovável
                 </h3>
                 
@@ -234,11 +216,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
@@ -252,17 +230,11 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 <div className="w-16 h-16 bg-yellow-400 rounded-full relative">
                   <div className="absolute inset-2 bg-yellow-300 rounded-full"></div>
                   {/* Sun rays */}
-                  {[...Array(8)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="absolute w-4 h-1 bg-yellow-400 rounded-full"
-                      style={{
-                        top: '50%',
-                        left: '50%',
-                        transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-24px)`
-                      }}
-                    ></div>
-                  ))}
+                  {[...Array(8)].map((_, i) => <div key={i} className="absolute w-4 h-1 bg-yellow-400 rounded-full" style={{
+                  top: '50%',
+                  left: '50%',
+                  transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-24px)`
+                }}></div>)}
                 </div>
                 <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">1</div>
               </div>
@@ -277,15 +249,11 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                       <div className="w-full h-16 bg-orange-500 rounded-t-lg"></div>
                       {/* Solar Panels */}
                       <div className="absolute top-2 left-4 right-4 grid grid-cols-3 gap-1">
-                        {[...Array(9)].map((_, i) => (
-                          <div key={i} className="w-16 h-10 bg-slate-800 rounded border-2 border-gray-300">
+                        {[...Array(9)].map((_, i) => <div key={i} className="w-16 h-10 bg-slate-800 rounded border-2 border-gray-300">
                             <div className="grid grid-cols-4 grid-rows-3 gap-0.5 p-0.5 h-full">
-                              {[...Array(12)].map((_, j) => (
-                                <div key={j} className="bg-slate-700 rounded-sm"></div>
-                              ))}
+                              {[...Array(12)].map((_, j) => <div key={j} className="bg-slate-700 rounded-sm"></div>)}
                             </div>
-                          </div>
-                        ))}
+                          </div>)}
                       </div>
                     </div>
                     
@@ -312,10 +280,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   {/* Power lines structure */}
                   <div className="absolute inset-0 opacity-30">
                     <svg viewBox="0 0 96 128" className="w-full h-full">
-                      <line x1="48" y1="0" x2="48" y2="128" stroke="#666" strokeWidth="2"/>
-                      <line x1="20" y1="20" x2="76" y2="20" stroke="#666" strokeWidth="2"/>
-                      <line x1="20" y1="40" x2="76" y2="40" stroke="#666" strokeWidth="2"/>
-                      <line x1="20" y1="60" x2="76" y2="60" stroke="#666" strokeWidth="2"/>
+                      <line x1="48" y1="0" x2="48" y2="128" stroke="#666" strokeWidth="2" />
+                      <line x1="20" y1="20" x2="76" y2="20" stroke="#666" strokeWidth="2" />
+                      <line x1="20" y1="40" x2="76" y2="40" stroke="#666" strokeWidth="2" />
+                      <line x1="20" y1="60" x2="76" y2="60" stroke="#666" strokeWidth="2" />
                     </svg>
                   </div>
                 </div>
@@ -367,11 +335,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <div className="text-center mb-16">
@@ -483,11 +447,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
@@ -496,8 +456,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Projects Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[...Array(9)].map((_, i) => (
-                <div key={i} className="relative bg-gray-200 h-48 rounded-lg overflow-hidden">
+              {[...Array(9)].map((_, i) => <div key={i} className="relative bg-gray-200 h-48 rounded-lg overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400"></div>
                   <div className="absolute top-2 left-2 bg-yellow-400 px-2 py-1 rounded text-xs font-bold">
                     ✓ MAIS UM PROJETO ENTREGUE
@@ -530,8 +489,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                       <img src={olimpoLogo} alt="Olimpo" className="h-6 w-auto brightness-0 invert" />
                     </div>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
 
             {/* Footer contact */}
@@ -551,11 +509,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
@@ -697,11 +651,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
@@ -800,11 +750,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             {/* Aerial View Placeholder */}
@@ -823,19 +769,25 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">Investimento: Poupança</span>
                   <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
-                    <div className="h-8 bg-red-500 rounded" style={{ width: '20%' }}></div>
+                    <div className="h-8 bg-red-500 rounded" style={{
+                    width: '20%'
+                  }}></div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">Investimento: CBD</span>
                   <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
-                    <div className="h-8 bg-orange-500 rounded" style={{ width: '35%' }}></div>
+                    <div className="h-8 bg-orange-500 rounded" style={{
+                    width: '35%'
+                  }}></div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">Investimento: Energia Solar</span>
                   <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
-                    <div className="h-8 bg-green-500 rounded" style={{ width: '80%' }}></div>
+                    <div className="h-8 bg-green-500 rounded" style={{
+                    width: '80%'
+                  }}></div>
                   </div>
                 </div>
               </div>
@@ -863,21 +815,17 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
               {/* Chart Bars */}
               <div className="flex justify-between items-end h-40 border-b-2 border-gray-300">
-                {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Média'].map((month, i) => (
-                  <div key={month} className="flex flex-col items-center gap-1">
+                {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Média'].map((month, i) => <div key={month} className="flex flex-col items-center gap-1">
                     <div className="flex gap-1">
-                      <div 
-                        className="w-6 bg-yellow-400 rounded-t" 
-                        style={{ height: `${120 + Math.random() * 20}px` }}
-                      ></div>
-                      <div 
-                        className="w-6 bg-gray-400 rounded-t" 
-                        style={{ height: `${100 + Math.random() * 15}px` }}
-                      ></div>
+                      <div className="w-6 bg-yellow-400 rounded-t" style={{
+                    height: `${120 + Math.random() * 20}px`
+                  }}></div>
+                      <div className="w-6 bg-gray-400 rounded-t" style={{
+                    height: `${100 + Math.random() * 15}px`
+                  }}></div>
                     </div>
                     <span className="text-xs text-slate-600 transform -rotate-45">{month}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
 
               <div className="grid grid-cols-4 gap-4 mt-6 text-center">
@@ -917,11 +865,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-16 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
@@ -1009,11 +953,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Logos dos bancos */}
             <div className="grid grid-cols-7 gap-4 mb-12 max-w-3xl mx-auto">
-              {['BV', 'Sicredi', 'Sol Agora', 'SICOOB', 'Viacredi', 'Santander', 'BNDES'].map((bank) => (
-                <div key={bank} className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-bold text-slate-600">
+              {['BV', 'Sicredi', 'Sol Agora', 'SICOOB', 'Viacredi', 'Santander', 'BNDES'].map(bank => <div key={bank} className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-bold text-slate-600">
                   {bank}
-                </div>
-              ))}
+                </div>)}
             </div>
 
             {/* Seção de rentabilidade - baseado na parte inferior da imagem 9 */}
@@ -1022,13 +964,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br/>sem Energia Solar:</h4>
+                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br />sem Energia Solar:</h4>
                   <div className="text-2xl font-bold text-red-400">R$ 8.000,00 / ano</div>
                   <div className="text-lg">R$ 8.000,00 / mês</div>
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br/>com Energia Solar:</h4>
+                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br />com Energia Solar:</h4>
                   <div className="text-2xl font-bold text-green-400">R$ 3.840,00 / ano</div>
                   <div className="text-lg">R$ 320,00 / mês</div>
                 </div>
@@ -1058,7 +1000,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="max-w-4xl mx-auto py-16">
             
             <h2 className="text-5xl font-bold text-slate-800 mb-12 leading-tight">
-              Termo de<br/>
+              Termo de<br />
               compromisso:
             </h2>
 
@@ -1105,7 +1047,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 <p className="font-bold italic text-xl text-slate-800">Contratado</p>
                 <div className="mt-4">
                   <p className="font-semibold text-slate-800">Olimpo Solar</p>
-                  <p className="text-slate-700 text-sm">CNPJ: XX.XXX.XXX/0001-XX</p>
+                  <p className="text-slate-700 text-sm">CNPJ: 55.139.821/0001-03</p>
                   <p className="text-slate-700 text-sm">Campo Grande - MS</p>
                 </div>
               </div>
@@ -1113,11 +1055,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Logo e informações da empresa */}
             <div className="flex justify-center mb-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-20 w-auto"
-              />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
             </div>
 
             {/* Footer da empresa */}
@@ -1161,8 +1099,6 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProposalPreview;
