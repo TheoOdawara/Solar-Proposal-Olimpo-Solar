@@ -272,118 +272,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
-          <div className="max-w-4xl mx-auto py-16">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
-            </div>
-
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-slate-800 mb-4">
-                Benefícios:
-              </h2>
-              <div className="inline-block bg-yellow-400 px-6 py-2 rounded">
-                <span className="text-xl font-bold text-slate-800">DA ENERGIA SOLAR</span>
-              </div>
-            </div>
-
-            {/* Benefits Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              {/* Row 1 */}
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <div className="text-4xl">%</div>
-                </div>
-                <h3 className="font-bold text-lg mb-2">Sem Tarifário</h3>
-                <p className="text-sm text-slate-600">Não é afetado pelo impacto tarifário. Isento dos aumentos anuais da tarifa de energia elétrica.</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <BarChart3 className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Isenção de Impostos</h3>
-                <p className="text-sm text-slate-600">Isenção de determinados tributos incluídos na sua fatura de energia elétrica.</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <Home className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Valorização</h3>
-                <p className="text-sm text-slate-600">Compartilhamento da energia excedente. Valorização de 3% a 6% do seu imóvel.</p>
-              </div>
-
-              {/* Row 2 */}
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <Leaf className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Contribuição para a Sustentabilidade</h3>
-                <p className="text-sm text-slate-600">Ao optar pela energia solar, você apoia práticas sustentáveis e reduz seu impacto ambiental.</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <Clock className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Durabilidade</h3>
-                <p className="text-sm text-slate-600">Painéis solares têm uma vida útil longa, geralmente de 25 anos ou mais, garantindo um bom retorno sobre o investimento.</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <DollarSign className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Baixos Custos de Manutenção</h3>
-                <p className="text-sm text-slate-600">Os sistemas solares exigem pouca manutenção após a instalação, o que reduz gastos adicionais.</p>
-              </div>
-
-              {/* Row 3 */}
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <Shield className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Garantia</h3>
-                <p className="text-sm text-slate-600">Módulos fotovoltaicos com uma garantia de 25 anos.</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <Wrench className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Projeto Sob Medida</h3>
-                <p className="text-sm text-slate-600">Análise exclusiva de sombreamento utilizando software especializado.</p>
-              </div>
-
-              <div className="text-center">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                  <Globe className="h-12 w-12 text-slate-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">1 Ano de Garantia na Instalação</h3>
-                <p className="text-sm text-slate-600">Sistema de Monitoramento Online.</p>
-              </div>
-            </div>
-
-            {/* Family image */}
-            <div className="rounded-lg overflow-hidden mb-8">
-              <img 
-                src="/lovable-uploads/06944c3f-9aae-47db-9ab8-0d13b80138a5.png" 
-                alt="Família feliz" 
-                className="w-full h-48 object-cover"
-              />
-            </div>
-
-            {/* Footer contact */}
-            <div className="bg-slate-800 py-4 text-center rounded-lg">
-              <div className="flex justify-center space-x-6 text-white text-sm">
-                <span>(67) 99668-0242</span>
-                <span>olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-              </div>
-            </div>
+        <section className="min-h-screen bg-white p-8">
+          <div className="flex items-center justify-center h-full">
+            <img 
+              src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" 
+              alt="Benefícios da Energia Solar" 
+              className="w-full h-auto max-w-4xl"
+            />
           </div>
         </section>
 
