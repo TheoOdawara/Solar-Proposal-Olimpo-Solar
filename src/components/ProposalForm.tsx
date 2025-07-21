@@ -26,7 +26,6 @@ interface FormData {
   moduleQuantity: number;
   modulePower: number;
   moduleBrand: string;
-  moduleModel: string;
   inverterBrand: string;
   inverterModel: string;
   
@@ -67,7 +66,6 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     moduleQuantity: 0,
     modulePower: 0,
     moduleBrand: '',
-    moduleModel: '',
     inverterBrand: '',
     inverterModel: '',
     paymentMethod: '',
@@ -167,7 +165,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
   const validateForm = () => {
     const requiredFields = [
       'clientName', 'address', 'number', 'neighborhood', 'city', 'phone',
-      'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand', 'moduleModel',
+      'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand',
       'inverterBrand', 'inverterModel', 'paymentMethod'
     ];
 
@@ -395,26 +393,14 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="moduleBrand">Marca dos Módulos *</Label>
-                <Input
-                  id="moduleBrand"
-                  value={formData.moduleBrand}
-                  onChange={(e) => handleInputChange('moduleBrand', e.target.value)}
-                  placeholder="Canadian Solar"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="moduleModel">Modelo dos Módulos *</Label>
-                <Input
-                  id="moduleModel"
-                  value={formData.moduleModel}
-                  onChange={(e) => handleInputChange('moduleModel', e.target.value)}
-                  placeholder="CS3K-300MS"
-                />
-              </div>
+            <div>
+              <Label htmlFor="moduleBrand">Marca dos Módulos *</Label>
+              <Input
+                id="moduleBrand"
+                value={formData.moduleBrand}
+                onChange={(e) => handleInputChange('moduleBrand', e.target.value)}
+                placeholder="Canadian Solar"
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
