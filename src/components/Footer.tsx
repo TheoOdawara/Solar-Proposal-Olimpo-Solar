@@ -31,7 +31,7 @@ const Footer = () => {
                 
                 <div className="flex items-center justify-center md:justify-start gap-1">
                   <Mail className="h-3 w-3" />
-                  <span>contato@olimposolar.com.br</span>
+                  <span>adm.olimposolar@gmail.com</span>
                 </div>
               </div>
             </div>
