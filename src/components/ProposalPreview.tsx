@@ -224,71 +224,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </h2>
 
             {/* Solar System Diagram */}
-            <div className="relative max-w-3xl mx-auto mb-16">
-              {/* Sun */}
-              <div className="absolute top-0 left-20">
-                <div className="w-16 h-16 bg-yellow-400 rounded-full relative">
-                  <div className="absolute inset-2 bg-yellow-300 rounded-full"></div>
-                  {/* Sun rays */}
-                  {[...Array(8)].map((_, i) => <div key={i} className="absolute w-4 h-1 bg-yellow-400 rounded-full" style={{
-                  top: '50%',
-                  left: '50%',
-                  transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-24px)`
-                }}></div>)}
-                </div>
-                <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">1</div>
-              </div>
-
-              {/* House with Solar Panels */}
-              <div className="mt-32 mb-16 text-center">
-                <div className="inline-block relative">
-                  {/* House */}
-                  <div className="w-64 h-40 bg-orange-400 rounded-lg relative">
-                    {/* Roof */}
-                    <div className="absolute -top-8 left-0 right-0">
-                      <div className="w-full h-16 bg-orange-500 rounded-t-lg"></div>
-                      {/* Solar Panels */}
-                      <div className="absolute top-2 left-4 right-4 grid grid-cols-3 gap-1">
-                        {[...Array(9)].map((_, i) => <div key={i} className="w-16 h-10 bg-slate-800 rounded border-2 border-gray-300">
-                            <div className="grid grid-cols-4 grid-rows-3 gap-0.5 p-0.5 h-full">
-                              {[...Array(12)].map((_, j) => <div key={j} className="bg-slate-700 rounded-sm"></div>)}
-                            </div>
-                          </div>)}
-                      </div>
-                    </div>
-                    
-                    {/* Windows and Door */}
-                    <div className="absolute bottom-8 left-8 w-8 h-8 bg-yellow-200 rounded"></div>
-                    <div className="absolute bottom-8 right-8 w-8 h-8 bg-yellow-200 rounded"></div>
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-16 bg-red-600 rounded-t"></div>
-                  </div>
-
-                  {/* Connection lines and boxes */}
-                  <div className="absolute -bottom-8 right-8 w-6 h-8 bg-white border-2 border-gray-400 rounded"></div>
-                  <div className="absolute -bottom-8 right-0 w-6 h-8 bg-white border-2 border-gray-400 rounded"></div>
-                  
-                  {/* Step numbers */}
-                  <div className="absolute bottom-12 left-4 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">3</div>
-                  <div className="absolute bottom-12 right-12 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">2</div>
-                  <div className="absolute bottom-12 right-4 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">4</div>
-                </div>
-              </div>
-
-              {/* Power Grid */}
-              <div className="absolute top-32 right-0">
-                <div className="w-24 h-32 relative">
-                  {/* Power lines structure */}
-                  <div className="absolute inset-0 opacity-30">
-                    <svg viewBox="0 0 96 128" className="w-full h-full">
-                      <line x1="48" y1="0" x2="48" y2="128" stroke="#666" strokeWidth="2" />
-                      <line x1="20" y1="20" x2="76" y2="20" stroke="#666" strokeWidth="2" />
-                      <line x1="20" y1="40" x2="76" y2="40" stroke="#666" strokeWidth="2" />
-                      <line x1="20" y1="60" x2="76" y2="60" stroke="#666" strokeWidth="2" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">5</div>
-              </div>
+            <div className="flex justify-center mb-16">
+              <img 
+                src="/lovable-uploads/eec5512b-b132-4591-8437-18986fe56e01.png" 
+                alt="Como funciona a energia solar" 
+                className="max-w-full h-auto max-h-96 object-contain"
+              />
             </div>
 
             {/* Yellow banner */}
