@@ -40,7 +40,17 @@ interface Calculations {
   totalValue: number;
 }
 
-const ProposalForm = () => {
+interface ProposalFormProps {
+  onProposalDataChange?: (data: {
+    clientName: string;
+    systemPower: number;
+    monthlyGeneration: number;
+    monthlySavings: number;
+    totalValue: number;
+  }) => void;
+}
+
+const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     clientName: '',
@@ -92,12 +102,25 @@ const ProposalForm = () => {
       // Valor fixo por kWp = R$1.850
       const totalValue = systemPower * 1850;
 
-      setCalculations({
+      const newCalculations = {
         monthlyGeneration: Math.round(monthlyGeneration),
         monthlySavings: Math.round(monthlySavings),
         requiredArea: Math.round(requiredArea * 10) / 10, // Uma casa decimal
         totalValue: Math.round(totalValue)
-      });
+      };
+      
+      setCalculations(newCalculations);
+      
+      // Notifica o componente pai sobre mudanças nos dados da proposta
+      if (onProposalDataChange) {
+        onProposalDataChange({
+          clientName: formData.clientName,
+          systemPower: formData.systemPower,
+          monthlyGeneration: newCalculations.monthlyGeneration,
+          monthlySavings: newCalculations.monthlySavings,
+          totalValue: newCalculations.totalValue
+        });
+      }
     } else {
       // Reset dos cálculos quando não há potência definida
       setCalculations({
@@ -107,7 +130,7 @@ const ProposalForm = () => {
         totalValue: 0
       });
     }
-  }, [formData.systemPower, formData.moduleQuantity]);
+  }, [formData.systemPower, formData.moduleQuantity, formData.clientName, onProposalDataChange]);
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({
