@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star } from "lucide-react";
+import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
 import olimpoLogo from "@/assets/olimpo-solar-logo.png";
 
 interface FormData {
@@ -56,6 +56,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
     });
   };
 
+  const calculateYearlySavings = () => calculations.monthlySavings * 12;
+  const calculateCurrentBill = () => calculations.monthlySavings;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navegação */}
@@ -74,238 +77,1050 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
       {/* Conteúdo da Proposta */}
       <div id="proposal-content" className="max-w-4xl mx-auto bg-white">
+        
         {/* PÁGINA 1: CAPA */}
-        <section className="min-h-screen p-8 flex flex-col justify-center bg-white">
-          {/* Logo */}
-          <div className="text-center mb-12">
-            <img 
-              src={olimpoLogo} 
-              alt="Olimpo Solar" 
-              className="mx-auto h-20 w-auto mb-8"
-            />
+        <section className="min-h-screen flex flex-col bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400 opacity-20 transform rotate-45 translate-x-48 -translate-y-48"></div>
+            <div className="absolute top-20 right-20 w-64 h-64 bg-yellow-300 opacity-30 transform rotate-45"></div>
+            <div className="absolute top-32 right-32 w-32 h-32 bg-yellow-200 opacity-40 transform rotate-45"></div>
           </div>
 
-          {/* Título */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Proposta Comercial
-            </h1>
-            <h2 className="text-2xl md:text-3xl font-semibold bg-gradient-solar bg-clip-text text-transparent">
-              Sistema Fotovoltaico
-            </h2>
-          </div>
-
-          {/* Dados do Cliente */}
-          <div className="space-y-8 max-w-2xl mx-auto">
-            <div>
-              <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                CLIENTE:
-              </h3>
-              <p className="text-lg text-foreground">{formData.clientName}</p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-foreground mb-3">ENDEREÇO:</h3>
-              <p className="text-lg text-foreground">
-                {formData.address}, {formData.number}
-              </p>
-              <p className="text-lg text-foreground">
-                {formData.neighborhood} - {formData.city}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                DATA:
-              </h3>
-              <p className="text-lg text-foreground">{formatDate()}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* PÁGINA 2: MENSAGEM INSTITUCIONAL */}
-        <section className="min-h-screen p-8 bg-white">
-          <div className="max-w-4xl mx-auto py-16">
-            <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-solar bg-clip-text text-transparent">
-              Mensagem Institucional
-            </h2>
-
-            <Card className="border-primary/20 border-2 bg-gradient-to-br from-background to-muted/20 mb-16">
-              <CardContent className="p-8 text-center">
-                <p className="text-xl font-medium text-foreground mb-4">
-                  Nosso compromisso é com seu bolso e com o planeta.
-                </p>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  Escolher a Olimpo Solar é optar por economia e<br/>
-                  sustentabilidade com atendimento humanizado,<br/>
-                  produtos premium e instalação rápida.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* RESUMO DO PROJETO */}
-            <h3 className="text-2xl font-bold text-center mb-8 bg-gradient-solar bg-clip-text text-transparent">
-              Resumo do Projeto
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex justify-between p-4 bg-muted/50 rounded-lg">
-                  <span className="font-semibold">Potência do Sistema:</span>
-                  <span className="text-primary font-bold">{formData.systemPower} kWp</span>
-                </div>
-                <div className="flex justify-between p-4 bg-muted/50 rounded-lg">
-                  <span className="font-semibold">Módulos:</span>
-                  <span className="text-primary font-bold">{formData.moduleQuantity} módulos de {formData.modulePower}W</span>
-                </div>
-                <div className="flex justify-between p-4 bg-muted/50 rounded-lg">
-                  <span className="font-semibold">Marca dos Módulos:</span>
-                  <span className="text-primary font-bold">{formData.moduleBrand}</span>
-                </div>
-                <div className="flex justify-between p-4 bg-muted/50 rounded-lg">
-                  <span className="font-semibold">Inversor:</span>
-                  <span className="text-primary font-bold">{formData.inverterBrand} - {formData.inverterPower}W</span>
-                </div>
-                <div className="flex justify-between p-4 bg-muted/50 rounded-lg">
-                  <span className="font-semibold">Forma de Pagamento:</span>
-                  <span className="text-primary font-bold">{formData.paymentMethod.toUpperCase()}</span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex justify-between p-4 bg-secondary/10 rounded-lg border border-secondary/20">
-                  <span className="font-semibold">Geração Mensal Estimada:</span>
-                  <span className="text-secondary font-bold">{calculations.monthlyGeneration} kWh/mês</span>
-                </div>
-                <div className="flex justify-between p-4 bg-secondary/10 rounded-lg border border-secondary/20">
-                  <span className="font-semibold">Economia Mensal Estimada:</span>
-                  <span className="text-secondary font-bold">{formatCurrency(calculations.monthlySavings)}</span>
-                </div>
-                <div className="flex justify-between p-4 bg-secondary/10 rounded-lg border border-secondary/20">
-                  <span className="font-semibold">Área Mínima Necessária:</span>
-                  <span className="text-secondary font-bold">{calculations.requiredArea} m²</span>
-                </div>
-                <div className="flex justify-between p-4 bg-gradient-solar/10 rounded-lg border border-primary/30">
-                  <span className="font-semibold">Valor Total do Projeto:</span>
-                  <span className="font-bold text-xl bg-gradient-solar bg-clip-text text-transparent">
-                    {formatCurrency(calculations.totalValue)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {formData.observations && (
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                <h4 className="font-semibold mb-2">Observações:</h4>
-                <p className="text-muted-foreground">{formData.observations}</p>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* PÁGINA 3: BENEFÍCIOS */}
-        <section className="min-h-screen p-8 bg-white">
-          <div className="max-w-4xl mx-auto py-16">
-            <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-solar bg-clip-text text-transparent">
-              Benefícios da Energia Solar
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-              {[
-                { icon: CheckCircle, text: "Garantia de até 25 anos" },
-                { icon: Star, text: "Valorização do imóvel" },
-                { icon: Zap, text: "Baixo custo de manutenção" },
-                { icon: CheckCircle, text: "Isenção de impostos e tarifas" },
-                { icon: Star, text: "Sustentabilidade ambiental" },
-                { icon: Zap, text: "Monitoramento online" }
-              ].map((benefit, index) => {
-                const IconComponent = benefit.icon;
-                return (
-                  <div key={index} className="flex items-center gap-4 p-4 bg-secondary/5 rounded-lg">
-                    <div className="flex-shrink-0">
-                      <IconComponent className="h-6 w-6 text-secondary" />
-                    </div>
-                    <span className="text-lg font-medium text-foreground">{benefit.text}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* ETAPAS DO PROJETO */}
-            <h3 className="text-2xl font-bold text-center mb-8 bg-gradient-solar bg-clip-text text-transparent">
-              Etapas do Projeto
-            </h3>
-
-            <div className="space-y-6">
-              {[
-                "Apresentação da proposta",
-                "Visita técnica",
-                "Assinatura de contrato",
-                "Instalação",
-                "Ativação da usina",
-                "Monitoramento"
-              ].map((step, index) => (
-                <div key={index} className="flex items-center gap-6 p-4 bg-primary/5 rounded-lg">
-                  <div className="flex-shrink-0 w-10 h-10 bg-gradient-solar rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">{index + 1}</span>
-                  </div>
-                  <span className="text-lg font-medium text-foreground">{step}</span>
-                  {index < 5 && (
-                    <div className="flex-1 border-b-2 border-dashed border-primary/30"></div>
-                  )}
-                </div>
+          {/* Dots pattern */}
+          <div className="absolute left-8 top-1/2 -translate-y-1/2">
+            <div className="grid grid-cols-3 gap-2">
+              {[...Array(9)].map((_, i) => (
+                <div key={i} className="w-2 h-2 bg-white rounded-full opacity-60"></div>
               ))}
             </div>
           </div>
-        </section>
 
-        {/* PÁGINA 4: COMPARATIVO */}
-        <section className="min-h-screen p-8 bg-white">
-          <div className="max-w-4xl mx-auto py-16">
-            <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-solar bg-clip-text text-transparent">
-              Comparativo de Investimento
-            </h2>
-
-            <div className="space-y-8 mb-16">
-              {[
-                { name: 'Energia Solar', value: 12, color: 'bg-gradient-solar' },
-                { name: 'Poupança', value: 6, color: 'bg-muted' },
-                { name: 'CDI', value: 8, color: 'bg-muted-foreground/20' }
-              ].map((investment, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-semibold">{investment.name}</span>
-                    <span className="text-lg font-bold text-primary">{investment.value}% a.a.</span>
-                  </div>
-                  <div className="w-full bg-muted/50 rounded-full h-6">
-                    <div 
-                      className={`h-6 rounded-full ${investment.color} transition-all duration-1000`}
-                      style={{ width: `${(investment.value / 12) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* RODAPÉ */}
-            <div className="bg-gradient-solar rounded-lg p-8 text-center text-white">
+          {/* Content */}
+          <div className="relative z-10 flex-1 flex flex-col justify-center px-8 py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
               <img 
                 src={olimpoLogo} 
                 alt="Olimpo Solar" 
-                className="mx-auto h-12 w-auto mb-4 brightness-0 invert"
+                className="h-20 w-auto brightness-0 invert"
               />
-              <h3 className="text-2xl font-bold mb-4">OLIMPO SOLAR</h3>
-              <div className="space-y-2 text-sm">
-                <p>R. Eduardo Santos Pereira, 1831 – Centro, Campo Grande – MS</p>
-                <p>WhatsApp: (67) 99668-0242</p>
-                <p>Instagram: @olimpo.energiasolar</p>
-                <p>E-mail: adm.olimposolar@gmail.com</p>
+            </div>
+
+            {/* Main Title */}
+            <div className="max-w-2xl">
+              <h1 className="text-6xl font-bold text-white leading-tight mb-4">
+                PROPOSTA<br/>
+                COMERCIAL
+              </h1>
+              <p className="text-2xl text-gray-300 font-light">
+                Sistema fotovoltaico
+              </p>
+            </div>
+
+            {/* Client Info Section */}
+            <div className="absolute bottom-16 right-8 max-w-md">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-white">
+                <h3 className="text-xl font-bold mb-4">DADOS DO CLIENTE:</h3>
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-semibold">Nome:</span> {formData.clientName}</p>
+                  <p><span className="font-semibold">Endereço:</span> {formData.address}, {formData.number}</p>
+                  <p><span className="font-semibold">Bairro:</span> {formData.neighborhood}</p>
+                  <p><span className="font-semibold">Cidade:</span> {formData.city}</p>
+                  <p><span className="font-semibold">Telefone:</span> {formData.phone}</p>
+                  <p><span className="font-semibold">Data:</span> {formatDate()}</p>
+                </div>
               </div>
             </div>
           </div>
         </section>
+
+        {/* PÁGINA 2: QUEM SOMOS */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
+              QUEM SOMOS:
+            </h2>
+
+            <div className="space-y-8">
+              <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto">
+                A Olimpo Solar, localizada em Campo Grande-MS, transforma o 
+                consumo de energia ao ajudar cidadãos a economizarem para 
+                investir no que realmente importa – suas famílias.
+              </p>
+
+              <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto">
+                Com soluções inovadoras e sustentáveis em energia solar, 
+                reduzimos suas despesas mensais e contribuímos para a 
+                preservação ambiental. Nosso diferencial está em trabalhar 
+                exclusivamente com materiais de alta qualidade e garantir 
+                produtos a pronta entrega, assegurando rapidez e e ciência no 
+                atendimento.
+              </p>
+
+              <div className="mt-16">
+                <h3 className="text-3xl font-bold text-slate-800 text-center mb-12">
+                  Por que escolher a<br/>
+                  Olimpo Energia Renovável
+                </h3>
+                
+                <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto mb-16">
+                  Escolher a Olimpo Solar significa optar por um futuro onde a 
+                  economia e a sustentabilidade andam lado a lado, beneficiando 
+                  tanto o seu bolso quanto o planeta.
+                </p>
+              </div>
+
+              {/* Compromisso Section */}
+              <div className="bg-slate-800 rounded-lg p-8 text-white mt-16">
+                <h3 className="text-3xl font-bold text-center mb-12">
+                  NOSSO COMPROMISSO
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Leaf className="h-8 w-8 text-slate-800" />
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">COM A NATUREZA</h4>
+                    <p className="text-sm">Energia limpa totalmente sustentável</p>
+                  </div>
+
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Zap className="h-8 w-8 text-slate-800" />
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">COM SEU PROJETO</h4>
+                    <p className="text-sm">Equipamentos profissionais altamente qualificados.</p>
+                  </div>
+
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                      <DollarSign className="h-8 w-8 text-slate-800" />
+                    </div>
+                    <h4 className="text-xl font-bold mb-2">COM SEU BOLSO</h4>
+                    <p className="text-sm">Economia de até 95% na sua fatura de energia.</p>
+                  </div>
+                </div>
+
+                {/* Contact Info */}
+                <div className="mt-12 text-center">
+                  <div className="flex justify-center space-x-8 text-sm">
+                    <span>(67) 99668-0242</span>
+                    <span>olimpo.energiasolar</span>
+                    <span>adm.olimposolar@gmail.com</span>
+                    <span>R. Eduardo Santos Pereira, 1835 Centro, Campo Grande</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 3: COMO FUNCIONA */}
+        <section className="min-h-screen bg-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
+              Como Funciona:
+            </h2>
+
+            {/* Solar System Diagram */}
+            <div className="relative max-w-3xl mx-auto mb-16">
+              {/* Sun */}
+              <div className="absolute top-0 left-20">
+                <div className="w-16 h-16 bg-yellow-400 rounded-full relative">
+                  <div className="absolute inset-2 bg-yellow-300 rounded-full"></div>
+                  {/* Sun rays */}
+                  {[...Array(8)].map((_, i) => (
+                    <div 
+                      key={i} 
+                      className="absolute w-4 h-1 bg-yellow-400 rounded-full"
+                      style={{
+                        top: '50%',
+                        left: '50%',
+                        transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-24px)`
+                      }}
+                    ></div>
+                  ))}
+                </div>
+                <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">1</div>
+              </div>
+
+              {/* House with Solar Panels */}
+              <div className="mt-32 mb-16 text-center">
+                <div className="inline-block relative">
+                  {/* House */}
+                  <div className="w-64 h-40 bg-orange-400 rounded-lg relative">
+                    {/* Roof */}
+                    <div className="absolute -top-8 left-0 right-0">
+                      <div className="w-full h-16 bg-orange-500 rounded-t-lg"></div>
+                      {/* Solar Panels */}
+                      <div className="absolute top-2 left-4 right-4 grid grid-cols-3 gap-1">
+                        {[...Array(9)].map((_, i) => (
+                          <div key={i} className="w-16 h-10 bg-slate-800 rounded border-2 border-gray-300">
+                            <div className="grid grid-cols-4 grid-rows-3 gap-0.5 p-0.5 h-full">
+                              {[...Array(12)].map((_, j) => (
+                                <div key={j} className="bg-slate-700 rounded-sm"></div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Windows and Door */}
+                    <div className="absolute bottom-8 left-8 w-8 h-8 bg-yellow-200 rounded"></div>
+                    <div className="absolute bottom-8 right-8 w-8 h-8 bg-yellow-200 rounded"></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-16 bg-red-600 rounded-t"></div>
+                  </div>
+
+                  {/* Connection lines and boxes */}
+                  <div className="absolute -bottom-8 right-8 w-6 h-8 bg-white border-2 border-gray-400 rounded"></div>
+                  <div className="absolute -bottom-8 right-0 w-6 h-8 bg-white border-2 border-gray-400 rounded"></div>
+                  
+                  {/* Step numbers */}
+                  <div className="absolute bottom-12 left-4 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">3</div>
+                  <div className="absolute bottom-12 right-12 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">2</div>
+                  <div className="absolute bottom-12 right-4 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">4</div>
+                </div>
+              </div>
+
+              {/* Power Grid */}
+              <div className="absolute top-32 right-0">
+                <div className="w-24 h-32 relative">
+                  {/* Power lines structure */}
+                  <div className="absolute inset-0 opacity-30">
+                    <svg viewBox="0 0 96 128" className="w-full h-full">
+                      <line x1="48" y1="0" x2="48" y2="128" stroke="#666" strokeWidth="2"/>
+                      <line x1="20" y1="20" x2="76" y2="20" stroke="#666" strokeWidth="2"/>
+                      <line x1="20" y1="40" x2="76" y2="40" stroke="#666" strokeWidth="2"/>
+                      <line x1="20" y1="60" x2="76" y2="60" stroke="#666" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold">5</div>
+              </div>
+            </div>
+
+            {/* Yellow banner */}
+            <div className="bg-yellow-400 py-4 px-8 rounded-lg mb-8">
+              <h3 className="text-2xl font-bold text-slate-800 text-center">
+                SIMPLES, ECONÔMICO E EFICIENTE
+              </h3>
+            </div>
+
+            {/* Steps explanation */}
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <span className="text-xl font-bold text-slate-800">1.</span>
+                <p className="text-lg text-slate-700">Placas solares captam energia do calor do sol.</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <span className="text-xl font-bold text-slate-800">2.</span>
+                <p className="text-lg text-slate-700">O sistema converte essa energia para uso direto na residência ou indústria.</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <span className="text-xl font-bold text-slate-800">3.</span>
+                <p className="text-lg text-slate-700">A energia convertida pode ser utilizada em todos os aparelhos elétricos.</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <span className="text-xl font-bold text-slate-800">4.</span>
+                <p className="text-lg text-slate-700">A energia não usada é armazenada, gerando crédito na concessionária.</p>
+              </div>
+            </div>
+
+            {/* Footer contact */}
+            <div className="mt-16 bg-slate-800 py-4 text-center">
+              <div className="flex justify-center space-x-8 text-white text-sm">
+                <span>67 99668-0242</span>
+                <span>Olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 4: BENEFÍCIOS */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-slate-800 mb-4">
+                Benefícios:
+              </h2>
+              <div className="inline-block bg-yellow-400 px-6 py-2 rounded">
+                <span className="text-xl font-bold text-slate-800">DA ENERGIA SOLAR</span>
+              </div>
+            </div>
+
+            {/* Benefits Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+              {/* Row 1 */}
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <div className="text-4xl">%</div>
+                </div>
+                <h3 className="font-bold text-lg mb-2">Sem Tarifário</h3>
+                <p className="text-sm text-slate-600">Não é afetado pelo impacto tarifário. Isento dos aumentos anuais da tarifa de energia elétrica.</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <BarChart3 className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Isenção de Impostos</h3>
+                <p className="text-sm text-slate-600">Isenção de determinados tributos incluídos na sua fatura de energia elétrica.</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <Home className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Valorização</h3>
+                <p className="text-sm text-slate-600">Compartilhamento da energia excedente. Valorização de 3% a 6% do seu imóvel.</p>
+              </div>
+
+              {/* Row 2 */}
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <Leaf className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Contribuição para a Sustentabilidade</h3>
+                <p className="text-sm text-slate-600">Ao optar pela energia solar, você apoia práticas sustentáveis e reduz seu impacto ambiental.</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <Clock className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Durabilidade</h3>
+                <p className="text-sm text-slate-600">Painéis solares têm uma vida útil longa, geralmente de 25 anos ou mais, garantindo um bom retorno sobre o investimento.</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <DollarSign className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Baixos Custos de Manutenção</h3>
+                <p className="text-sm text-slate-600">Os sistemas solares exigem pouca manutenção após a instalação, o que reduz gastos adicionais.</p>
+              </div>
+
+              {/* Row 3 */}
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <Shield className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Garantia</h3>
+                <p className="text-sm text-slate-600">Módulos fotovoltaicos com uma garantia de 25 anos.</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <Wrench className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Projeto Sob Medida</h3>
+                <p className="text-sm text-slate-600">Análise exclusiva de sombreamento utilizando software especializado.</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <Globe className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">1 Ano de Garantia na Instalação</h3>
+                <p className="text-sm text-slate-600">Sistema de Monitoramento Online.</p>
+              </div>
+            </div>
+
+            {/* Family image placeholder */}
+            <div className="bg-gray-200 h-48 rounded-lg flex items-center justify-center mb-8">
+              <p className="text-gray-500">Imagem da Família Feliz</p>
+            </div>
+
+            {/* Footer contact */}
+            <div className="bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>(67) 99668-0242</span>
+                <span>olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 5: NOSSOS PROJETOS */}
+        <section className="min-h-screen bg-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
+              Nossos Projetos:
+            </h2>
+
+            {/* Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[...Array(9)].map((_, i) => (
+                <div key={i} className="relative bg-gray-200 h-48 rounded-lg overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400"></div>
+                  <div className="absolute top-2 left-2 bg-yellow-400 px-2 py-1 rounded text-xs font-bold">
+                    ✓ MAIS UM PROJETO ENTREGUE
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-slate-800 text-white p-3">
+                    <div className="text-yellow-400 font-bold text-sm mb-1">
+                      PROJETO {i % 2 === 0 ? 'RESIDENCIAL' : 'COMERCIAL'}
+                    </div>
+                    <div className="flex items-center gap-4 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Zap className="h-3 w-3" />
+                        <span>{18 + i} Painéis</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Battery className="h-3 w-3" />
+                        <span>{(6 + i * 0.5).toFixed(1)} kWp</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs mt-1">
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="h-3 w-3" />
+                        <span>{500 + i * 100} kWh/Mês</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <DollarSign className="h-3 w-3" />
+                        <span>R$ {(400 + i * 50).toLocaleString()}/Ano</span>
+                      </div>
+                    </div>
+                    <div className="absolute bottom-2 right-2">
+                      <img src={olimpoLogo} alt="Olimpo" className="h-6 w-auto brightness-0 invert" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer contact */}
+            <div className="mt-16 bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>(67) 99668-0242</span>
+                <span>olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 6: PROJETO 360° */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
+              Projeto 360°
+            </h2>
+
+            <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto mb-16">
+              Nosso compromisso é satisfazer as necessidades dos clientes do início ao 
+              fim de cada projeto fotovoltaico. Por isso, adotamos um processo de 
+              gerenciamento que torna mais ágeis as ações durante a negociação.
+            </p>
+
+            {/* Process Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+              {/* Row 1 */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <BarChart3 className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Estudo de Necessidade</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <FileDown className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Apresentação da Proposta</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <DollarSign className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Escolha de opções de pagamento</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <CheckCircle className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Assinatura de Contrato</h3>
+              </div>
+
+              {/* Row 2 */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-yellow-400 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <span className="font-bold text-slate-800">START</span>
+                </div>
+                <h3 className="font-bold text-sm">Apresentação do Canal do Cliente</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <MapPin className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Vistoria do Projeto</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <Wrench className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Elaboração de Projeto</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <Zap className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Pedido de Equipamentos</h3>
+              </div>
+
+              {/* Row 3 */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <FileDown className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Transporte e Entrega</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <CheckCircle className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Aprovação do Projeto</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <Wrench className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Instalação</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <Battery className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Troca do medidor</h3>
+              </div>
+
+              {/* Row 4 */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-yellow-400 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <Lightbulb className="h-10 w-10 text-slate-800" />
+                </div>
+                <h3 className="font-bold text-sm">Início da Geração</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <BarChart3 className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Monitoramento</h3>
+              </div>
+
+              <div className="text-center">
+                <div className="w-20 h-20 bg-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                  <DollarSign className="h-10 w-10 text-slate-600" />
+                </div>
+                <h3 className="font-bold text-sm">Economia</h3>
+              </div>
+            </div>
+
+            {/* Footer contact */}
+            <div className="bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>(67) 99668-0242</span>
+                <span>olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 7: SEU PROJETO */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
+              Seu Projeto:
+            </h2>
+
+            {/* Project Equipment Image Placeholder */}
+            <div className="bg-white rounded-lg p-8 mb-12 text-center">
+              <div className="w-80 h-60 bg-gray-200 rounded-lg mx-auto mb-8 flex items-center justify-center">
+                <p className="text-gray-500">Imagem dos Equipamentos do Sistema</p>
+              </div>
+              
+              {/* Equipment Icons */}
+              <div className="grid grid-cols-3 gap-6 max-w-lg mx-auto mb-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                    <Zap className="h-8 w-8 text-slate-600" />
+                  </div>
+                  <p className="text-sm text-slate-600">{formData.moduleQuantity} Painéis</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                    <Battery className="h-8 w-8 text-slate-600" />
+                  </div>
+                  <p className="text-sm text-slate-600">Inversor {formData.inverterBrand}</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                    <Wrench className="h-8 w-8 text-slate-600" />
+                  </div>
+                  <p className="text-sm text-slate-600">Estrutura</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                    <Lightbulb className="h-8 w-8 text-slate-600" />
+                  </div>
+                  <p className="text-sm text-slate-600">Monitoramento</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                    <DollarSign className="h-8 w-8 text-slate-600" />
+                  </div>
+                  <p className="text-sm text-slate-600">Economia</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                    <BarChart3 className="h-8 w-8 text-slate-600" />
+                  </div>
+                  <p className="text-sm text-slate-600">Potência {formData.systemPower}kWp</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Warranties Section */}
+            <div className="bg-slate-800 rounded-lg p-8 text-white">
+              <h3 className="text-3xl font-bold text-center mb-8">GARANTIAS</h3>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-3 border-b border-gray-600">
+                  <span className="font-semibold">Módulos solares</span>
+                  <span>25 anos de eficiência e 12 anos para defeito de fabricação</span>
+                </div>
+                <div className="flex justify-between items-center py-3 border-b border-gray-600">
+                  <span className="font-semibold">Inversores</span>
+                  <span>10 anos</span>
+                </div>
+                <div className="flex justify-between items-center py-3 border-b border-gray-600">
+                  <span className="font-semibold">Micro Inversores</span>
+                  <span>15 anos</span>
+                </div>
+                <div className="flex justify-between items-center py-3 border-b border-gray-600">
+                  <span className="font-semibold">Estrutura</span>
+                  <span>10 anos</span>
+                </div>
+                <div className="flex justify-between items-center py-3">
+                  <span className="font-semibold italic">Instalação</span>
+                  <span className="italic">12 meses</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer contact */}
+            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>67 99668-0242</span>
+                <span>Olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 8: RENTABILIDADE */}
+        <section className="min-h-screen bg-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            {/* Aerial View Placeholder */}
+            <div className="bg-gray-200 h-64 rounded-lg mb-12 flex items-center justify-center">
+              <p className="text-gray-500">Vista Aérea - Imagem Personalizada do Cliente: {formData.clientName}</p>
+            </div>
+
+            <div className="bg-slate-800 rounded-t-lg p-8 text-white mb-8">
+              <h2 className="text-3xl font-bold text-center mb-4">Rentabilidade:</h2>
+              <p className="text-xl text-center">Comparativo de Investimento</p>
+            </div>
+
+            {/* Investment Comparison */}
+            <div className="space-y-6 mb-12 bg-slate-800 p-8 text-white">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Investimento: Poupança</span>
+                  <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
+                    <div className="h-8 bg-red-500 rounded" style={{ width: '20%' }}></div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Investimento: CBD</span>
+                  <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
+                    <div className="h-8 bg-orange-500 rounded" style={{ width: '35%' }}></div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Investimento: Energia Solar</span>
+                  <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
+                    <div className="h-8 bg-green-500 rounded" style={{ width: '80%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Generation Capacity Chart */}
+            <div className="bg-yellow-100 p-8 rounded-lg">
+              <h3 className="text-2xl font-bold text-slate-800 text-center mb-8">
+                Capacidade de geração:
+              </h3>
+              <p className="text-lg text-slate-700 text-center mb-6">
+                Energia Consumida X Gerada (KwH/mês) - Projeto {formData.clientName}
+              </p>
+
+              <div className="flex justify-center gap-8 mb-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-yellow-400 rounded"></div>
+                  <span className="text-sm">Geração</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                  <span className="text-sm">Consumo</span>
+                </div>
+              </div>
+
+              {/* Chart Bars */}
+              <div className="flex justify-between items-end h-40 border-b-2 border-gray-300">
+                {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Média'].map((month, i) => (
+                  <div key={month} className="flex flex-col items-center gap-1">
+                    <div className="flex gap-1">
+                      <div 
+                        className="w-6 bg-yellow-400 rounded-t" 
+                        style={{ height: `${120 + Math.random() * 20}px` }}
+                      ></div>
+                      <div 
+                        className="w-6 bg-gray-400 rounded-t" 
+                        style={{ height: `${100 + Math.random() * 15}px` }}
+                      ></div>
+                    </div>
+                    <span className="text-xs text-slate-600 transform -rotate-45">{month}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-4 gap-4 mt-6 text-center">
+                <div>
+                  <div className="font-bold text-2xl text-yellow-600">{calculations.monthlyGeneration}</div>
+                  <div className="text-sm text-slate-600">kWh Geração Média</div>
+                </div>
+                <div>
+                  <div className="font-bold text-2xl text-gray-600">{Math.round(calculations.monthlyGeneration * 0.85)}</div>
+                  <div className="text-sm text-slate-600">kWh Consumo Médio</div>
+                </div>
+                <div>
+                  <div className="font-bold text-2xl text-green-600">{Math.round(calculations.monthlyGeneration * 0.15)}</div>
+                  <div className="text-sm text-slate-600">kWh Excedente</div>
+                </div>
+                <div>
+                  <div className="font-bold text-2xl text-blue-600">95%</div>
+                  <div className="text-sm text-slate-600">Economia Mensal</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer contact */}
+            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>67 99668-0242</span>
+                <span>Olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 9: SEU INVESTIMENTO */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-white p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            {/* Logo */}
+            <div className="absolute top-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-16 w-auto"
+              />
+            </div>
+
+            <h2 className="text-4xl font-bold text-slate-800 mb-12 text-center">
+              Seu investimento:
+            </h2>
+
+            {/* Investment Value */}
+            <div className="bg-yellow-400 p-6 rounded-lg mb-8 text-center">
+              <div className="text-3xl font-bold text-slate-800">
+                {formatCurrency(calculations.totalValue)}
+              </div>
+            </div>
+
+            {/* Financing Table */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+              <table className="w-full">
+                <thead className="bg-gray-200">
+                  <tr>
+                    <th className="py-4 px-6 text-left font-bold">Descrição</th>
+                    <th className="py-4 px-6 text-center font-bold">Qtd Meses</th>
+                    <th className="py-4 px-6 text-center font-bold">Parcela</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-yellow-400">
+                  <tr className="border-b border-yellow-500">
+                    <td className="py-4 px-6 font-bold">Cartão de crédito</td>
+                    <td className="py-4 px-6 text-center font-bold">18 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 18)}</td>
+                  </tr>
+                  <tr className="border-b border-yellow-500">
+                    <td className="py-4 px-6 font-bold">Sol agora</td>
+                    <td className="py-4 px-6 text-center font-bold">24 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 24)}</td>
+                  </tr>
+                  <tr className="border-b border-yellow-500">
+                    <td className="py-4 px-6 font-bold">Sol agora</td>
+                    <td className="py-4 px-6 text-center font-bold">36 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 36)}</td>
+                  </tr>
+                  <tr className="border-b border-yellow-500">
+                    <td className="py-4 px-6 font-bold">Sol agora</td>
+                    <td className="py-4 px-6 text-center font-bold">48 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 48)}</td>
+                  </tr>
+                  <tr className="border-b border-yellow-500">
+                    <td className="py-4 px-6 font-bold">Sol agora</td>
+                    <td className="py-4 px-6 text-center font-bold">64 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 64)}</td>
+                  </tr>
+                  <tr className="border-b border-yellow-500">
+                    <td className="py-4 px-6 font-bold">Sol agora</td>
+                    <td className="py-4 px-6 text-center font-bold">72 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 72)}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 px-6 font-bold">Sol agora</td>
+                    <td className="py-4 px-6 text-center font-bold">84 meses</td>
+                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 84)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="text-center text-sm text-slate-600 mb-8">
+              <p>Simulação sujeita a análise de crédito de acordo com a instituição financeira selecionada.</p>
+            </div>
+
+            <div className="bg-gray-50 p-6 rounded-lg mb-8">
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Para dimensionar e precificar adequadamente o seu projeto, nossa visita técnica é essencial. A inclinação e a 
+                face do telhado podem impactar a geração de energia do sistema fotovoltaico. Durante a visita, também 
+                iremos analisar as condições da estrutura física e elétrica. Pode ser necessário realizar ajustes para garantir sua 
+                segurança e a correta homologação do sistema com a Concessionária de Energia.
+              </p>
+            </div>
+
+            {/* Payment Methods Icons */}
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">VISA</div>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-8 h-5 bg-blue-400 rounded flex items-center justify-center text-white text-xs font-bold">AMEX</div>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">MC</div>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <div className="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">ELO</div>
+              </div>
+            </div>
+
+            {/* Banks Icons */}
+            <div className="grid grid-cols-4 md:grid-cols-8 gap-4 mb-12">
+              {['BV', 'Sicredi', 'Sol Agora', 'SICOOB', 'Viacredi', 'Santander', 'BNDES'].map((bank, i) => (
+                <div key={bank} className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-bold text-slate-600">
+                  {bank}
+                </div>
+              ))}
+            </div>
+
+            {/* Profitability Section */}
+            <div className="bg-slate-800 rounded-lg p-8 text-white">
+              <h3 className="text-3xl font-bold text-center mb-8">Sua rentabilidade:</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div>
+                  <h4 className="font-bold mb-2">Sua conta de energia sem Energia Solar:</h4>
+                  <div className="text-2xl font-bold">{formatCurrency(calculateYearlySavings())}/ano</div>
+                  <div className="text-lg">{formatCurrency(calculateCurrentBill())}/mês</div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold mb-2">Sua conta de energia com Energia Solar:</h4>
+                  <div className="text-2xl font-bold">{formatCurrency(calculations.totalValue * 0.05)}/ano</div>
+                  <div className="text-lg">{formatCurrency((calculations.totalValue * 0.05) / 12)}/mês</div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold mb-2">Sua economia será de:</h4>
+                  <div className="text-2xl font-bold">{formatCurrency(calculateYearlySavings() * 0.9)}/ano</div>
+                  <div className="text-lg">{formatCurrency(calculations.monthlySavings * 0.9)}/mês</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer contact */}
+            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>67 99668-0242</span>
+                <span>Olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* PÁGINA 10: TERMO DE COMPROMISSO */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 p-8">
+          <div className="max-w-4xl mx-auto py-16">
+            
+            <h2 className="text-4xl font-bold text-slate-800 mb-8">
+              Termo de<br/>
+              compromisso:
+            </h2>
+
+            <div className="space-y-6 text-sm text-slate-700 leading-relaxed mb-16">
+              <p>
+                Para o entendimento da contratação de ambas as partes, logo abaixo se encontram algumas informações 
+                importantes para todo o processo de aquisição da usina solar.
+              </p>
+
+              <p>
+                O <strong>COMPROMISSÁRIO COMPRADOR</strong> se obriga a viabilizar a realização da visita técnica pelo <strong>COMPROMISSÁRIO 
+                VENDEDOR</strong> afim de comprovar a viabilidade técnica do local para instalação do sistema fotovoltaico. As partes 
+                poderão renunciar a assinatura <strong>CONTRATO DE COMPRA, VENDA, PRESTAÇÃO DE SERVIÇOS E OUTRAS AVENÇAS PARA 
+                IMPLANTAÇÃO DE SISTEMA DE GERAÇÃO DE ENERGIA FOTOVOLTAICO</strong>, sem qualquer tipo de penalidade, nos casos de:
+              </p>
+
+              <div className="ml-6 space-y-2">
+                <p><strong>A)</strong> Inviabilidade técnica para instalação do sistema;</p>
+                <p><strong>B)</strong> Inviabilidade financeira do projeto.</p>
+                <p><strong>C)</strong> Salientamos que a aceitação da proposta vigente terá validade jurídica após contrato de compra e venda, 
+                aprovação das formas de pagamento ou financiamento ofertado.</p>
+              </div>
+            </div>
+
+            {/* Signature Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+              <div className="text-center">
+                <div className="border-b-2 border-slate-800 pb-2 mb-4 min-h-[60px]"></div>
+                <p className="font-bold italic text-lg">Contratante</p>
+                <p className="text-sm mt-2">{formData.clientName}</p>
+              </div>
+
+              <div className="text-center">
+                <div className="border-b-2 border-slate-800 pb-2 mb-4 min-h-[60px]"></div>
+                <p className="font-bold italic text-lg">Contratado</p>
+                <p className="text-sm mt-2">Olimpo Solar</p>
+              </div>
+            </div>
+
+            {/* Company Info and Logo */}
+            <div className="bg-slate-800 rounded-lg p-8 text-center">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="mx-auto h-16 w-auto mb-4 brightness-0 invert"
+              />
+              <div className="text-white">
+                <div className="flex justify-center space-x-6 text-sm">
+                  <span>(67) 99668-0242</span>
+                  <span>olimpo.energiasolar</span>
+                  <span>adm.olimposolar@gmail.com</span>
+                  <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
 
       {/* Botões Fixos no Mobile */}
