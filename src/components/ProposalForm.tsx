@@ -440,19 +440,6 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
               </div>
               
               <div>
-                <Label htmlFor="moduleQuantity">Quantidade de Módulos * (Calculado automaticamente)</Label>
-                <Input
-                  id="moduleQuantity"
-                  type="number"
-                  value={formData.moduleQuantity || ''}
-                  readOnly
-                  disabled
-                  placeholder="Será calculado automaticamente"
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
-              
-              <div>
                 <Label htmlFor="modulePower">Potência do Módulo (W) *</Label>
                 <Input
                   id="modulePower"
