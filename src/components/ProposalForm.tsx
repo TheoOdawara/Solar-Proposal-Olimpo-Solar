@@ -323,32 +323,48 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Cabeçalho */}
-        <Card className="bg-gradient-card shadow-card border-0">
-          <CardHeader className="text-center pb-2">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 bg-gradient-solar rounded-xl shadow-button">
-                <Zap className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <CardTitle className="text-3xl font-bold bg-gradient-solar bg-clip-text text-transparent">
-                  Olimpo Solar
-                </CardTitle>
-                <p className="text-muted-foreground text-sm">Gerador de Propostas Comerciais</p>
+    <div className="min-h-screen p-4">
+      <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+        {/* Enhanced hero section */}
+        <div className="text-center space-y-4 py-8">
+          <div className="flex items-center justify-center gap-4 animate-scale-in">
+            <div className="p-4 bg-gradient-solar rounded-xl shadow-glow animate-glow-pulse">
+              <Zap className="h-10 w-10 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-solar bg-clip-text text-transparent">
+                Gerador de Propostas
+              </h1>
+              <p className="text-muted-foreground">
+                Sistema inteligente para criação de propostas solares
+              </p>
+            </div>
+          </div>
+          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent w-1/2 mx-auto"></div>
+        </div>
+
+        {/* Client data section with enhanced design */}
+        <Card className="bg-gradient-surface shadow-floating border-0 animate-slide-up">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
+                  <Home className="h-5 w-5 text-white" />
+                </div>
+                Dados do Cliente
+              </CardTitle>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowHistory(!showHistory)}
+                  className="hover:bg-primary/5 hover:border-primary/40 transition-smooth"
+                >
+                  <History className="h-4 w-4 mr-2" />
+                  Histórico
+                </Button>
               </div>
             </div>
-          </CardHeader>
-        </Card>
-
-        {/* Formulário Principal */}
-        <Card className="bg-gradient-card shadow-card border-0">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Home className="h-5 w-5 text-primary" />
-              Dados do Cliente
-            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

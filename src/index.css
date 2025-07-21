@@ -48,14 +48,20 @@ All colors MUST be HSL.
     --gradient-solar: linear-gradient(135deg, hsl(219 76% 42%) 0%, hsl(150 82% 35%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(219 76% 48%) 0%, hsl(219 76% 42%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(219 14% 98%) 100%);
+    --gradient-auth: linear-gradient(180deg, hsl(219 76% 45%) 0%, hsl(150 82% 32%) 100%);
+    --gradient-surface: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(219 14% 97%) 100%);
+    --gradient-glow: radial-gradient(circle at center, hsl(219 76% 42% / 0.15) 0%, transparent 70%);
     
     /* Elegant shadows */
     --shadow-card: 0 4px 25px -5px hsl(219 76% 42% / 0.15);
     --shadow-button: 0 4px 14px -2px hsl(219 76% 42% / 0.25);
     --shadow-floating: 0 8px 30px -8px hsl(219 76% 42% / 0.3);
+    --shadow-glow: 0 0 40px hsl(219 76% 42% / 0.2);
+    --shadow-inner: inset 0 2px 4px 0 hsl(219 14% 0% / 0.05);
     
     /* Animation timing */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --sidebar-background: 0 0% 98%;
 
