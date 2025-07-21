@@ -13,10 +13,10 @@ const Footer = () => {
                 <span className="font-semibold">Endereço</span>
               </div>
               <div className="text-sm text-muted-foreground space-y-1">
-                <p>Rua das Tecnologias, 123</p>
-                <p>Jardim dos Estados</p>
+                <p>Rua Eduardo Santos Pereira, 1831 - Sala 4</p>
+                <p>Centro</p>
                 <p>Campo Grande - MS</p>
-                <p>CEP: 79000-000</p>
+                <p>CEP: 79010-030</p>
               </div>
             </div>
 
