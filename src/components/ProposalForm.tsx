@@ -88,14 +88,31 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
 
   // Cálculos automáticos baseados nos dados do projeto
   useEffect(() => {
-    const { desiredKwh, moduleQuantity } = formData;
+    const { desiredKwh, modulePower } = formData;
     
     if (desiredKwh > 0) {
       // Calcular potência necessária: potência = kWh desejados / (5.5 × 30 × 0.80)
       const calculatedSystemPower = desiredKwh / (5.5 * 30 * 0.80);
       
-      // Atualizar potência do sistema
-      setFormData(prev => ({ ...prev, systemPower: Math.round(calculatedSystemPower * 10) / 10 }));
+      // Calcular quantidade de módulos baseada na potência desejada e potência do módulo
+      let calculatedModuleQuantity = 0;
+      if (modulePower > 0) {
+        // Converter potência do módulo de W para kW
+        const modulePowerKw = modulePower / 1000;
+        // Calcular quantidade de módulos necessários
+        calculatedModuleQuantity = Math.ceil(calculatedSystemPower / modulePowerKw);
+        
+        // Atualizar quantidade de módulos automaticamente
+        setFormData(prev => ({ 
+          ...prev, 
+          systemPower: Math.round(calculatedSystemPower * 10) / 10,
+          moduleQuantity: calculatedModuleQuantity
+        }));
+      } else {
+        // Atualizar apenas potência do sistema se não tiver potência do módulo
+        setFormData(prev => ({ ...prev, systemPower: Math.round(calculatedSystemPower * 10) / 10 }));
+      }
+      
       // 1. Geração mensal estimada = kWh desejados
       const monthlyGeneration = desiredKwh;
       
@@ -107,7 +124,8 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       // 3. Área mínima necessária (m²)
       // Formula: qtd_modulos × 2.8
       // Cada módulo ocupa 2,8 m²
-      const requiredArea = moduleQuantity * 2.8;
+      const moduleQuantityForArea = calculatedModuleQuantity || formData.moduleQuantity;
+      const requiredArea = moduleQuantityForArea * 2.8;
       
       // 4. Valor total do projeto usando a potência calculada
       const totalValue = calculatedSystemPower * 1850;
@@ -129,7 +147,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         totalValue: 0
       });
     }
-  }, [formData.desiredKwh, formData.moduleQuantity]);
+  }, [formData.desiredKwh, formData.modulePower]);
 
   // Notifica o componente pai sobre mudanças nos dados da proposta
   useEffect(() => {
@@ -422,13 +440,15 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
               </div>
               
               <div>
-                <Label htmlFor="moduleQuantity">Quantidade de Módulos *</Label>
+                <Label htmlFor="moduleQuantity">Quantidade de Módulos * (Calculado automaticamente)</Label>
                 <Input
                   id="moduleQuantity"
                   type="number"
                   value={formData.moduleQuantity || ''}
-                  onChange={(e) => handleInputChange('moduleQuantity', parseInt(e.target.value) || 0)}
-                  placeholder="12"
+                  readOnly
+                  disabled
+                  placeholder="Será calculado automaticamente"
+                  className="bg-muted/50 cursor-not-allowed"
                 />
               </div>
               
