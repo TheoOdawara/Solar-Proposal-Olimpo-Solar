@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, BarChart3 } from "lucide-react";
+import { Link } from "react-router-dom";
 import ProposalForm from '@/components/ProposalForm';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import Footer from '@/components/Footer';
 import { useAuth } from "@/hooks/useAuth";
+import { useRoles } from "@/hooks/useRoles";
 
 const Index = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useRoles();
   const [proposalData, setProposalData] = useState<{
     clientName: string;
     systemPower: number;
@@ -35,15 +38,30 @@ const Index = () => {
             <User className="h-4 w-4" />
             {user?.email}
           </div>
-          <Button
-            onClick={signOut}
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Link to="/dashboard" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Relatórios
+                </Link>
+              </Button>
+            )}
+            <Button
+              onClick={signOut}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </div>
 

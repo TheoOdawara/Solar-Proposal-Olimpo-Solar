@@ -10,6 +10,7 @@ import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History
 import { useToast } from "@/hooks/use-toast";
 import { generateProposalPDF } from "@/lib/pdf-generator";
 import { useProposals, ProposalData } from "@/hooks/useProposals";
+import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
 
 interface FormData {
@@ -53,6 +54,7 @@ interface ProposalFormProps {
 
 const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const { saveProposal } = useProposals();
   const [showHistory, setShowHistory] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -211,7 +213,9 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         system_power: formData.systemPower,
         monthly_generation: calculations.monthlyGeneration,
         monthly_savings: calculations.monthlySavings,
-        total_value: calculations.totalValue
+        total_value: calculations.totalValue,
+        seller_name: user?.email?.split('@')[0] || 'Vendedor',
+        seller_id: user?.id
       });
     } catch (error) {
       // Error handling is done in the hook

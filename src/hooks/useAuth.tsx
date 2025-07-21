@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { useToast } from "@/hooks/use-toast";
+import { setupFirstAdmin } from '@/utils/adminSetup';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -12,12 +13,15 @@ export const useAuth = () => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        if (event === 'SIGNED_IN') {
-          // Defer any additional operations to prevent deadlocks
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Set up roles for users
+          setTimeout(async () => {
+            await setupFirstAdmin(session.user.id);
+          }, 0);
           setTimeout(() => {
             setLoading(false);
           }, 0);

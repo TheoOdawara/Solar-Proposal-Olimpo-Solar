@@ -9,6 +9,8 @@ export interface ProposalData {
   monthly_generation: number;
   monthly_savings: number;
   total_value: number;
+  seller_name?: string;
+  seller_id?: string;
   created_at?: string;
   updated_at?: string;
 }
