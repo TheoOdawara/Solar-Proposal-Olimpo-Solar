@@ -660,8 +660,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Project Equipment Image Placeholder */}
             <div className="bg-white rounded-lg p-8 mb-12 text-center">
-              <div className="w-80 h-60 bg-gray-200 rounded-lg mx-auto mb-8 flex items-center justify-center">
-                <p className="text-gray-500">Imagem dos Equipamentos do Sistema</p>
+              <div className="w-80 h-60 mx-auto mb-8 flex items-center justify-center">
+                <img src={olimpoLogo} alt="Olimpo Solar - Equipamentos do Sistema" className="max-h-full max-w-full object-contain" />
               </div>
               
               {/* Equipment Icons */}
