@@ -78,59 +78,62 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       {/* Conteúdo da Proposta */}
       <div id="proposal-content" className="max-w-4xl mx-auto bg-white">
         
-        {/* PÁGINA 1: CAPA */}
-        <section className="min-h-screen flex flex-col bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 relative overflow-hidden">
-          {/* Background Pattern */}
-          <div className="absolute inset-0">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400 opacity-20 transform rotate-45 translate-x-48 -translate-y-48"></div>
-            <div className="absolute top-20 right-20 w-64 h-64 bg-yellow-300 opacity-30 transform rotate-45"></div>
-            <div className="absolute top-32 right-32 w-32 h-32 bg-yellow-200 opacity-40 transform rotate-45"></div>
+        {/* PÁGINA 1: CAPA - Baseado na primeira imagem */}
+        <section className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+          {/* Formas geométricas 3D amarelas/douradas */}
+          <div className="absolute top-1/4 right-1/4 transform -translate-y-1/2">
+            {/* Cubo grande */}
+            <div className="relative">
+              <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-yellow-500 transform rotate-12 shadow-2xl"></div>
+              <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-yellow-300 to-yellow-400 transform rotate-45 shadow-xl"></div>
+              <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-yellow-200 to-yellow-300 transform rotate-12 shadow-lg"></div>
+            </div>
           </div>
 
-          {/* Dots pattern */}
+          {/* Padrão de pontos no lado esquerdo */}
           <div className="absolute left-8 top-1/2 -translate-y-1/2">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-3">
               {[...Array(9)].map((_, i) => (
-                <div key={i} className="w-2 h-2 bg-white rounded-full opacity-60"></div>
+                <div key={i} className="w-3 h-3 bg-white rounded-full opacity-80"></div>
               ))}
             </div>
           </div>
 
           {/* Content */}
-          <div className="relative z-10 flex-1 flex flex-col justify-center px-8 py-16">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img 
-                src={olimpoLogo} 
-                alt="Olimpo Solar" 
-                className="h-20 w-auto brightness-0 invert"
-              />
-            </div>
-
+          <div className="relative z-10 flex-1 flex items-center justify-between px-16 py-16">
             {/* Main Title */}
-            <div className="max-w-2xl">
-              <h1 className="text-6xl font-bold text-white leading-tight mb-4">
+            <div className="max-w-xl">
+              <h1 className="text-7xl font-bold text-white leading-none mb-4">
                 PROPOSTA<br/>
                 COMERCIAL
               </h1>
-              <p className="text-2xl text-gray-300 font-light">
+              <p className="text-xl text-gray-300 font-light">
                 Sistema fotovoltaico
               </p>
+              
+              {/* Cliente info integrado no design */}
+              <div className="mt-12 space-y-2 text-white/90">
+                <div className="text-lg font-semibold">{formData.clientName}</div>
+                <div className="text-sm">{formData.address}, {formData.number} - {formData.neighborhood}</div>
+                <div className="text-sm">{formData.city}</div>
+                <div className="text-sm">{formData.phone}</div>
+                <div className="text-sm">Data: {formatDate()}</div>
+              </div>
+
+              {/* Box com potência do sistema */}
+              <div className="mt-8 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 px-6 py-3 rounded-lg inline-block transform -rotate-3 shadow-xl">
+                <div className="font-bold text-lg">{formData.systemPower} kWp</div>
+                <div className="text-sm">Sistema Solar</div>
+              </div>
             </div>
 
-            {/* Client Info Section */}
-            <div className="absolute bottom-16 right-8 max-w-md">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-white">
-                <h3 className="text-xl font-bold mb-4">DADOS DO CLIENTE:</h3>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Nome:</span> {formData.clientName}</p>
-                  <p><span className="font-semibold">Endereço:</span> {formData.address}, {formData.number}</p>
-                  <p><span className="font-semibold">Bairro:</span> {formData.neighborhood}</p>
-                  <p><span className="font-semibold">Cidade:</span> {formData.city}</p>
-                  <p><span className="font-semibold">Telefone:</span> {formData.phone}</p>
-                  <p><span className="font-semibold">Data:</span> {formatDate()}</p>
-                </div>
-              </div>
+            {/* Logo */}
+            <div className="absolute bottom-8 right-8">
+              <img 
+                src={olimpoLogo} 
+                alt="Olimpo Solar" 
+                className="h-24 w-auto brightness-0 invert"
+              />
             </div>
           </div>
         </section>
@@ -909,8 +912,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           </div>
         </section>
 
-        {/* PÁGINA 9: SEU INVESTIMENTO */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-white p-8">
+        {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
+        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
@@ -921,73 +924,74 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               />
             </div>
 
-            <h2 className="text-4xl font-bold text-slate-800 mb-12 text-center">
+            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
               Seu investimento:
             </h2>
 
-            {/* Investment Value */}
-            <div className="bg-yellow-400 p-6 rounded-lg mb-8 text-center">
-              <div className="text-3xl font-bold text-slate-800">
+            {/* Investment Value - Valor em destaque amarelo */}
+            <div className="bg-yellow-400 py-6 px-12 rounded-lg mb-8 text-center">
+              <div className="text-4xl font-bold text-slate-800">
                 {formatCurrency(calculations.totalValue)}
               </div>
             </div>
 
-            {/* Financing Table */}
+            {/* Financing Table - Exatamente como na imagem */}
             <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
               <table className="w-full">
-                <thead className="bg-gray-200">
-                  <tr>
+                <thead>
+                  <tr className="bg-gray-400 text-white">
                     <th className="py-4 px-6 text-left font-bold">Descrição</th>
                     <th className="py-4 px-6 text-center font-bold">Qtd Meses</th>
                     <th className="py-4 px-6 text-center font-bold">Parcela</th>
                   </tr>
                 </thead>
-                <tbody className="bg-yellow-400">
-                  <tr className="border-b border-yellow-500">
-                    <td className="py-4 px-6 font-bold">Cartão de crédito</td>
-                    <td className="py-4 px-6 text-center font-bold">18 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 18)}</td>
+                <tbody>
+                  <tr className="bg-yellow-400 border-b border-yellow-600">
+                    <td className="py-3 px-6 font-bold text-black">Cartão de crédito</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">18 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 18)}</td>
                   </tr>
-                  <tr className="border-b border-yellow-500">
-                    <td className="py-4 px-6 font-bold">Sol agora</td>
-                    <td className="py-4 px-6 text-center font-bold">24 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 24)}</td>
+                  <tr className="bg-yellow-400 border-b border-yellow-600">
+                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">24 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 24)}</td>
                   </tr>
-                  <tr className="border-b border-yellow-500">
-                    <td className="py-4 px-6 font-bold">Sol agora</td>
-                    <td className="py-4 px-6 text-center font-bold">36 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 36)}</td>
+                  <tr className="bg-yellow-400 border-b border-yellow-600">
+                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">36 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 36)}</td>
                   </tr>
-                  <tr className="border-b border-yellow-500">
-                    <td className="py-4 px-6 font-bold">Sol agora</td>
-                    <td className="py-4 px-6 text-center font-bold">48 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 48)}</td>
+                  <tr className="bg-yellow-400 border-b border-yellow-600">
+                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">48 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 48)}</td>
                   </tr>
-                  <tr className="border-b border-yellow-500">
-                    <td className="py-4 px-6 font-bold">Sol agora</td>
-                    <td className="py-4 px-6 text-center font-bold">64 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 64)}</td>
+                  <tr className="bg-yellow-400 border-b border-yellow-600">
+                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">64 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 64)}</td>
                   </tr>
-                  <tr className="border-b border-yellow-500">
-                    <td className="py-4 px-6 font-bold">Sol agora</td>
-                    <td className="py-4 px-6 text-center font-bold">72 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 72)}</td>
+                  <tr className="bg-yellow-400 border-b border-yellow-600">
+                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">72 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 72)}</td>
                   </tr>
-                  <tr>
-                    <td className="py-4 px-6 font-bold">Sol agora</td>
-                    <td className="py-4 px-6 text-center font-bold">84 meses</td>
-                    <td className="py-4 px-6 text-center font-bold">{formatCurrency(calculations.totalValue / 84)}</td>
+                  <tr className="bg-yellow-400">
+                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">84 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 84)}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
+            {/* Texto explicativo */}
             <div className="text-center text-sm text-slate-600 mb-8">
               <p>Simulação sujeita a análise de crédito de acordo com a instituição financeira selecionada.</p>
             </div>
 
-            <div className="bg-gray-50 p-6 rounded-lg mb-8">
-              <p className="text-sm text-slate-700 leading-relaxed">
+            <div className="bg-gray-100 p-6 rounded-lg mb-8 text-sm text-slate-700 leading-relaxed">
+              <p>
                 Para dimensionar e precificar adequadamente o seu projeto, nossa visita técnica é essencial. A inclinação e a 
                 face do telhado podem impactar a geração de energia do sistema fotovoltaico. Durante a visita, também 
                 iremos analisar as condições da estrutura física e elétrica. Pode ser necessário realizar ajustes para garantir sua 
@@ -995,52 +999,44 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </p>
             </div>
 
-            {/* Payment Methods Icons */}
-            <div className="flex flex-wrap justify-center gap-4 mb-8">
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">VISA</div>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-8 h-5 bg-blue-400 rounded flex items-center justify-center text-white text-xs font-bold">AMEX</div>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">MC</div>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <div className="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">ELO</div>
-              </div>
+            {/* Bandeiras de cartão */}
+            <div className="flex justify-center gap-4 mb-6">
+              <div className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-bold">VISA</div>
+              <div className="bg-blue-400 text-white px-3 py-1 rounded text-sm font-bold">AMERICAN EXPRESS</div>
+              <div className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">MASTERCARD</div>
+              <div className="bg-blue-500 text-white px-3 py-1 rounded text-sm font-bold">ELO</div>
             </div>
 
-            {/* Banks Icons */}
-            <div className="grid grid-cols-4 md:grid-cols-8 gap-4 mb-12">
-              {['BV', 'Sicredi', 'Sol Agora', 'SICOOB', 'Viacredi', 'Santander', 'BNDES'].map((bank, i) => (
+            {/* Logos dos bancos */}
+            <div className="grid grid-cols-7 gap-4 mb-12 max-w-3xl mx-auto">
+              {['BV', 'Sicredi', 'Sol Agora', 'SICOOB', 'Viacredi', 'Santander', 'BNDES'].map((bank) => (
                 <div key={bank} className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-bold text-slate-600">
                   {bank}
                 </div>
               ))}
             </div>
 
-            {/* Profitability Section */}
+            {/* Seção de rentabilidade - baseado na parte inferior da imagem 9 */}
             <div className="bg-slate-800 rounded-lg p-8 text-white">
               <h3 className="text-3xl font-bold text-center mb-8">Sua rentabilidade:</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                 <div>
-                  <h4 className="font-bold mb-2">Sua conta de energia sem Energia Solar:</h4>
-                  <div className="text-2xl font-bold">{formatCurrency(calculateYearlySavings())}/ano</div>
-                  <div className="text-lg">{formatCurrency(calculateCurrentBill())}/mês</div>
+                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br/>sem Energia Solar:</h4>
+                  <div className="text-2xl font-bold text-red-400">R$ 8.000,00 / ano</div>
+                  <div className="text-lg">R$ 8.000,00 / mês</div>
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-2">Sua conta de energia com Energia Solar:</h4>
-                  <div className="text-2xl font-bold">{formatCurrency(calculations.totalValue * 0.05)}/ano</div>
-                  <div className="text-lg">{formatCurrency((calculations.totalValue * 0.05) / 12)}/mês</div>
+                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br/>com Energia Solar:</h4>
+                  <div className="text-2xl font-bold text-green-400">R$ 3.840,00 / ano</div>
+                  <div className="text-lg">R$ 320,00 / mês</div>
                 </div>
 
                 <div>
-                  <h4 className="font-bold mb-2">Sua economia será de:</h4>
-                  <div className="text-2xl font-bold">{formatCurrency(calculateYearlySavings() * 0.9)}/ano</div>
-                  <div className="text-lg">{formatCurrency(calculations.monthlySavings * 0.9)}/mês</div>
+                  <h4 className="font-bold mb-4 text-lg">Sua economia será de:</h4>
+                  <div className="text-2xl font-bold text-yellow-400">R$ 90.852 / ano</div>
+                  <div className="text-lg">R$ 7.571,00 / mês</div>
                 </div>
               </div>
             </div>
@@ -1057,16 +1053,16 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           </div>
         </section>
 
-        {/* PÁGINA 10: TERMO DE COMPROMISSO */}
+        {/* PÁGINA 10: TERMO DE COMPROMISSO - Baseado na imagem 10 */}
         <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 p-8">
           <div className="max-w-4xl mx-auto py-16">
             
-            <h2 className="text-4xl font-bold text-slate-800 mb-8">
+            <h2 className="text-5xl font-bold text-slate-800 mb-12 leading-tight">
               Termo de<br/>
               compromisso:
             </h2>
 
-            <div className="space-y-6 text-sm text-slate-700 leading-relaxed mb-16">
+            <div className="space-y-6 text-base text-slate-800 leading-relaxed mb-20">
               <p>
                 Para o entendimento da contratação de ambas as partes, logo abaixo se encontram algumas informações 
                 importantes para todo o processo de aquisição da usina solar.
@@ -1079,7 +1075,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 IMPLANTAÇÃO DE SISTEMA DE GERAÇÃO DE ENERGIA FOTOVOLTAICO</strong>, sem qualquer tipo de penalidade, nos casos de:
               </p>
 
-              <div className="ml-6 space-y-2">
+              <div className="ml-6 space-y-3 text-base">
                 <p><strong>A)</strong> Inviabilidade técnica para instalação do sistema;</p>
                 <p><strong>B)</strong> Inviabilidade financeira do projeto.</p>
                 <p><strong>C)</strong> Salientamos que a aceitação da proposta vigente terá validade jurídica após contrato de compra e venda, 
@@ -1087,34 +1083,63 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
             </div>
 
-            {/* Signature Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
+            {/* Signature Section - Exatamente como na imagem */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-20">
               <div className="text-center">
-                <div className="border-b-2 border-slate-800 pb-2 mb-4 min-h-[60px]"></div>
-                <p className="font-bold italic text-lg">Contratante</p>
-                <p className="text-sm mt-2">{formData.clientName}</p>
+                <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]">
+                  {/* Espaço para assinatura */}
+                </div>
+                <p className="font-bold italic text-xl text-slate-800">Contratante</p>
+                <div className="mt-4">
+                  <p className="font-semibold text-slate-800">{formData.clientName}</p>
+                  <p className="text-slate-700 text-sm">{formData.address}, {formData.number}</p>
+                  <p className="text-slate-700 text-sm">{formData.neighborhood} - {formData.city}</p>
+                  <p className="text-slate-700 text-sm">Data: {formatDate()}</p>
+                </div>
               </div>
 
               <div className="text-center">
-                <div className="border-b-2 border-slate-800 pb-2 mb-4 min-h-[60px]"></div>
-                <p className="font-bold italic text-lg">Contratado</p>
-                <p className="text-sm mt-2">Olimpo Solar</p>
+                <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]">
+                  {/* Espaço para assinatura */}
+                </div>
+                <p className="font-bold italic text-xl text-slate-800">Contratado</p>
+                <div className="mt-4">
+                  <p className="font-semibold text-slate-800">Olimpo Solar</p>
+                  <p className="text-slate-700 text-sm">CNPJ: XX.XXX.XXX/0001-XX</p>
+                  <p className="text-slate-700 text-sm">Campo Grande - MS</p>
+                </div>
               </div>
             </div>
 
-            {/* Company Info and Logo */}
-            <div className="bg-slate-800 rounded-lg p-8 text-center">
+            {/* Logo e informações da empresa */}
+            <div className="flex justify-center mb-8">
               <img 
                 src={olimpoLogo} 
                 alt="Olimpo Solar" 
-                className="mx-auto h-16 w-auto mb-4 brightness-0 invert"
+                className="h-20 w-auto"
               />
+            </div>
+
+            {/* Footer da empresa */}
+            <div className="bg-slate-800 rounded-lg p-6 text-center">
               <div className="text-white">
-                <div className="flex justify-center space-x-6 text-sm">
-                  <span>(67) 99668-0242</span>
-                  <span>olimpo.energiasolar</span>
-                  <span>adm.olimposolar@gmail.com</span>
-                  <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+                <div className="flex justify-center items-center space-x-8 text-sm">
+                  <span className="flex items-center">
+                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
+                    (67) 99668-0242
+                  </span>
+                  <span className="flex items-center">
+                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
+                    olimpo.energiasolar
+                  </span>
+                  <span className="flex items-center">
+                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
+                    adm.olimposolar@gmail.com
+                  </span>
+                  <span className="flex items-center">
+                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
+                    R. Eduardo Santos Pereira, 1831 Centro, Campo Grande
+                  </span>
                 </div>
               </div>
             </div>

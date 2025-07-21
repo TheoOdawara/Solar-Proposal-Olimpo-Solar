@@ -117,17 +117,6 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       };
       
       setCalculations(newCalculations);
-      
-      // Notifica o componente pai sobre mudanças nos dados da proposta
-      if (onProposalDataChange) {
-        onProposalDataChange({
-          clientName: formData.clientName,
-          systemPower: formData.systemPower,
-          monthlyGeneration: newCalculations.monthlyGeneration,
-          monthlySavings: newCalculations.monthlySavings,
-          totalValue: newCalculations.totalValue
-        });
-      }
     } else {
       // Reset dos cálculos quando não há potência definida
       setCalculations({
@@ -137,7 +126,20 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         totalValue: 0
       });
     }
-  }, [formData.systemPower, formData.moduleQuantity, formData.clientName, onProposalDataChange]);
+  }, [formData.systemPower, formData.moduleQuantity]);
+
+  // Notifica o componente pai sobre mudanças nos dados da proposta
+  useEffect(() => {
+    if (onProposalDataChange && calculations.totalValue > 0) {
+      onProposalDataChange({
+        clientName: formData.clientName,
+        systemPower: formData.systemPower,
+        monthlyGeneration: calculations.monthlyGeneration,
+        monthlySavings: calculations.monthlySavings,
+        totalValue: calculations.totalValue
+      });
+    }
+  }, [formData.clientName, formData.systemPower, calculations, onProposalDataChange]);
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({
