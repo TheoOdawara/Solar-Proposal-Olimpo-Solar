@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { generateProposalPDF } from "@/lib/pdf-generator";
 
 interface FormData {
   // Dados do cliente
@@ -141,13 +142,21 @@ const ProposalForm = () => {
   const generateProposal = () => {
     if (!validateForm()) return;
     
-    toast({
-      title: "Proposta gerada com sucesso!",
-      description: "O PDF será baixado em instantes.",
-    });
-    
-    // Aqui seria a integração com geração de PDF
-    console.log('Dados da proposta:', { formData, calculations });
+    try {
+      generateProposalPDF(formData, calculations);
+      
+      toast({
+        title: "Proposta gerada com sucesso!",
+        description: "O PDF foi baixado automaticamente.",
+      });
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      toast({
+        title: "Erro ao gerar PDF",
+        description: "Ocorreu um erro ao gerar a proposta. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
