@@ -25,6 +25,7 @@ interface FormData {
   phone: string;
   
   // Dados do projeto
+  monthlyConsumption: number;
   desiredKwh: number;
   systemPower: number;
   moduleQuantity: number;
@@ -68,6 +69,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     neighborhood: '',
     city: '',
     phone: '',
+    monthlyConsumption: 0,
     desiredKwh: 0,
     systemPower: 0,
     moduleQuantity: 0,
@@ -427,6 +429,18 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="monthlyConsumption">Consumo Médio Mensal (kWh) *</Label>
+                <Input
+                  id="monthlyConsumption"
+                  type="number"
+                  step="1"
+                  value={formData.monthlyConsumption || ''}
+                  onChange={(e) => handleInputChange('monthlyConsumption', parseFloat(e.target.value) || 0)}
+                  placeholder="800"
+                />
+              </div>
+              
               <div>
                 <Label htmlFor="desiredKwh">Quantidade de kWh desejados/mês *</Label>
                 <Input
