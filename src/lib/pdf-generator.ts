@@ -1,10 +1,10 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 // Extend jsPDF to include autoTable
 declare module 'jspdf' {
   interface jsPDF {
-    autoTable: (options: any) => jsPDF;
+    autoTable: typeof autoTable;
   }
 }
 
@@ -186,7 +186,7 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
     tableData.push(['Observações', formData.observations]);
   }
 
-  pdf.autoTable({
+  autoTable(pdf, {
     startY: yPosition,
     head: [['Item', 'Descrição']],
     body: tableData,
