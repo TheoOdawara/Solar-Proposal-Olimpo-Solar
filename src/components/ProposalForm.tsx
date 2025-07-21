@@ -25,6 +25,7 @@ interface FormData {
   phone: string;
   
   // Dados do projeto
+  desiredKwh: number;
   systemPower: number;
   moduleQuantity: number;
   modulePower: number;
@@ -67,6 +68,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     neighborhood: '',
     city: '',
     phone: '',
+    desiredKwh: 0,
     systemPower: 0,
     moduleQuantity: 0,
     modulePower: 0,
@@ -86,13 +88,16 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
 
   // Cálculos automáticos baseados nos dados do projeto
   useEffect(() => {
-    const { systemPower, moduleQuantity } = formData;
+    const { desiredKwh, moduleQuantity } = formData;
     
-    if (systemPower > 0) {
-      // 1. Geração mensal estimada (kWh/mês)
-      // Formula: potencia_kwp × 5.5 × 30 × 0.80
-      // Irradiação solar média de Campo Grande-MS (5,5 kWh/m²/dia) e fator de perdas de 20%
-      const monthlyGeneration = systemPower * 5.5 * 30 * 0.80;
+    if (desiredKwh > 0) {
+      // Calcular potência necessária: potência = kWh desejados / (5.5 × 30 × 0.80)
+      const calculatedSystemPower = desiredKwh / (5.5 * 30 * 0.80);
+      
+      // Atualizar potência do sistema
+      setFormData(prev => ({ ...prev, systemPower: Math.round(calculatedSystemPower * 10) / 10 }));
+      // 1. Geração mensal estimada = kWh desejados
+      const monthlyGeneration = desiredKwh;
       
       // 2. Economia mensal estimada (R$)
       // Formula: geracao_mensal × 1.27
@@ -104,10 +109,8 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       // Cada módulo ocupa 2,8 m²
       const requiredArea = moduleQuantity * 2.8;
       
-      // 4. Valor total do projeto (R$)
-      // Formula: potencia_kwp × 1850
-      // Valor fixo por kWp = R$1.850
-      const totalValue = systemPower * 1850;
+      // 4. Valor total do projeto usando a potência calculada
+      const totalValue = calculatedSystemPower * 1850;
 
       const newCalculations = {
         monthlyGeneration: Math.round(monthlyGeneration),
@@ -126,7 +129,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         totalValue: 0
       });
     }
-  }, [formData.systemPower, formData.moduleQuantity]);
+  }, [formData.desiredKwh, formData.moduleQuantity]);
 
   // Notifica o componente pai sobre mudanças nos dados da proposta
   useEffect(() => {
@@ -407,14 +410,14 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="systemPower">Potência do Sistema (kWp) *</Label>
+                <Label htmlFor="desiredKwh">Quantidade de kWh desejados/mês *</Label>
                 <Input
-                  id="systemPower"
+                  id="desiredKwh"
                   type="number"
-                  step="0.1"
-                  value={formData.systemPower || ''}
-                  onChange={(e) => handleInputChange('systemPower', parseFloat(e.target.value) || 0)}
-                  placeholder="5.5"
+                  step="1"
+                  value={formData.desiredKwh || ''}
+                  onChange={(e) => handleInputChange('desiredKwh', parseFloat(e.target.value) || 0)}
+                  placeholder="600"
                 />
               </div>
               
