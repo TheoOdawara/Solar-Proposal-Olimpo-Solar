@@ -125,89 +125,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 2: QUEM SOMOS */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
-          <div className="max-w-4xl mx-auto py-16">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
-            </div>
-
-            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
-              QUEM SOMOS:
-            </h2>
-
-            <div className="space-y-8">
-              <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto">
-                A Olimpo Solar, localizada em Campo Grande-MS, transforma o 
-                consumo de energia ao ajudar cidadãos a economizarem para 
-                investir no que realmente importa – suas famílias.
-              </p>
-
-              <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto">
-                Com soluções inovadoras e sustentáveis em energia solar, 
-                reduzimos suas despesas mensais e contribuímos para a 
-                preservação ambiental. Nosso diferencial está em trabalhar 
-                exclusivamente com materiais de alta qualidade e garantir 
-                produtos a pronta entrega, assegurando rapidez e e ciência no 
-                atendimento.
-              </p>
-
-              <div className="mt-16">
-                <h3 className="text-3xl font-bold text-slate-800 text-center mb-12">
-                  Por que escolher a<br />
-                  Olimpo Energia Renovável
-                </h3>
-                
-                <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto mb-16">
-                  Escolher a Olimpo Solar significa optar por um futuro onde a 
-                  economia e a sustentabilidade andam lado a lado, beneficiando 
-                  tanto o seu bolso quanto o planeta.
-                </p>
-              </div>
-
-              {/* Compromisso Section */}
-              <div className="bg-slate-800 rounded-lg p-8 text-white mt-16">
-                <h3 className="text-3xl font-bold text-center mb-12">
-                  NOSSO COMPROMISSO
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Leaf className="h-8 w-8 text-slate-800" />
-                    </div>
-                    <h4 className="text-xl font-bold mb-2">COM A NATUREZA</h4>
-                    <p className="text-sm">Energia limpa totalmente sustentável</p>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Zap className="h-8 w-8 text-slate-800" />
-                    </div>
-                    <h4 className="text-xl font-bold mb-2">COM SEU PROJETO</h4>
-                    <p className="text-sm">Equipamentos profissionais altamente qualificados.</p>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-                      <DollarSign className="h-8 w-8 text-slate-800" />
-                    </div>
-                    <h4 className="text-xl font-bold mb-2">COM SEU BOLSO</h4>
-                    <p className="text-sm">Economia de até 95% na sua fatura de energia.</p>
-                  </div>
-                </div>
-
-                {/* Contact Info */}
-                <div className="mt-12 text-center">
-                  <div className="flex justify-center space-x-8 text-sm">
-                    <span>(67) 99668-0242</span>
-                    <span>olimpo.energiasolar</span>
-                    <span>adm.olimposolar@gmail.com</span>
-                    <span>R. Eduardo Santos Pereira, 1835 Centro, Campo Grande</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <section className="min-h-screen bg-white p-8">
+          <div className="flex items-center justify-center h-full">
+            <img 
+              src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" 
+              alt="Quem Somos - Olimpo Solar" 
+              className="w-full h-auto max-w-4xl"
+            />
           </div>
         </section>
 
