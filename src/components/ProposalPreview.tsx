@@ -366,9 +366,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
             </div>
 
-            {/* Family image placeholder */}
-            <div className="bg-gray-200 h-48 rounded-lg flex items-center justify-center mb-8">
-              <p className="text-gray-500">Imagem da Família Feliz</p>
+            {/* Family image */}
+            <div className="rounded-lg overflow-hidden mb-8">
+              <img 
+                src="/lovable-uploads/06944c3f-9aae-47db-9ab8-0d13b80138a5.png" 
+                alt="Família feliz" 
+                className="w-full h-48 object-cover"
+              />
             </div>
 
             {/* Footer contact */}
