@@ -48,7 +48,7 @@ const Footer = () => {
                 
               </div>
               <div className="text-xs text-muted-foreground">
-                <p>@olimposolar</p>
+                <p>@olimpo.energiasolar</p>
               </div>
             </div>
           </div>
