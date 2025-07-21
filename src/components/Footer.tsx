@@ -42,7 +42,7 @@ const Footer = () => {
                 <span className="font-semibold">Redes Sociais</span>
               </div>
               <div className="flex items-center justify-center md:justify-start gap-3">
-                <a href="https://instagram.com/olimposolar" target="_blank" rel="noopener noreferrer" className="p-2 bg-gradient-solar rounded-lg hover:shadow-button transition-smooth group">
+                <a href="https://www.instagram.com/olimpo.energiasolar/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gradient-solar rounded-lg hover:shadow-button transition-smooth group">
                   <Instagram className="h-4 w-4 text-white group-hover:scale-110 transition-transform" />
                 </a>
                 
