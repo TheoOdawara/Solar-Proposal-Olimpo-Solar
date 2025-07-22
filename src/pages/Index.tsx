@@ -6,11 +6,11 @@ import ProposalForm from '@/components/ProposalForm';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import Footer from '@/components/Footer';
 import { useAuth } from "@/hooks/useAuth";
-import { useRoles } from "@/hooks/useRoles";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 
 const Index = () => {
   const { user, signOut } = useAuth();
-  const { isAdmin } = useRoles();
+  const { hasAdminAccess } = useAdminAccess();
   const [proposalData, setProposalData] = useState<{
     clientName: string;
     systemPower: number;
@@ -57,7 +57,7 @@ const Index = () => {
                 <span className="text-muted-foreground">{user?.email}</span>
               </div>
               
-              {isAdmin && (
+              {hasAdminAccess && (
                 <Button
                   asChild
                   variant="outline"
