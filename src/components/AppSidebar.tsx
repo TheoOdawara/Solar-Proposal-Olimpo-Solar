@@ -47,7 +47,7 @@ export function AppSidebar() {
       <SidebarHeader className="border-b px-4 py-3">
         <div className="flex items-center space-x-3">
           <img 
-            src="/src/assets/olimpo-solar-logo.png" 
+            src="/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png" 
             alt="Olimpo Solar" 
             className="h-8 w-auto"
           />

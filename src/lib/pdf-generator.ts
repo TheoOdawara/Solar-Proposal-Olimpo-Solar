@@ -69,7 +69,11 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   // PÁGINA 1: CAPA
   let yPosition = 40;
 
-  // Logo placeholder
+  // Logo - Nova logo oficial da Olimpo Solar
+  // Nota: Em um ambiente real, você adicionaria a imagem da logo aqui
+  // pdf.addImage('/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png', 'PNG', pageWidth/2 - 20, yPosition, 40, 20);
+  
+  // Placeholder para a logo oficial
   pdf.setFillColor(...primaryColor);
   pdf.rect(pageWidth/2 - 20, yPosition, 40, 20, 'F');
   pdf.setTextColor(255, 255, 255);
@@ -170,12 +174,17 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
 
   yPosition += 20;
 
+  // Cálculos reais baseados na potência do sistema
+  const energiaMensal = formData.systemPower * 5.0 * 30; // Irradiação Campo Grande
+  const consumoMedio = calculations.monthlyGeneration;
+  const economia = Math.round((energiaMensal / consumoMedio) * 100);
+
   const tableData = [
     ['Potência do Sistema', `${formData.systemPower} kWp`],
     ['Módulos', `${formData.moduleQuantity} módulos de ${formData.modulePower}W`],
     ['Marca dos Módulos', formData.moduleBrand],
     ['Inversor', `${formData.inverterBrand} - ${formData.inverterPower}W`],
-    ['Geração Mensal Estimada', `${calculations.monthlyGeneration} kWh/mês`],
+    ['Geração Mensal Estimada', `${Math.round(energiaMensal)} kWh/mês`],
     ['Economia Mensal Estimada', formatCurrency(calculations.monthlySavings)],
     ['Área Mínima Necessária', `${calculations.requiredArea} m²`],
     ['Valor Total do Projeto', formatCurrency(calculations.totalValue)],
@@ -393,7 +402,13 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
     pdf.text(month, x + 2, yPosition + 60);
   });
 
-  // Métricas abaixo do gráfico
+  // Métricas reais baseadas nos dados do formulário
+  const metricas = {
+    geracaoMedia: Math.round(energiaMensal),
+    consumoMedio: Math.round(consumoMedio),
+    economia: Math.min(economia, 100)
+  };
+
   yPosition += 70;
   pdf.setFillColor(249, 250, 251);
   pdf.rect(30, yPosition, pageWidth - 60, 25, 'F');
@@ -401,7 +416,7 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   pdf.setTextColor(255, 191, 6);
   pdf.setFontSize(12);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('7.200', 50, yPosition + 10);
+  pdf.text(metricas.geracaoMedia.toLocaleString(), 50, yPosition + 10);
   pdf.setTextColor(2, 33, 54);
   pdf.setFontSize(8);
   pdf.text('Geração média (kWh)', 50, yPosition + 18);
@@ -409,7 +424,7 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   pdf.setTextColor(156, 163, 175);
   pdf.setFontSize(12);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('6.500', pageWidth/2 - 10, yPosition + 10);
+  pdf.text(metricas.consumoMedio.toLocaleString(), pageWidth/2 - 10, yPosition + 10);
   pdf.setTextColor(2, 33, 54);
   pdf.setFontSize(8);
   pdf.text('Consumo médio (kWh)', pageWidth/2 - 10, yPosition + 18);
@@ -417,7 +432,7 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   pdf.setTextColor(34, 197, 94);
   pdf.setFontSize(12);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('92%', pageWidth - 80, yPosition + 10);
+  pdf.text(`${metricas.economia}%`, pageWidth - 80, yPosition + 10);
   pdf.setTextColor(2, 33, 54);
   pdf.setFontSize(8);
   pdf.text('Economia mensal estimada', pageWidth - 80, yPosition + 18);

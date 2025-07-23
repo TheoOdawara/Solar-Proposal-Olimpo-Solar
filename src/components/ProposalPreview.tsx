@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
-import olimpoLogo from "/lovable-uploads/acaace7f-261e-46a7-a12b-9135ad05ca28.png";
+import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
 interface FormData {
   clientName: string;
   address: string;
@@ -53,6 +53,22 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   };
   const calculateYearlySavings = () => calculations.monthlySavings * 12;
   const calculateCurrentBill = () => calculations.monthlySavings;
+  
+  // Cálculos reais para as métricas do gráfico
+  const calculateRealMetrics = () => {
+    // Considerando irradiação de Campo Grande ≈ 5,0 kWh/m²/dia
+    const energiaMensal = formData.systemPower * 5.0 * 30; // produção em kWh/mês
+    const consumoMedio = calculations.monthlyGeneration; // usar o valor do cálculo existente
+    const economia = Math.round((energiaMensal / consumoMedio) * 100);
+    
+    return {
+      geracaoMedia: Math.round(energiaMensal),
+      consumoMedio: Math.round(consumoMedio),
+      economia: Math.min(economia, 100) // limitar a 100%
+    };
+  };
+  
+  const metricas = calculateRealMetrics();
   return <div className="min-h-screen bg-background">
       {/* Navegação */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
@@ -505,9 +521,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   <BarChart
                     layout="horizontal"
                     data={[
-                      { name: 'Investimento: Poupança', value: 6, color: '#ef4444' },
-                      { name: 'Investimento: CBD', value: 10, color: '#f97316' },
-                      { name: 'Investimento: Energia Solar', value: 18, color: '#22c55e' }
+                      { name: 'Poupança', valor: 4 },
+                      { name: 'CBD', valor: 7 },
+                      { name: 'Energia Solar', valor: 18 }
                     ]}
                     margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
                   >
@@ -537,16 +553,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                       formatter={(value) => [`${value}% a.a.`, 'Rentabilidade']}
                     />
                     <Bar 
-                      dataKey="value" 
+                      dataKey="valor" 
                       radius={[0, 4, 4, 0]}
                     >
-                      {[
-                        { name: 'Investimento: Poupança', value: 6, color: '#ef4444' },
-                        { name: 'Investimento: CBD', value: 10, color: '#f97316' },
-                        { name: 'Investimento: Energia Solar', value: 18, color: '#22c55e' }
-                      ].map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
+                      <Cell fill="#ef4444" />
+                      <Cell fill="#f97316" />
+                      <Cell fill="#22c55e" />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
@@ -577,19 +589,19 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={[
-                      { month: 'Jan', generation: 7200, consumption: 6500 },
-                      { month: 'Fev', generation: 7400, consumption: 6600 },
-                      { month: 'Mar', generation: 7600, consumption: 6700 },
-                      { month: 'Abr', generation: 7500, consumption: 6600 },
-                      { month: 'Mai', generation: 7300, consumption: 6400 },
-                      { month: 'Jun', generation: 7100, consumption: 6200 },
-                      { month: 'Jul', generation: 7000, consumption: 6100 },
-                      { month: 'Ago', generation: 7200, consumption: 6300 },
-                      { month: 'Set', generation: 7400, consumption: 6500 },
-                      { month: 'Out', generation: 7600, consumption: 6700 },
-                      { month: 'Nov', generation: 7500, consumption: 6600 },
-                      { month: 'Dez', generation: 7300, consumption: 6400 },
-                      { month: 'Média', generation: 7300, consumption: 6400 },
+                      { month: 'Jan', generation: metricas.geracaoMedia, consumption: metricas.consumoMedio },
+                      { month: 'Fev', generation: metricas.geracaoMedia + 200, consumption: metricas.consumoMedio + 100 },
+                      { month: 'Mar', generation: metricas.geracaoMedia + 400, consumption: metricas.consumoMedio + 200 },
+                      { month: 'Abr', generation: metricas.geracaoMedia + 300, consumption: metricas.consumoMedio + 100 },
+                      { month: 'Mai', generation: metricas.geracaoMedia + 100, consumption: metricas.consumoMedio - 100 },
+                      { month: 'Jun', generation: metricas.geracaoMedia - 100, consumption: metricas.consumoMedio - 300 },
+                      { month: 'Jul', generation: metricas.geracaoMedia - 200, consumption: metricas.consumoMedio - 400 },
+                      { month: 'Ago', generation: metricas.geracaoMedia, consumption: metricas.consumoMedio - 200 },
+                      { month: 'Set', generation: metricas.geracaoMedia + 200, consumption: metricas.consumoMedio },
+                      { month: 'Out', generation: metricas.geracaoMedia + 400, consumption: metricas.consumoMedio + 200 },
+                      { month: 'Nov', generation: metricas.geracaoMedia + 300, consumption: metricas.consumoMedio + 100 },
+                      { month: 'Dez', generation: metricas.geracaoMedia + 100, consumption: metricas.consumoMedio - 100 },
+                      { month: 'Média', generation: metricas.geracaoMedia, consumption: metricas.consumoMedio },
                     ]}
                     margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                   >
@@ -642,16 +654,16 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               {/* Métricas extras */}
               <div className="grid grid-cols-3 gap-6 text-center bg-gray-50 p-6 rounded-lg border">
                 <div>
-                  <div className="font-bold text-3xl" style={{ color: '#ffbf06' }}>7.200</div>
-                  <div className="text-sm font-semibold text-gray-600">Geração média (kWh)</div>
+                  <div className="font-bold text-3xl" style={{ color: '#ffbf06' }}>{metricas.geracaoMedia.toLocaleString()}</div>
+                  <div className="text-sm font-semibold" style={{ color: '#022136' }}>Geração média (kWh)</div>
                 </div>
                 <div>
-                  <div className="font-bold text-3xl text-gray-600">6.500</div>
-                  <div className="text-sm font-semibold text-gray-600">Consumo médio (kWh)</div>
+                  <div className="font-bold text-3xl" style={{ color: '#9ca3af' }}>{metricas.consumoMedio.toLocaleString()}</div>
+                  <div className="text-sm font-semibold" style={{ color: '#022136' }}>Consumo médio (kWh)</div>
                 </div>
                 <div>
-                  <div className="font-bold text-3xl text-green-600">92%</div>
-                  <div className="text-sm font-semibold text-gray-600">Economia mensal estimada</div>
+                  <div className="font-bold text-3xl" style={{ color: '#22c55e' }}>{metricas.economia}%</div>
+                  <div className="text-sm font-semibold" style={{ color: '#022136' }}>Economia mensal estimada</div>
                 </div>
               </div>
             </div>
