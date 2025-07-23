@@ -36,7 +36,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Link } from "react-router-dom";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { hasAdminAccess, loading: adminLoading, adminEmail } = useAdminAccess();
   const {
     proposals,
@@ -53,21 +53,23 @@ const Dashboard = () => {
 
   const [selectedNotification, setSelectedNotification] = useState<string | null>(null);
 
-  // Redirect if not authenticated
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  if (adminLoading) {
+  // Show loading while auth is being checked
+  if (authLoading || adminLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Verificando permissões administrativas...</p>
+          <p className="text-muted-foreground">Carregando...</p>
         </div>
       </div>
     );
   }
+
+  // Only redirect if not loading AND not authenticated
+  if (!authLoading && !user) {
+    return <Navigate to="/auth" replace />;
+  }
+
 
   // Restrict access only to specific admin email
   if (!hasAdminAccess) {
