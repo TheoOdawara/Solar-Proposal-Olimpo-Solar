@@ -14,7 +14,6 @@ import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
 import ProposalPreview from "@/components/ProposalPreview";
 import html2pdf from 'html2pdf.js';
-
 interface FormData {
   // Dados do cliente
   clientName: string;
@@ -23,7 +22,7 @@ interface FormData {
   neighborhood: string;
   city: string;
   phone: string;
-  
+
   // Dados do projeto
   monthlyConsumption: number;
   desiredKwh: number;
@@ -33,19 +32,17 @@ interface FormData {
   moduleBrand: string;
   inverterBrand: string;
   inverterPower: number;
-  
+
   // Complementos
   paymentMethod: string;
   observations: string;
 }
-
 interface Calculations {
   monthlyGeneration: number;
   monthlySavings: number;
   requiredArea: number;
   totalValue: number;
 }
-
 interface ProposalFormProps {
   onProposalDataChange?: (data: {
     clientName: string;
@@ -55,11 +52,18 @@ interface ProposalFormProps {
     totalValue: number;
   }) => void;
 }
-
-const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const { saveProposal } = useProposals();
+const ProposalForm = ({
+  onProposalDataChange
+}: ProposalFormProps) => {
+  const {
+    toast
+  } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    saveProposal
+  } = useProposals();
   const [showHistory, setShowHistory] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -80,7 +84,6 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     paymentMethod: '',
     observations: ''
   });
-
   const [calculations, setCalculations] = useState<Calculations>({
     monthlyGeneration: 0,
     monthlySavings: 0,
@@ -90,12 +93,14 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
 
   // Cálculos automáticos baseados nos dados do projeto
   useEffect(() => {
-    const { desiredKwh, modulePower } = formData;
-    
+    const {
+      desiredKwh,
+      modulePower
+    } = formData;
     if (desiredKwh > 0) {
       // Calcular potência necessária: potência = kWh desejados / (5.5 × 30 × 0.80)
       const calculatedSystemPower = desiredKwh / (5.5 * 30 * 0.80);
-      
+
       // Calcular quantidade de módulos baseada na potência desejada e potência do módulo
       let calculatedModuleQuantity = 0;
       if (modulePower > 0) {
@@ -103,42 +108,44 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         const modulePowerKw = modulePower / 1000;
         // Calcular quantidade de módulos necessários
         calculatedModuleQuantity = Math.ceil(calculatedSystemPower / modulePowerKw);
-        
+
         // Atualizar quantidade de módulos automaticamente
-        setFormData(prev => ({ 
-          ...prev, 
+        setFormData(prev => ({
+          ...prev,
           systemPower: Math.round(calculatedSystemPower * 10) / 10,
           moduleQuantity: calculatedModuleQuantity
         }));
       } else {
         // Atualizar apenas potência do sistema se não tiver potência do módulo
-        setFormData(prev => ({ ...prev, systemPower: Math.round(calculatedSystemPower * 10) / 10 }));
+        setFormData(prev => ({
+          ...prev,
+          systemPower: Math.round(calculatedSystemPower * 10) / 10
+        }));
       }
-      
+
       // 1. Geração mensal estimada = kWh desejados
       const monthlyGeneration = desiredKwh;
-      
+
       // 2. Economia mensal estimada (R$)
       // Formula: geracao_mensal × 1.27
       // Valor médio do kWh = R$1,27
       const monthlySavings = monthlyGeneration * 1.27;
-      
+
       // 3. Área mínima necessária (m²)
       // Formula: qtd_modulos × 2.8
       // Cada módulo ocupa 2,8 m²
       const moduleQuantityForArea = calculatedModuleQuantity || formData.moduleQuantity;
       const requiredArea = moduleQuantityForArea * 2.8;
-      
+
       // 4. Valor total do projeto usando a potência calculada
       const totalValue = calculatedSystemPower * 1850;
-
       const newCalculations = {
         monthlyGeneration: Math.round(monthlyGeneration),
         monthlySavings: Math.round(monthlySavings),
-        requiredArea: Math.round(requiredArea * 10) / 10, // Uma casa decimal
+        requiredArea: Math.round(requiredArea * 10) / 10,
+        // Uma casa decimal
         totalValue: Math.round(totalValue)
       };
-      
       setCalculations(newCalculations);
     } else {
       // Reset dos cálculos quando não há potência definida
@@ -163,21 +170,18 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       });
     }
   }, [formData.clientName, formData.systemPower, calculations.monthlyGeneration, calculations.monthlySavings, calculations.totalValue]);
-
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
   };
-
   const formatPhone = (phone: string) => {
     const cleaned = phone.replace(/\D/g, '');
     const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
@@ -186,19 +190,12 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     }
     return phone;
   };
-
   const handlePhoneChange = (value: string) => {
     const formatted = formatPhone(value);
     handleInputChange('phone', formatted);
   };
-
   const validateForm = () => {
-    const requiredFields = [
-      'clientName', 'address', 'number', 'neighborhood', 'city', 'phone',
-      'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand',
-      'inverterBrand', 'inverterPower', 'paymentMethod'
-    ];
-
+    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'paymentMethod'];
     for (const field of requiredFields) {
       if (!formData[field as keyof FormData]) {
         toast({
@@ -211,43 +208,40 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
     }
     return true;
   };
-
   const generateProposal = () => {
     if (!validateForm()) return;
     setShowPreview(true);
   };
-
   const generatePDFFromHTML = async () => {
     try {
       const element = document.getElementById('proposal-content');
       if (!element) {
         throw new Error('Elemento de proposta não encontrado');
       }
-
       const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-
       const options = {
         margin: 0,
         filename: fileName,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
+        image: {
+          type: 'jpeg',
+          quality: 0.98
+        },
+        html2canvas: {
           scale: 2,
           useCORS: true,
           letterRendering: true,
           allowTaint: true
         },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: 'portrait' 
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait'
         }
       };
-
       await html2pdf().set(options).from(element).save();
-      
       toast({
         title: "Proposta gerada com sucesso!",
-        description: "O PDF foi baixado automaticamente.",
+        description: "O PDF foi baixado automaticamente."
       });
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
@@ -258,10 +252,8 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       });
     }
   };
-
   const saveCurrentProposal = async () => {
     if (!validateForm()) return;
-
     try {
       await saveProposal({
         client_name: formData.clientName,
@@ -276,19 +268,19 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
       // Error handling is done in the hook
     }
   };
-
   const loadProposal = (proposal: ProposalData) => {
     setFormData(prev => ({
       ...prev,
       clientName: proposal.client_name,
       systemPower: proposal.system_power
     }));
-    
+
     // Trigger calculations update
     setCalculations({
       monthlyGeneration: proposal.monthly_generation,
       monthlySavings: proposal.monthly_savings,
-      requiredArea: Math.round((proposal.system_power * 12) * 2.8 * 10) / 10, // Estimated
+      requiredArea: Math.round(proposal.system_power * 12 * 2.8 * 10) / 10,
+      // Estimated
       totalValue: proposal.total_value
     });
 
@@ -302,35 +294,23 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         totalValue: proposal.total_value
       });
     }
-
     setShowHistory(false);
     toast({
       title: "Proposta carregada!",
-      description: "Os dados foram preenchidos automaticamente.",
+      description: "Os dados foram preenchidos automaticamente."
     });
   };
 
   // Se está no modo preview, mostra o componente de visualização
   if (showPreview) {
-    return (
-      <ProposalPreview
-        formData={formData}
-        calculations={calculations}
-        onEdit={() => setShowPreview(false)}
-        onGeneratePDF={generatePDFFromHTML}
-      />
-    );
+    return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} />;
   }
-
-  return (
-    <div className="min-h-screen p-4">
+  return <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
         {/* Enhanced hero section */}
         <div className="text-center space-y-4 py-8">
           <div className="flex items-center justify-center gap-4 animate-scale-in">
-            <div className="p-4 bg-gradient-solar rounded-xl shadow-glow animate-glow-pulse">
-              <Zap className="h-10 w-10 text-white" />
-            </div>
+            
             <div>
               <h1 className="text-4xl font-bold bg-gradient-solar bg-clip-text text-transparent">
                 Gerador de Propostas
@@ -354,12 +334,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
                 Dados do Cliente
               </CardTitle>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowHistory(!showHistory)}
-                  className="hover:bg-primary/5 hover:border-primary/40 transition-smooth"
-                >
+                <Button variant="outline" size="sm" onClick={() => setShowHistory(!showHistory)} className="hover:bg-primary/5 hover:border-primary/40 transition-smooth">
                   <History className="h-4 w-4 mr-2" />
                   Histórico
                 </Button>
@@ -370,65 +345,34 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Label htmlFor="clientName">Nome do Cliente *</Label>
-                <Input
-                  id="clientName"
-                  value={formData.clientName}
-                  onChange={(e) => handleInputChange('clientName', e.target.value)}
-                  placeholder="Nome completo do cliente"
-                />
+                <Input id="clientName" value={formData.clientName} onChange={e => handleInputChange('clientName', e.target.value)} placeholder="Nome completo do cliente" />
               </div>
               
               <div>
                 <Label htmlFor="address">Endereço *</Label>
-                <Input
-                  id="address"
-                  value={formData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="Rua, Avenida..."
-                />
+                <Input id="address" value={formData.address} onChange={e => handleInputChange('address', e.target.value)} placeholder="Rua, Avenida..." />
               </div>
               
               <div>
                 <Label htmlFor="number">Número *</Label>
-                <Input
-                  id="number"
-                  value={formData.number}
-                  onChange={(e) => handleInputChange('number', e.target.value)}
-                  placeholder="123"
-                />
+                <Input id="number" value={formData.number} onChange={e => handleInputChange('number', e.target.value)} placeholder="123" />
               </div>
               
               <div>
                 <Label htmlFor="neighborhood">Bairro *</Label>
-                <Input
-                  id="neighborhood"
-                  value={formData.neighborhood}
-                  onChange={(e) => handleInputChange('neighborhood', e.target.value)}
-                  placeholder="Nome do bairro"
-                />
+                <Input id="neighborhood" value={formData.neighborhood} onChange={e => handleInputChange('neighborhood', e.target.value)} placeholder="Nome do bairro" />
               </div>
               
               <div>
                 <Label htmlFor="city">Cidade *</Label>
-                <Input
-                  id="city"
-                  value={formData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  placeholder="Campo Grande"
-                />
+                <Input id="city" value={formData.city} onChange={e => handleInputChange('city', e.target.value)} placeholder="Campo Grande" />
               </div>
               
               <div className="md:col-span-2">
                 <Label htmlFor="phone">Telefone *</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="(67) 99999-9999"
-                    className="pl-10"
-                  />
+                  <Input id="phone" value={formData.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="(67) 99999-9999" className="pl-10" />
                 </div>
               </div>
             </div>
@@ -447,70 +391,34 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="monthlyConsumption">Consumo Médio Mensal (kWh) *</Label>
-                <Input
-                  id="monthlyConsumption"
-                  type="number"
-                  step="1"
-                  value={formData.monthlyConsumption || ''}
-                  onChange={(e) => handleInputChange('monthlyConsumption', parseFloat(e.target.value) || 0)}
-                  placeholder="800"
-                />
+                <Input id="monthlyConsumption" type="number" step="1" value={formData.monthlyConsumption || ''} onChange={e => handleInputChange('monthlyConsumption', parseFloat(e.target.value) || 0)} placeholder="800" />
               </div>
               
               <div>
                 <Label htmlFor="desiredKwh">Quantidade de kWh desejados/mês *</Label>
-                <Input
-                  id="desiredKwh"
-                  type="number"
-                  step="1"
-                  value={formData.desiredKwh || ''}
-                  onChange={(e) => handleInputChange('desiredKwh', parseFloat(e.target.value) || 0)}
-                  placeholder="600"
-                />
+                <Input id="desiredKwh" type="number" step="1" value={formData.desiredKwh || ''} onChange={e => handleInputChange('desiredKwh', parseFloat(e.target.value) || 0)} placeholder="600" />
               </div>
               
               <div>
                 <Label htmlFor="modulePower">Potência do Módulo (W) *</Label>
-                <Input
-                  id="modulePower"
-                  type="number"
-                  value={formData.modulePower || ''}
-                  onChange={(e) => handleInputChange('modulePower', parseInt(e.target.value) || 0)}
-                  placeholder="450"
-                />
+                <Input id="modulePower" type="number" value={formData.modulePower || ''} onChange={e => handleInputChange('modulePower', parseInt(e.target.value) || 0)} placeholder="450" />
               </div>
             </div>
 
             <div>
               <Label htmlFor="moduleBrand">Marca dos Módulos *</Label>
-              <Input
-                id="moduleBrand"
-                value={formData.moduleBrand}
-                onChange={(e) => handleInputChange('moduleBrand', e.target.value)}
-                placeholder="Canadian Solar"
-              />
+              <Input id="moduleBrand" value={formData.moduleBrand} onChange={e => handleInputChange('moduleBrand', e.target.value)} placeholder="Canadian Solar" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="inverterBrand">Marca do Inversor *</Label>
-                <Input
-                  id="inverterBrand"
-                  value={formData.inverterBrand}
-                  onChange={(e) => handleInputChange('inverterBrand', e.target.value)}
-                  placeholder="Fronius"
-                />
+                <Input id="inverterBrand" value={formData.inverterBrand} onChange={e => handleInputChange('inverterBrand', e.target.value)} placeholder="Fronius" />
               </div>
               
               <div>
                 <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
-                <Input
-                  id="inverterPower"
-                  type="number"
-                  value={formData.inverterPower || ''}
-                  onChange={(e) => handleInputChange('inverterPower', parseInt(e.target.value) || 0)}
-                  placeholder="5000"
-                />
+                <Input id="inverterPower" type="number" value={formData.inverterPower || ''} onChange={e => handleInputChange('inverterPower', parseInt(e.target.value) || 0)} placeholder="5000" />
               </div>
             </div>
           </CardContent>
@@ -559,7 +467,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
-                <Select onValueChange={(value) => handleInputChange('paymentMethod', value)}>
+                <Select onValueChange={value => handleInputChange('paymentMethod', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione a forma de pagamento" />
                   </SelectTrigger>
@@ -574,13 +482,7 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
             
             <div>
               <Label htmlFor="observations">Observações Gerais</Label>
-              <Textarea
-                id="observations"
-                value={formData.observations}
-                onChange={(e) => handleInputChange('observations', e.target.value)}
-                placeholder="Informações adicionais sobre o projeto..."
-                className="min-h-[100px]"
-              />
+              <Textarea id="observations" value={formData.observations} onChange={e => handleInputChange('observations', e.target.value)} placeholder="Informações adicionais sobre o projeto..." className="min-h-[100px]" />
             </div>
           </CardContent>
         </Card>
@@ -588,32 +490,17 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         {/* Ações */}
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => setShowHistory(!showHistory)}
-              size="lg"
-              variant="outline"
-              className="px-6 py-3"
-            >
+            <Button onClick={() => setShowHistory(!showHistory)} size="lg" variant="outline" className="px-6 py-3">
               <History className="mr-2 h-5 w-5" />
               {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
             </Button>
             
-            <Button
-              onClick={saveCurrentProposal}
-              size="lg"
-              variant="secondary"
-              className="px-6 py-3"
-            >
+            <Button onClick={saveCurrentProposal} size="lg" variant="secondary" className="px-6 py-3">
               <Save className="mr-2 h-5 w-5" />
               Salvar Proposta
             </Button>
             
-            <Button
-              onClick={generateProposal}
-              size="lg"
-              variant="hero"
-              className="px-8 py-3 text-lg font-semibold"
-            >
+            <Button onClick={generateProposal} size="lg" variant="hero" className="px-8 py-3 text-lg font-semibold">
               <Eye className="mr-2 h-5 w-5" />
               Pré-visualizar Proposta
             </Button>
@@ -621,14 +508,10 @@ const ProposalForm = ({ onProposalDataChange }: ProposalFormProps) => {
         </div>
 
         {/* Histórico de Propostas */}
-        {showHistory && (
-          <ProposalsHistory onLoadProposal={loadProposal} />
-        )}
+        {showHistory && <ProposalsHistory onLoadProposal={loadProposal} />}
 
         <div className="pb-8"></div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProposalForm;
