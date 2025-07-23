@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 import olimpoLogo from "/lovable-uploads/acaace7f-261e-46a7-a12b-9135ad05ca28.png";
 interface FormData {
   clientName: string;
@@ -493,103 +494,164 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               <p className="text-gray-500">Vista Aérea - Imagem Personalizada do Cliente: {formData.clientName}</p>
             </div>
 
-            <div className="bg-slate-800 rounded-t-lg p-8 text-white mb-8">
-              <h2 className="text-3xl font-bold text-center mb-4">Rentabilidade:</h2>
-              <p className="text-xl text-center">Comparativo de Investimento</p>
-            </div>
-
-            {/* Investment Comparison */}
-            <div className="space-y-6 mb-12 bg-slate-800 p-8 text-white">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">Investimento: Poupança</span>
-                  <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
-                    <div className="h-8 bg-red-500 rounded" style={{
-                    width: '20%'
-                  }}></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">Investimento: CBD</span>
-                  <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
-                    <div className="h-8 bg-orange-500 rounded" style={{
-                    width: '35%'
-                  }}></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">Investimento: Energia Solar</span>
-                  <div className="flex-1 mx-4 bg-gray-600 h-8 rounded">
-                    <div className="h-8 bg-green-500 rounded" style={{
-                    width: '80%'
-                  }}></div>
-                  </div>
-                </div>
+            {/* Horizontal Bar Chart - Rentabilidade */}
+            <div style={{ backgroundColor: '#022136' }} className="rounded-lg p-8 text-white mb-12">
+              <h2 className="text-3xl font-bold text-center mb-8 text-white">
+                Rentabilidade: Comparativo de Investimento
+              </h2>
+              
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    layout="horizontal"
+                    data={[
+                      { name: 'Investimento: Poupança', value: 6, color: '#ef4444' },
+                      { name: 'Investimento: CBD', value: 10, color: '#f97316' },
+                      { name: 'Investimento: Energia Solar', value: 18, color: '#22c55e' }
+                    ]}
+                    margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
+                  >
+                    <CartesianGrid stroke="#ffffff" strokeOpacity={0.3} />
+                    <XAxis 
+                      type="number" 
+                      domain={[0, 20]}
+                      axisLine={{ stroke: '#ffffff', strokeWidth: 1 }}
+                      tickLine={{ stroke: '#ffffff' }}
+                      tick={{ fill: '#ffffff', fontSize: 12 }}
+                    />
+                    <YAxis 
+                      type="category" 
+                      dataKey="name"
+                      axisLine={{ stroke: '#ffffff', strokeWidth: 1 }}
+                      tickLine={{ stroke: '#ffffff' }}
+                      tick={{ fill: '#ffffff', fontSize: 14, fontWeight: 'bold' }}
+                      width={120}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#022136', 
+                        border: '1px solid #ffffff',
+                        borderRadius: '8px',
+                        color: '#ffffff'
+                      }}
+                      formatter={(value) => [`${value}% a.a.`, 'Rentabilidade']}
+                    />
+                    <Bar 
+                      dataKey="value" 
+                      radius={[0, 4, 4, 0]}
+                    >
+                      {[
+                        { name: 'Investimento: Poupança', value: 6, color: '#ef4444' },
+                        { name: 'Investimento: CBD', value: 10, color: '#f97316' },
+                        { name: 'Investimento: Energia Solar', value: 18, color: '#22c55e' }
+                      ].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Generation Capacity Chart */}
-            <div className="bg-yellow-100 p-8 rounded-lg">
-              <h3 className="text-2xl font-bold text-slate-800 text-center mb-8">
+            {/* Vertical Bar Chart - Capacidade de Geração */}
+            <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
+              <h3 className="text-2xl font-bold text-center mb-2" style={{ color: '#022136' }}>
                 Capacidade de geração:
               </h3>
-              <p className="text-lg text-slate-700 text-center mb-6">
-                Energia Consumida X Gerada (KwH/mês) - Projeto {formData.clientName}
+              <p className="text-lg text-center mb-8" style={{ color: '#022136' }}>
+                Energia Consumida X Gerada (kWh/mês)
               </p>
 
               <div className="flex justify-center gap-8 mb-6">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-yellow-400 rounded"></div>
-                  <span className="text-sm">Geração</span>
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#ffbf06' }}></div>
+                  <span className="text-sm font-semibold">Geração</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-gray-400 rounded"></div>
-                  <span className="text-sm">Consumo</span>
+                  <span className="text-sm font-semibold">Consumo</span>
                 </div>
               </div>
 
-              {/* Chart Bars */}
-              <div className="flex justify-between items-end h-40 border-b-2 border-gray-300">
-                {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Média'].map((month, i) => {
-                  // Simular variação sazonal baseada no mês (valores fixos)
-                  const seasonalFactors = [0.85, 0.9, 1.0, 1.1, 1.15, 1.2, 1.25, 1.2, 1.1, 1.0, 0.9, 0.8, 1.0];
-                  const generationHeight = Math.round(100 + (seasonalFactors[i] * 20));
-                  const consumptionHeight = Math.round(90 + (seasonalFactors[i] * 10));
-                  
-                  return (
-                    <div key={month} className="flex flex-col items-center gap-1">
-                      <div className="flex gap-1">
-                        <div 
-                          className="w-6 bg-yellow-400 rounded-t" 
-                          style={{ height: `${generationHeight}px` }}
-                        ></div>
-                        <div 
-                          className="w-6 bg-gray-400 rounded-t" 
-                          style={{ height: `${consumptionHeight}px` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-slate-600 transform -rotate-45">{month}</span>
-                    </div>
-                  );
-                })}
+              <div className="h-80 mb-8">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={[
+                      { month: 'Jan', generation: 7200, consumption: 6500 },
+                      { month: 'Fev', generation: 7400, consumption: 6600 },
+                      { month: 'Mar', generation: 7600, consumption: 6700 },
+                      { month: 'Abr', generation: 7500, consumption: 6600 },
+                      { month: 'Mai', generation: 7300, consumption: 6400 },
+                      { month: 'Jun', generation: 7100, consumption: 6200 },
+                      { month: 'Jul', generation: 7000, consumption: 6100 },
+                      { month: 'Ago', generation: 7200, consumption: 6300 },
+                      { month: 'Set', generation: 7400, consumption: 6500 },
+                      { month: 'Out', generation: 7600, consumption: 6700 },
+                      { month: 'Nov', generation: 7500, consumption: 6600 },
+                      { month: 'Dez', generation: 7300, consumption: 6400 },
+                      { month: 'Média', generation: 7300, consumption: 6400 },
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid stroke="#e5e7eb" strokeWidth={1} />
+                    <XAxis 
+                      dataKey="month"
+                      axisLine={{ stroke: '#022136', strokeWidth: 1 }}
+                      tickLine={{ stroke: '#022136' }}
+                      tick={{ fill: '#022136', fontSize: 12, fontWeight: 'bold' }}
+                    />
+                    <YAxis 
+                      domain={[0, 8000]}
+                      axisLine={{ stroke: '#022136', strokeWidth: 1 }}
+                      tickLine={{ stroke: '#022136' }}
+                      tick={{ fill: '#022136', fontSize: 12, fontWeight: 'bold' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#ffffff', 
+                        border: '1px solid #022136',
+                        borderRadius: '8px',
+                        color: '#022136'
+                      }}
+                      formatter={(value, name) => [
+                        `${value} kWh`, 
+                        name === 'generation' ? 'Geração' : 'Consumo'
+                      ]}
+                    />
+                    <Legend 
+                      verticalAlign="top"
+                      height={36}
+                      formatter={(value) => value === 'generation' ? 'Geração' : 'Consumo'}
+                    />
+                    <Bar 
+                      dataKey="generation" 
+                      fill="#ffbf06"
+                      name="generation"
+                      radius={[2, 2, 0, 0]}
+                    />
+                    <Bar 
+                      dataKey="consumption" 
+                      fill="#9ca3af"
+                      name="consumption"
+                      radius={[2, 2, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 mt-6 text-center">
+              {/* Métricas extras */}
+              <div className="grid grid-cols-3 gap-6 text-center bg-gray-50 p-6 rounded-lg border">
                 <div>
-                  <div className="font-bold text-2xl text-yellow-600">{calculations.monthlyGeneration}</div>
-                  <div className="text-sm text-slate-600">kWh Geração Média</div>
+                  <div className="font-bold text-3xl" style={{ color: '#ffbf06' }}>7.200</div>
+                  <div className="text-sm font-semibold text-gray-600">Geração média (kWh)</div>
                 </div>
                 <div>
-                  <div className="font-bold text-2xl text-gray-600">{Math.round(calculations.monthlyGeneration * 0.85)}</div>
-                  <div className="text-sm text-slate-600">kWh Consumo Médio</div>
+                  <div className="font-bold text-3xl text-gray-600">6.500</div>
+                  <div className="text-sm font-semibold text-gray-600">Consumo médio (kWh)</div>
                 </div>
                 <div>
-                  <div className="font-bold text-2xl text-green-600">{Math.round(calculations.monthlyGeneration * 0.15)}</div>
-                  <div className="text-sm text-slate-600">kWh Excedente</div>
-                </div>
-                <div>
-                  <div className="font-bold text-2xl text-blue-600">95%</div>
-                  <div className="text-sm text-slate-600">Economia Mensal</div>
+                  <div className="font-bold text-3xl text-green-600">92%</div>
+                  <div className="text-sm font-semibold text-gray-600">Economia mensal estimada</div>
                 </div>
               </div>
             </div>

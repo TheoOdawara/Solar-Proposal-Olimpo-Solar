@@ -300,35 +300,127 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
 
   yPosition += 30;
 
-  // Comparativo simples com barras
-  const investments: Array<{ name: string; value: number; color: [number, number, number] }> = [
-    { name: 'Energia Solar', value: 12, color: primaryColor },
-    { name: 'Poupança', value: 6, color: [100, 100, 100] },
-    { name: 'CDI', value: 8, color: [150, 150, 150] }
+  // GRÁFICO 1: RENTABILIDADE (Horizontal Bar Chart)
+  pdf.setFillColor(2, 33, 54); // #022136
+  pdf.rect(20, yPosition - 10, pageWidth - 40, 80, 'F');
+  
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Rentabilidade: Comparativo de Investimento', pageWidth/2, yPosition + 10, { align: 'center' });
+
+  yPosition += 30;
+
+  const investments = [
+    { name: 'Investimento: Poupança', value: 6, color: [239, 68, 68] },
+    { name: 'Investimento: CBD', value: 10, color: [249, 115, 22] },
+    { name: 'Investimento: Energia Solar', value: 18, color: [34, 197, 94] }
   ];
 
-  const barWidth = 100;
-  const barHeight = 20;
-  const maxValue = Math.max(...investments.map(inv => inv.value));
+  const barWidth = 120;
+  const barHeight = 12;
+  const maxValue = 20;
 
   investments.forEach((investment, index) => {
-    const y = yPosition + (index * 35);
+    const y = yPosition + (index * 20);
     const barLength = (investment.value / maxValue) * barWidth;
     
-    // Nome do investimento
-    pdf.setTextColor(...darkColor);
-    pdf.setFontSize(12);
-    pdf.text(investment.name, 40, y + 5);
+    // Nome do investimento (branco sobre fundo azul)
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(10);
+    pdf.text(investment.name, 25, y + 8);
     
     // Barra
-    pdf.setFillColor(...investment.color);
-    pdf.rect(40, y + 8, barLength, barHeight, 'F');
+    pdf.setFillColor(investment.color[0], investment.color[1], investment.color[2]);
+    pdf.rect(pageWidth - 140, y, barLength, barHeight, 'F');
     
     // Valor
-    pdf.setTextColor(...investment.color);
+    pdf.setTextColor(investment.color[0], investment.color[1], investment.color[2]);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(`${investment.value}% a.a.`, 40 + barLength + 10, y + 18);
+    pdf.text(`${investment.value}% a.a.`, pageWidth - 140 + barLength + 5, y + 8);
   });
+
+  yPosition += 80;
+
+  // GRÁFICO 2: CAPACIDADE DE GERAÇÃO (Vertical Bar Chart)
+  pdf.setFillColor(255, 255, 255);
+  pdf.rect(20, yPosition, pageWidth - 40, 120, 'F');
+  pdf.setDrawColor(2, 33, 54);
+  pdf.setLineWidth(1);
+  pdf.rect(20, yPosition, pageWidth - 40, 120);
+
+  pdf.setTextColor(2, 33, 54);
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Capacidade de geração:', pageWidth/2, yPosition + 15, { align: 'center' });
+  pdf.setFontSize(12);
+  pdf.text('Energia Consumida X Gerada (kWh/mês)', pageWidth/2, yPosition + 25, { align: 'center' });
+
+  // Legenda
+  yPosition += 35;
+  pdf.setFillColor(255, 191, 6); // #ffbf06
+  pdf.rect(pageWidth/2 - 40, yPosition, 8, 6, 'F');
+  pdf.setTextColor(2, 33, 54);
+  pdf.setFontSize(10);
+  pdf.text('Geração', pageWidth/2 - 30, yPosition + 5);
+
+  pdf.setFillColor(156, 163, 175); // gray-400
+  pdf.rect(pageWidth/2 + 10, yPosition, 8, 6, 'F');
+  pdf.text('Consumo', pageWidth/2 + 20, yPosition + 5);
+
+  // Barras simplificadas (representação dos meses)
+  yPosition += 15;
+  const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D', 'M'];
+  const barChartWidth = pageWidth - 60;
+  const barSpacing = barChartWidth / months.length;
+
+  months.forEach((month, index) => {
+    const x = 30 + (index * barSpacing);
+    const generationHeight = 25 + Math.random() * 15;
+    const consumptionHeight = 20 + Math.random() * 10;
+
+    // Barra de geração (amarela)
+    pdf.setFillColor(255, 191, 6);
+    pdf.rect(x, yPosition + 50 - generationHeight, 6, generationHeight, 'F');
+
+    // Barra de consumo (cinza)
+    pdf.setFillColor(156, 163, 175);
+    pdf.rect(x + 8, yPosition + 50 - consumptionHeight, 6, consumptionHeight, 'F');
+
+    // Label do mês
+    pdf.setTextColor(2, 33, 54);
+    pdf.setFontSize(8);
+    pdf.text(month, x + 2, yPosition + 60);
+  });
+
+  // Métricas abaixo do gráfico
+  yPosition += 70;
+  pdf.setFillColor(249, 250, 251);
+  pdf.rect(30, yPosition, pageWidth - 60, 25, 'F');
+
+  pdf.setTextColor(255, 191, 6);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('7.200', 50, yPosition + 10);
+  pdf.setTextColor(2, 33, 54);
+  pdf.setFontSize(8);
+  pdf.text('Geração média (kWh)', 50, yPosition + 18);
+
+  pdf.setTextColor(156, 163, 175);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('6.500', pageWidth/2 - 10, yPosition + 10);
+  pdf.setTextColor(2, 33, 54);
+  pdf.setFontSize(8);
+  pdf.text('Consumo médio (kWh)', pageWidth/2 - 10, yPosition + 18);
+
+  pdf.setTextColor(34, 197, 94);
+  pdf.setFontSize(12);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('92%', pageWidth - 80, yPosition + 10);
+  pdf.setTextColor(2, 33, 54);
+  pdf.setFontSize(8);
+  pdf.text('Economia mensal estimada', pageWidth - 80, yPosition + 18);
 
   // RODAPÉ
   yPosition = pageHeight - 80;
