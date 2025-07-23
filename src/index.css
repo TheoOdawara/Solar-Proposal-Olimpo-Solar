@@ -8,46 +8,53 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Solar-themed design system */
-    --background: 210 40% 98%;
-    --foreground: 215 25% 17%;
+    /* Olimpo Solar Identity Colors */
+    --background: 0 0% 100%;
+    --foreground: 204 91% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 17%;
+    --card-foreground: 204 91% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 17%;
+    --popover-foreground: 204 91% 11%;
 
-    /* Solar blue primary */
-    --primary: 219 76% 42%;
+    /* Olimpo Solar Primary - Azul escuro #022136 */
+    --primary: 204 91% 11%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 219 76% 38%;
+    --primary-hover: 204 91% 8%;
 
-    /* Green sustainable secondary */
-    --secondary: 150 82% 35%;
-    --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 150 82% 31%;
+    /* Olimpo Solar Secondary - Amarelo ouro #ffbf06 */
+    --secondary: 46 100% 51%;
+    --secondary-foreground: 204 91% 11%;
+    --secondary-hover: 46 100% 45%;
 
-    /* Light grays and accent colors */
-    --muted: 219 14% 95%;
+    /* Accent colors for charts and highlights */
+    --accent: 46 100% 95%;
+    --accent-foreground: 204 91% 11%;
+
+    --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
-
-    --accent: 150 82% 95%;
-    --accent-foreground: 150 82% 25%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 219 14% 87%;
     --input: 0 0% 100%;
-    --ring: 219 76% 42%;
+    --ring: 204 91% 11%;
 
     --radius: 0.75rem;
 
-    /* Solar gradients */
-    --gradient-solar: linear-gradient(135deg, hsl(219 76% 42%) 0%, hsl(150 82% 35%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(219 76% 48%) 0%, hsl(219 76% 42%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(219 14% 98%) 100%);
+    /* Olimpo Solar Gradients */
+    --gradient-olimpo: linear-gradient(135deg, hsl(204 91% 11%) 0%, hsl(46 100% 51%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(204 91% 15%) 0%, hsl(204 91% 11%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+
+    /* Chart colors using Olimpo palette */
+    --chart-1: 204 91% 11%;
+    --chart-2: 46 100% 51%;
+    --chart-3: 204 91% 25%;
+    --chart-4: 46 100% 65%;
+    --chart-5: 204 91% 35%;
     --gradient-auth: linear-gradient(180deg, hsl(219 76% 45%) 0%, hsl(150 82% 32%) 100%);
     --gradient-surface: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(219 14% 97%) 100%);
     --gradient-glow: radial-gradient(circle at center, hsl(219 76% 42% / 0.15) 0%, transparent 70%);

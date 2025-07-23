@@ -33,7 +33,7 @@ export function AppSidebar() {
 
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary/10 text-primary font-medium border-r-2 border-primary" : "hover:bg-muted/50";
+    isActive ? "bg-secondary/10 text-primary font-medium border-r-2 border-secondary" : "hover:bg-muted/50 text-foreground";
 
   const allItems = hasAdminAccess 
     ? [...items, { title: "Métricas", url: "/metrics", icon: BarChart3 }]
@@ -53,7 +53,7 @@ export function AppSidebar() {
           />
           {state === "expanded" && (
             <div>
-              <h2 className="text-lg font-semibold text-foreground">Olimpo Solar</h2>
+              <h2 className="text-lg font-semibold text-primary">Olimpo Solar</h2>
               <p className="text-xs text-muted-foreground">Sistema de Propostas</p>
             </div>
           )}
@@ -62,7 +62,7 @@ export function AppSidebar() {
 
       <SidebarContent className="px-2 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className={state === "collapsed" ? "sr-only" : ""}>
+          <SidebarGroupLabel className={state === "collapsed" ? "sr-only" : "text-primary font-medium"}>
             Navegação
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -98,7 +98,7 @@ export function AppSidebar() {
               <Button
                 onClick={signOut}
                 variant="ghost"
-                className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4 flex-shrink-0" />
                 {state === "expanded" && <span className="ml-3">Sair</span>}
