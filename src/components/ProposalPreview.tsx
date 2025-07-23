@@ -59,13 +59,20 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
     // Considerando irradiação de Campo Grande ≈ 5,0 kWh/m²/dia
     const energiaMensal = formData.systemPower * 5.0 * 30; // produção em kWh/mês
     const consumoMedio = calculations.monthlyGeneration; // usar o valor do cálculo existente
-    const economia = Math.round((energiaMensal / consumoMedio) * 100);
+    const economia = Math.min(Math.round((1 - consumoMedio / energiaMensal) * 100), 100); // cálculo correto da economia
     
     return {
       geracaoMedia: Math.round(energiaMensal),
       consumoMedio: Math.round(consumoMedio),
-      economia: Math.min(economia, 100) // limitar a 100%
+      economia: Math.max(economia, 0) // garantir que não seja negativo
     };
+  };
+  
+  // Calcular ROI para energia solar
+  const calculateSolarROI = () => {
+    const annualSavings = calculations.monthlySavings * 12;
+    const roi = (annualSavings / calculations.totalValue) * 100;
+    return Math.round(roi * 10) / 10; // arredondar para 1 casa decimal
   };
   
   const metricas = calculateRealMetrics();
@@ -521,9 +528,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   <BarChart
                     layout="horizontal"
                     data={[
-                      { name: 'Poupança', valor: 4 },
-                      { name: 'CBD', valor: 7 },
-                      { name: 'Energia Solar', valor: 18 }
+                      { name: 'Poupança', valor: 3 },
+                      { name: 'CBD', valor: 8 },
+                      { name: 'Energia Solar', valor: calculateSolarROI() }
                     ]}
                     margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
                   >
@@ -588,21 +595,38 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               <div className="h-80 mb-8">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={[
-                      { month: 'Jan', generation: metricas.geracaoMedia, consumption: metricas.consumoMedio },
-                      { month: 'Fev', generation: metricas.geracaoMedia + 200, consumption: metricas.consumoMedio + 100 },
-                      { month: 'Mar', generation: metricas.geracaoMedia + 400, consumption: metricas.consumoMedio + 200 },
-                      { month: 'Abr', generation: metricas.geracaoMedia + 300, consumption: metricas.consumoMedio + 100 },
-                      { month: 'Mai', generation: metricas.geracaoMedia + 100, consumption: metricas.consumoMedio - 100 },
-                      { month: 'Jun', generation: metricas.geracaoMedia - 100, consumption: metricas.consumoMedio - 300 },
-                      { month: 'Jul', generation: metricas.geracaoMedia - 200, consumption: metricas.consumoMedio - 400 },
-                      { month: 'Ago', generation: metricas.geracaoMedia, consumption: metricas.consumoMedio - 200 },
-                      { month: 'Set', generation: metricas.geracaoMedia + 200, consumption: metricas.consumoMedio },
-                      { month: 'Out', generation: metricas.geracaoMedia + 400, consumption: metricas.consumoMedio + 200 },
-                      { month: 'Nov', generation: metricas.geracaoMedia + 300, consumption: metricas.consumoMedio + 100 },
-                      { month: 'Dez', generation: metricas.geracaoMedia + 100, consumption: metricas.consumoMedio - 100 },
-                      { month: 'Média', generation: metricas.geracaoMedia, consumption: metricas.consumoMedio },
-                    ]}
+                    data={(() => {
+                      // Calcular variação sazonal baseada no padrão de irradiação solar
+                      const baseGeneration = formData.systemPower * 5.0 * 30;
+                      const baseConsumption = calculations.monthlyGeneration;
+                      const monthlyData = [];
+                      
+                      // Variações sazonais de irradiação para Campo Grande
+                      const seasonalVariations = [
+                        { month: 'Jan', genVar: 1.15, consVar: 1.1 }, // Verão - mais geração e consumo
+                        { month: 'Fev', genVar: 1.1, consVar: 1.05 },
+                        { month: 'Mar', genVar: 1.0, consVar: 1.0 },
+                        { month: 'Abr', genVar: 0.95, consVar: 0.9 },
+                        { month: 'Mai', genVar: 0.85, consVar: 0.8 }, // Inverno - menos geração
+                        { month: 'Jun', genVar: 0.8, consVar: 0.75 },
+                        { month: 'Jul', genVar: 0.85, consVar: 0.8 },
+                        { month: 'Ago', genVar: 0.9, consVar: 0.85 },
+                        { month: 'Set', genVar: 1.0, consVar: 0.95 },
+                        { month: 'Out', genVar: 1.1, consVar: 1.05 },
+                        { month: 'Nov', genVar: 1.15, consVar: 1.1 },
+                        { month: 'Dez', genVar: 1.2, consVar: 1.15 }
+                      ];
+                      
+                      seasonalVariations.forEach(({ month, genVar, consVar }) => {
+                        monthlyData.push({
+                          month,
+                          generation: Math.round(baseGeneration * genVar),
+                          consumption: Math.round(baseConsumption * consVar)
+                        });
+                      });
+                      
+                      return monthlyData;
+                    })()}
                     margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                   >
                     <CartesianGrid stroke="#e5e7eb" strokeWidth={1} />
