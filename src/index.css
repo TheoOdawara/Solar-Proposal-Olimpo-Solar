@@ -48,6 +48,7 @@ All colors MUST be HSL.
     --gradient-olimpo: linear-gradient(135deg, hsl(204 91% 11%) 0%, hsl(46 100% 51%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(204 91% 15%) 0%, hsl(204 91% 11%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    --gradient-solar: linear-gradient(135deg, hsl(46 100% 51%) 0%, hsl(46 100% 45%) 100%);
 
     /* Chart colors using Olimpo palette */
     --chart-1: 204 91% 11%;

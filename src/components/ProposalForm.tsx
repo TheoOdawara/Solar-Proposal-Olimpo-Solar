@@ -208,6 +208,14 @@ const ProposalForm = ({
     }
     return true;
   };
+
+  const isFormValid = () => {
+    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'paymentMethod'];
+    return requiredFields.every(field => {
+      const value = formData[field as keyof FormData];
+      return value !== '' && value !== 0;
+    });
+  };
   const generateProposal = () => {
     if (!validateForm()) return;
     setShowPreview(true);
@@ -500,7 +508,13 @@ const ProposalForm = ({
               Salvar Proposta
             </Button>
             
-            <Button onClick={generateProposal} size="lg" variant="hero" className="px-8 py-3 text-lg font-semibold">
+            <Button 
+              onClick={generateProposal} 
+              size="lg" 
+              variant="hero" 
+              className="px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!isFormValid()}
+            >
               <Eye className="mr-2 h-5 w-5" />
               Pré-visualizar Proposta
             </Button>

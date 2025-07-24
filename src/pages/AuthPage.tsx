@@ -144,7 +144,8 @@ const AuthPage = () => {
                       style={{ 
                         backgroundColor: '#ffbf06', 
                         color: '#022136',
-                        border: 'none'
+                        border: 'none',
+                        fontWeight: '600'
                       }}
                       disabled={loading}
                     >
@@ -227,7 +228,8 @@ const AuthPage = () => {
                       style={{ 
                         backgroundColor: '#ffbf06', 
                         color: '#022136',
-                        border: 'none'
+                        border: 'none',
+                        fontWeight: '600'
                       }}
                       disabled={loading || password !== confirmPassword}
                     >
