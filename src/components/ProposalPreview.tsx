@@ -264,22 +264,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 6: PROJETO 360° */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8">
+        <section 
+          className="min-h-screen p-8 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/lovable-uploads/a49ae0ec-e7fe-417a-9147-55a0c7735241.png')"
+          }}
+        >
           <div className="max-w-4xl mx-auto py-16">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
-            </div>
-
-            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
-              Projeto 360°
-            </h2>
-
-            <p className="text-lg text-slate-700 text-center leading-relaxed max-w-3xl mx-auto mb-16">
-              Nosso compromisso é satisfazer as necessidades dos clientes do início ao 
-              fim de cada projeto fotovoltaico. Por isso, adotamos um processo de 
-              gerenciamento que torna mais ágeis as ações durante a negociação.
-            </p>
 
             {/* Process Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
