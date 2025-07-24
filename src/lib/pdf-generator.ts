@@ -1,4 +1,12 @@
-import html2pdf from 'html2pdf.js';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+// Extend jsPDF to include autoTable
+declare module 'jspdf' {
+  interface jsPDF {
+    autoTable: typeof autoTable;
+  }
+}
 
 interface FormData {
   clientName: string;
@@ -25,123 +33,47 @@ interface Calculations {
 }
 
 export const generateProposalPDF = (formData: FormData, calculations: Calculations) => {
-  // Configurar opções para alta qualidade e fidelidade visual
-  const options = {
-    margin: 0,              // Sem margens para capturar o layout completo
-    filename: `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-    image: { 
-      type: 'jpeg', 
-      quality: 1.0          // Máxima qualidade de imagem
-    },
-    html2canvas: { 
-      scale: 2,             // Escala 2x para maior resolução
-      useCORS: true,        // Permitir imagens externas
-      letterRendering: true, // Melhor renderização de texto
-      allowTaint: false,    // Evitar problemas de segurança
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: 1200,          // Largura fixa para consistência
-      height: null,         // Altura automática
-      scrollX: 0,
-      scrollY: 0,
-      onclone: (clonedDoc: Document) => {
-        // Ajustar estilos específicos para PDF no documento clonado
-        const clonedElement = clonedDoc.getElementById('proposal-content');
-        if (clonedElement) {
-          // Remover transições e animações que podem afetar a captura
-          clonedElement.style.transition = 'none';
-          clonedElement.style.animation = 'none';
-          clonedElement.style.transform = 'none';
-          
-          // Garantir que todas as imagens sejam carregadas
-          const images = clonedElement.getElementsByTagName('img');
-          Array.from(images).forEach(img => {
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-          });
+  const pdf = new jsPDF();
+  const pageWidth = pdf.internal.pageSize.width;
+  const pageHeight = pdf.internal.pageSize.height;
 
-          // Ajustar gráficos para melhor renderização
-          const charts = clonedElement.querySelectorAll('.recharts-wrapper');
-          Array.from(charts).forEach(chart => {
-            (chart as HTMLElement).style.backgroundColor = 'transparent';
-          });
-        }
-      }
-    },
-    jsPDF: { 
-      unit: 'mm',
-      format: 'a4',         // Formato A4 padrão
-      orientation: 'portrait',
-      precision: 16,        // Alta precisão
-      putOnlyUsedFonts: true,
-      floatPrecision: 16
-    },
-    pagebreak: { 
-      mode: ['avoid-all', 'css', 'legacy'], // Respeitar quebras de página CSS
-      before: '.min-h-screen',              // Quebrar antes de cada seção
-      after: '',
-      avoid: 'img'          // Evitar quebrar imagens
+  // Cores da Olimpo Solar
+  const darkColor: [number, number, number]   = [  2,  33,  54]; // #022136
+  const accentColor:[number, number, number] = [255, 191,   6]; // #ffbf06
+  const whiteColor:[number, number, number]  = [255, 255, 255]; // #ffffff
+
+  // Helper para formatação e data
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
+  const formatDate = () =>
+    new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  // Quebra de página dinâmica
+  const addNewPageIfNeeded = (currentY: number, contentHeight: number) => {
+    if (currentY + contentHeight > pageHeight - 30) {
+      pdf.addPage();
+      return 30;
     }
+    return currentY;
   };
 
-  // Capturar o elemento com o conteúdo da proposta
-  const element = document.getElementById('proposal-content');
-  
-  if (!element) {
-    console.error('Elemento proposal-content não encontrado');
-    return;
-  }
+  let y = 30;
 
-  // Aplicar estilos temporários para otimização da captura
-  const originalStyles = {
-    position: element.style.position,
-    left: element.style.left,
-    top: element.style.top,
-    zIndex: element.style.zIndex,
-    transform: element.style.transform
-  };
+  // === PÁGINA 1: CAPA ===
+  y = addNewPageIfNeeded(y, 180);
+  // Logo
+  pdf.setFillColor(...accentColor);
+  pdf.rect(pageWidth/2 - 20, y, 40, 20, 'F');
+  pdf.setTextColor(...whiteColor);
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('OLIMPO', pageWidth/2, y + 10, { align: 'center' });
+  pdf.text('SOLAR', pageWidth/2, y + 16, { align: 'center' });
 
-  // Temporariamente posicionar o elemento para captura
-  element.style.position = 'relative';
-  element.style.left = '0';
-  element.style.top = '0';
-  element.style.zIndex = '9999';
-  element.style.transform = 'none';
-
-  // Garantir que todas as imagens estejam carregadas antes da captura
-  const images = element.getElementsByTagName('img');
-  const imagePromises = Array.from(images).map((img) => {
-    return new Promise((resolve) => {
-      if (img.complete) {
-        resolve(img);
-      } else {
-        img.onload = () => resolve(img);
-        img.onerror = () => resolve(img); // Continuar mesmo se uma imagem falhar
-      }
-    });
-  });
-
-  Promise.all(imagePromises).then(() => {
-    // Pequeno delay para garantir que tudo foi renderizado
-    setTimeout(() => {
-      html2pdf()
-        .set(options)
-        .from(element)
-        .save()
-        .then(() => {
-          // Restaurar estilos originais
-          Object.keys(originalStyles).forEach(key => {
-            element.style[key as any] = originalStyles[key as keyof typeof originalStyles];
-          });
-          console.log('PDF gerado com sucesso!');
-        })
-        .catch((error: any) => {
-          console.error('Erro ao gerar PDF:', error);
-          // Restaurar estilos originais mesmo em caso de erro
-          Object.keys(originalStyles).forEach(key => {
-            element.style[key as any] = originalStyles[key as keyof typeof originalStyles];
-          });
-        });
-    }, 500);
-  });
-};
+  y += 40;
+  // Título
+  pdf.setTextColor(...darkColor);
+  pdf.setFontSize(24);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Proposta Comercial', pageWidth/2, y, {
