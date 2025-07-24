@@ -136,3 +136,67 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Gradient utilities */
+.bg-gradient-solar {
+  background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-hover)));
+}
+
+/* PDF Print Optimization Styles */
+.print-optimized {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+}
+
+.page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
+@media print {
+  .print-optimized * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+  
+  /* Garantir que backgrounds sejam impressos */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Otimizar texto para impressão */
+  * {
+    text-rendering: optimizeLegibility;
+    font-smooth: always;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Evitar quebra de elementos importantes */
+  img, svg, canvas {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Otimizar tabelas */
+  table {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* Garantir visibilidade de gradientes */
+  .bg-gradient-to-br,
+  .bg-gradient-to-b,
+  .bg-gradient-to-r {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

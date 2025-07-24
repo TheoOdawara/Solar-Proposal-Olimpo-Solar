@@ -1,12 +1,4 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
-// Extend jsPDF to include autoTable
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: typeof autoTable;
-  }
-}
+import html2pdf from 'html2pdf.js';
 
 interface FormData {
   clientName: string;
@@ -33,437 +25,123 @@ interface Calculations {
 }
 
 export const generateProposalPDF = (formData: FormData, calculations: Calculations) => {
-  const pdf = new jsPDF();
-  const pageWidth = pdf.internal.pageSize.width;
-  const pageHeight = pdf.internal.pageSize.height;
-  
-  // Cores da Olimpo Solar
-  const primaryColor: [number, number, number] = [255, 140, 0]; // Laranja
-  const secondaryColor: [number, number, number] = [46, 125, 50]; // Verde
-  const darkColor: [number, number, number] = [33, 33, 33]; // Cinza escuro
-  
-  // Helper functions
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+  // Configurar opções para alta qualidade e fidelidade visual
+  const options = {
+    margin: 0,              // Sem margens para capturar o layout completo
+    filename: `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+    image: { 
+      type: 'jpeg', 
+      quality: 1.0          // Máxima qualidade de imagem
+    },
+    html2canvas: { 
+      scale: 2,             // Escala 2x para maior resolução
+      useCORS: true,        // Permitir imagens externas
+      letterRendering: true, // Melhor renderização de texto
+      allowTaint: false,    // Evitar problemas de segurança
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: 1200,          // Largura fixa para consistência
+      height: null,         // Altura automática
+      scrollX: 0,
+      scrollY: 0,
+      onclone: (clonedDoc: Document) => {
+        // Ajustar estilos específicos para PDF no documento clonado
+        const clonedElement = clonedDoc.getElementById('proposal-content');
+        if (clonedElement) {
+          // Remover transições e animações que podem afetar a captura
+          clonedElement.style.transition = 'none';
+          clonedElement.style.animation = 'none';
+          clonedElement.style.transform = 'none';
+          
+          // Garantir que todas as imagens sejam carregadas
+          const images = clonedElement.getElementsByTagName('img');
+          Array.from(images).forEach(img => {
+            img.style.maxWidth = '100%';
+            img.style.height = 'auto';
+          });
 
-  const formatDate = () => {
-    return new Date().toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
-
-  const addNewPageIfNeeded = (currentY: number, contentHeight: number) => {
-    if (currentY + contentHeight > pageHeight - 30) {
-      pdf.addPage();
-      return 30;
+          // Ajustar gráficos para melhor renderização
+          const charts = clonedElement.querySelectorAll('.recharts-wrapper');
+          Array.from(charts).forEach(chart => {
+            (chart as HTMLElement).style.backgroundColor = 'transparent';
+          });
+        }
+      }
+    },
+    jsPDF: { 
+      unit: 'mm',
+      format: 'a4',         // Formato A4 padrão
+      orientation: 'portrait',
+      precision: 16,        // Alta precisão
+      putOnlyUsedFonts: true,
+      floatPrecision: 16
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'css', 'legacy'], // Respeitar quebras de página CSS
+      before: '.min-h-screen',              // Quebrar antes de cada seção
+      after: '',
+      avoid: 'img'          // Evitar quebrar imagens
     }
-    return currentY;
   };
 
-  // PÁGINA 1: CAPA
-  let yPosition = 40;
-
-  // Logo - Nova logo oficial da Olimpo Solar
-  // Nota: Em um ambiente real, você adicionaria a imagem da logo aqui
-  // pdf.addImage('/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png', 'PNG', pageWidth/2 - 20, yPosition, 40, 20);
+  // Capturar o elemento com o conteúdo da proposta
+  const element = document.getElementById('proposal-content');
   
-  // Placeholder para a logo oficial
-  pdf.setFillColor(...primaryColor);
-  pdf.rect(pageWidth/2 - 20, yPosition, 40, 20, 'F');
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('OLIMPO', pageWidth/2, yPosition + 10, { align: 'center' });
-  pdf.text('SOLAR', pageWidth/2, yPosition + 16, { align: 'center' });
-
-  yPosition += 40;
-
-  // Título
-  pdf.setTextColor(...darkColor);
-  pdf.setFontSize(24);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Proposta Comercial', pageWidth/2, yPosition, { align: 'center' });
-  
-  yPosition += 15;
-  pdf.setFontSize(18);
-  pdf.setTextColor(...primaryColor);
-  pdf.text('Sistema Fotovoltaico', pageWidth/2, yPosition, { align: 'center' });
-
-  yPosition += 40;
-
-  // Dados do cliente
-  pdf.setTextColor(...darkColor);
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('CLIENTE:', 30, yPosition);
-  
-  yPosition += 10;
-  pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(12);
-  pdf.text(formData.clientName, 30, yPosition);
-  
-  yPosition += 20;
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(14);
-  pdf.text('ENDEREÇO:', 30, yPosition);
-  
-  yPosition += 10;
-  pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(12);
-  pdf.text(`${formData.address}, ${formData.number}`, 30, yPosition);
-  yPosition += 8;
-  pdf.text(`${formData.neighborhood} - ${formData.city}`, 30, yPosition);
-
-  yPosition += 30;
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(14);
-  pdf.text('DATA:', 30, yPosition);
-  
-  yPosition += 10;
-  pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(12);
-  pdf.text(formatDate(), 30, yPosition);
-
-  // PÁGINA 2: MENSAGEM INSTITUCIONAL
-  pdf.addPage();
-  yPosition = 40;
-
-  pdf.setTextColor(...primaryColor);
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Mensagem Institucional', pageWidth/2, yPosition, { align: 'center' });
-
-  yPosition += 30;
-
-  // Box da mensagem
-  pdf.setFillColor(248, 249, 250);
-  pdf.rect(20, yPosition - 10, pageWidth - 40, 60, 'F');
-  pdf.setDrawColor(...primaryColor);
-  pdf.setLineWidth(2);
-  pdf.rect(20, yPosition - 10, pageWidth - 40, 60);
-
-  pdf.setTextColor(...darkColor);
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'normal');
-  
-  const institutionalMessage = [
-    'Nosso compromisso é com seu bolso e com o planeta.',
-    '',
-    'Escolher a Olimpo Solar é optar por economia e',
-    'sustentabilidade com atendimento humanizado,',
-    'produtos premium e instalação rápida.'
-  ];
-
-  institutionalMessage.forEach((line, index) => {
-    pdf.text(line, pageWidth/2, yPosition + (index * 8), { align: 'center' });
-  });
-
-  yPosition += 100;
-
-  // RESUMO DO PROJETO
-  pdf.setTextColor(...primaryColor);
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Resumo do Projeto', pageWidth/2, yPosition, { align: 'center' });
-
-  yPosition += 20;
-
-  // Cálculos reais baseados na potência do sistema
-  const energiaMensal = formData.systemPower * 5.0 * 30; // Irradiação Campo Grande
-  const consumoMedio = calculations.monthlyGeneration;
-  const economia = Math.round((energiaMensal / consumoMedio) * 100);
-
-  const tableData = [
-    ['Potência do Sistema', `${formData.systemPower} kWp`],
-    ['Módulos', `${formData.moduleQuantity} módulos de ${formData.modulePower}W`],
-    ['Marca dos Módulos', formData.moduleBrand],
-    ['Inversor', `${formData.inverterBrand} - ${formData.inverterPower}W`],
-    ['Geração Mensal Estimada', `${Math.round(energiaMensal)} kWh/mês`],
-    ['Economia Mensal Estimada', formatCurrency(calculations.monthlySavings)],
-    ['Área Mínima Necessária', `${calculations.requiredArea} m²`],
-    ['Valor Total do Projeto', formatCurrency(calculations.totalValue)],
-    ['Forma de Pagamento', formData.paymentMethod.toUpperCase()],
-  ];
-
-  if (formData.observations) {
-    tableData.push(['Observações', formData.observations]);
+  if (!element) {
+    console.error('Elemento proposal-content não encontrado');
+    return;
   }
 
-  autoTable(pdf, {
-    startY: yPosition,
-    head: [['Item', 'Descrição']],
-    body: tableData,
-    headStyles: {
-      fillColor: primaryColor,
-      textColor: [255, 255, 255],
-      fontSize: 12,
-      fontStyle: 'bold'
-    },
-    bodyStyles: {
-      fontSize: 11,
-      cellPadding: 5
-    },
-    alternateRowStyles: {
-      fillColor: [248, 249, 250]
-    },
-    margin: { left: 20, right: 20 },
-    tableWidth: pageWidth - 40
-  });
-
-  // PÁGINA 3: BENEFÍCIOS
-  pdf.addPage();
-  yPosition = 40;
-
-  pdf.setTextColor(...primaryColor);
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Benefícios da Energia Solar', pageWidth/2, yPosition, { align: 'center' });
-
-  yPosition += 30;
-
-  const benefits = [
-    '✓ Garantia de até 25 anos',
-    '✓ Valorização do imóvel',
-    '✓ Baixo custo de manutenção',
-    '✓ Isenção de impostos e tarifas',
-    '✓ Sustentabilidade ambiental',
-    '✓ Monitoramento online'
-  ];
-
-  pdf.setTextColor(...darkColor);
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'normal');
-
-  benefits.forEach((benefit, index) => {
-    const row = Math.floor(index / 2);
-    const col = index % 2;
-    const x = col === 0 ? 30 : pageWidth/2 + 20;
-    const y = yPosition + (row * 20);
-    
-    pdf.setTextColor(...secondaryColor);
-    pdf.text('✓', x, y);
-    pdf.setTextColor(...darkColor);
-    pdf.text(benefit.substring(2), x + 10, y);
-  });
-
-  yPosition += 80;
-
-  // ETAPAS DO PROJETO
-  pdf.setTextColor(...primaryColor);
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Etapas do Projeto', pageWidth/2, yPosition, { align: 'center' });
-
-  yPosition += 20;
-
-  const steps = [
-    '1. Apresentação da proposta',
-    '2. Visita técnica',
-    '3. Assinatura de contrato',
-    '4. Instalação',
-    '5. Ativação da usina',
-    '6. Monitoramento'
-  ];
-
-  pdf.setTextColor(...darkColor);
-  pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'normal');
-
-  steps.forEach((step, index) => {
-    const y = yPosition + 15 + (index * 15);
-    
-    // Círculo com número
-    pdf.setFillColor(...primaryColor);
-    pdf.circle(35, y - 3, 5, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text((index + 1).toString(), 35, y, { align: 'center' });
-    
-    // Texto da etapa
-    pdf.setTextColor(...darkColor);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(step.substring(3), 50, y);
-    
-    // Linha conectora (exceto último)
-    if (index < steps.length - 1) {
-      pdf.setDrawColor(...primaryColor);
-      pdf.setLineWidth(2);
-      pdf.line(35, y + 3, 35, y + 12);
-    }
-  });
-
-  // PÁGINA 4: COMPARATIVO E RODAPÉ
-  pdf.addPage();
-  yPosition = 40;
-
-  pdf.setTextColor(...primaryColor);
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Comparativo de Investimento', pageWidth/2, yPosition, { align: 'center' });
-
-  yPosition += 30;
-
-  // GRÁFICO 1: RENTABILIDADE (Horizontal Bar Chart)
-  pdf.setFillColor(2, 33, 54); // #022136
-  pdf.rect(20, yPosition - 10, pageWidth - 40, 80, 'F');
-  
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(16);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Rentabilidade: Comparativo de Investimento', pageWidth/2, yPosition + 10, { align: 'center' });
-
-  yPosition += 30;
-
-  const investments = [
-    { name: 'Investimento: Poupança', value: 6, color: [239, 68, 68] },
-    { name: 'Investimento: CBD', value: 10, color: [249, 115, 22] },
-    { name: 'Investimento: Energia Solar', value: 18, color: [34, 197, 94] }
-  ];
-
-  const barWidth = 120;
-  const barHeight = 12;
-  const maxValue = 20;
-
-  investments.forEach((investment, index) => {
-    const y = yPosition + (index * 20);
-    const barLength = (investment.value / maxValue) * barWidth;
-    
-    // Nome do investimento (branco sobre fundo azul)
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(10);
-    pdf.text(investment.name, 25, y + 8);
-    
-    // Barra
-    pdf.setFillColor(investment.color[0], investment.color[1], investment.color[2]);
-    pdf.rect(pageWidth - 140, y, barLength, barHeight, 'F');
-    
-    // Valor
-    pdf.setTextColor(investment.color[0], investment.color[1], investment.color[2]);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(`${investment.value}% a.a.`, pageWidth - 140 + barLength + 5, y + 8);
-  });
-
-  yPosition += 80;
-
-  // GRÁFICO 2: CAPACIDADE DE GERAÇÃO (Vertical Bar Chart)
-  pdf.setFillColor(255, 255, 255);
-  pdf.rect(20, yPosition, pageWidth - 40, 120, 'F');
-  pdf.setDrawColor(2, 33, 54);
-  pdf.setLineWidth(1);
-  pdf.rect(20, yPosition, pageWidth - 40, 120);
-
-  pdf.setTextColor(2, 33, 54);
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Capacidade de geração:', pageWidth/2, yPosition + 15, { align: 'center' });
-  pdf.setFontSize(12);
-  pdf.text('Energia Consumida X Gerada (kWh/mês)', pageWidth/2, yPosition + 25, { align: 'center' });
-
-  // Legenda
-  yPosition += 35;
-  pdf.setFillColor(255, 191, 6); // #ffbf06
-  pdf.rect(pageWidth/2 - 40, yPosition, 8, 6, 'F');
-  pdf.setTextColor(2, 33, 54);
-  pdf.setFontSize(10);
-  pdf.text('Geração', pageWidth/2 - 30, yPosition + 5);
-
-  pdf.setFillColor(156, 163, 175); // gray-400
-  pdf.rect(pageWidth/2 + 10, yPosition, 8, 6, 'F');
-  pdf.text('Consumo', pageWidth/2 + 20, yPosition + 5);
-
-  // Barras simplificadas (representação dos meses)
-  yPosition += 15;
-  const months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D', 'M'];
-  const barChartWidth = pageWidth - 60;
-  const barSpacing = barChartWidth / months.length;
-
-  months.forEach((month, index) => {
-    const x = 30 + (index * barSpacing);
-    const generationHeight = 25 + Math.random() * 15;
-    const consumptionHeight = 20 + Math.random() * 10;
-
-    // Barra de geração (amarela)
-    pdf.setFillColor(255, 191, 6);
-    pdf.rect(x, yPosition + 50 - generationHeight, 6, generationHeight, 'F');
-
-    // Barra de consumo (cinza)
-    pdf.setFillColor(156, 163, 175);
-    pdf.rect(x + 8, yPosition + 50 - consumptionHeight, 6, consumptionHeight, 'F');
-
-    // Label do mês
-    pdf.setTextColor(2, 33, 54);
-    pdf.setFontSize(8);
-    pdf.text(month, x + 2, yPosition + 60);
-  });
-
-  // Métricas reais baseadas nos dados do formulário
-  const metricas = {
-    geracaoMedia: Math.round(energiaMensal),
-    consumoMedio: Math.round(consumoMedio),
-    economia: Math.min(economia, 100)
+  // Aplicar estilos temporários para otimização da captura
+  const originalStyles = {
+    position: element.style.position,
+    left: element.style.left,
+    top: element.style.top,
+    zIndex: element.style.zIndex,
+    transform: element.style.transform
   };
 
-  yPosition += 70;
-  pdf.setFillColor(249, 250, 251);
-  pdf.rect(30, yPosition, pageWidth - 60, 25, 'F');
+  // Temporariamente posicionar o elemento para captura
+  element.style.position = 'relative';
+  element.style.left = '0';
+  element.style.top = '0';
+  element.style.zIndex = '9999';
+  element.style.transform = 'none';
 
-  pdf.setTextColor(255, 191, 6);
-  pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(metricas.geracaoMedia.toLocaleString(), 50, yPosition + 10);
-  pdf.setTextColor(2, 33, 54);
-  pdf.setFontSize(8);
-  pdf.text('Geração média (kWh)', 50, yPosition + 18);
-
-  pdf.setTextColor(156, 163, 175);
-  pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(metricas.consumoMedio.toLocaleString(), pageWidth/2 - 10, yPosition + 10);
-  pdf.setTextColor(2, 33, 54);
-  pdf.setFontSize(8);
-  pdf.text('Consumo médio (kWh)', pageWidth/2 - 10, yPosition + 18);
-
-  pdf.setTextColor(34, 197, 94);
-  pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(`${metricas.economia}%`, pageWidth - 80, yPosition + 10);
-  pdf.setTextColor(2, 33, 54);
-  pdf.setFontSize(8);
-  pdf.text('Economia mensal estimada', pageWidth - 80, yPosition + 18);
-
-  // RODAPÉ
-  yPosition = pageHeight - 80;
-
-  pdf.setFillColor(...primaryColor);
-  pdf.rect(0, yPosition, pageWidth, 80, 'F');
-
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(16);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('OLIMPO SOLAR', pageWidth/2, yPosition + 15, { align: 'center' });
-
-  yPosition += 25;
-  pdf.setFontSize(10);
-  pdf.setFont('helvetica', 'normal');
-
-  const contactInfo = [
-    'R. Eduardo Santos Pereira, 1831 – Centro, Campo Grande – MS',
-    'WhatsApp: (67) 99668-0242',
-    'Instagram: @olimpo.energiasolar',
-    'E-mail: adm.olimposolar@gmail.com'
-  ];
-
-  contactInfo.forEach((info, index) => {
-    pdf.text(info, pageWidth/2, yPosition + (index * 8), { align: 'center' });
+  // Garantir que todas as imagens estejam carregadas antes da captura
+  const images = element.getElementsByTagName('img');
+  const imagePromises = Array.from(images).map((img) => {
+    return new Promise((resolve) => {
+      if (img.complete) {
+        resolve(img);
+      } else {
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(img); // Continuar mesmo se uma imagem falhar
+      }
+    });
   });
 
-  // Salvar o PDF
-  const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-  pdf.save(fileName);
+  Promise.all(imagePromises).then(() => {
+    // Pequeno delay para garantir que tudo foi renderizado
+    setTimeout(() => {
+      html2pdf()
+        .set(options)
+        .from(element)
+        .save()
+        .then(() => {
+          // Restaurar estilos originais
+          Object.keys(originalStyles).forEach(key => {
+            element.style[key as any] = originalStyles[key as keyof typeof originalStyles];
+          });
+          console.log('PDF gerado com sucesso!');
+        })
+        .catch((error: any) => {
+          console.error('Erro ao gerar PDF:', error);
+          // Restaurar estilos originais mesmo em caso de erro
+          Object.keys(originalStyles).forEach(key => {
+            element.style[key as any] = originalStyles[key as keyof typeof originalStyles];
+          });
+        });
+    }, 500);
+  });
 };
