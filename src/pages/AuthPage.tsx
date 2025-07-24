@@ -82,7 +82,7 @@ const AuthPage = () => {
                 <TabsList className="grid w-full grid-cols-2 bg-gray-100">
                   <TabsTrigger 
                     value="login" 
-                    className="flex items-center gap-2 data-[state=active]:text-white transition-smooth"
+                    className="flex items-center gap-2 text-gray-600 data-[state=active]:text-white transition-smooth"
                     style={{ 
                       '--tw-data-state-active-bg': '#ffbf06',
                       '--tw-data-state-active-color': '#022136'
