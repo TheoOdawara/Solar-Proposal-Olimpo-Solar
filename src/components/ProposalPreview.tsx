@@ -53,28 +53,27 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   };
   const calculateYearlySavings = () => calculations.monthlySavings * 12;
   const calculateCurrentBill = () => calculations.monthlySavings;
-  
+
   // Cálculos reais para as métricas do gráfico
   const calculateRealMetrics = () => {
     // Considerando irradiação de Campo Grande ≈ 5,0 kWh/m²/dia
     const energiaMensal = formData.systemPower * 5.0 * 30; // produção em kWh/mês
     const consumoMedio = calculations.monthlyGeneration; // usar o valor do cálculo existente
     const economia = Math.min(Math.round((1 - consumoMedio / energiaMensal) * 100), 100); // cálculo correto da economia
-    
+
     return {
       geracaoMedia: Math.round(energiaMensal),
       consumoMedio: Math.round(consumoMedio),
       economia: Math.max(economia, 0) // garantir que não seja negativo
     };
   };
-  
+
   // Calcular ROI para energia solar
   const calculateSolarROI = () => {
     const annualSavings = calculations.monthlySavings * 12;
-    const roi = (annualSavings / calculations.totalValue) * 100;
+    const roi = annualSavings / calculations.totalValue * 100;
     return Math.round(roi * 10) / 10; // arredondar para 1 casa decimal
   };
-  
   const metricas = calculateRealMetrics();
   return <div className="min-h-screen bg-background">
       {/* Navegação */}
@@ -151,11 +150,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {/* PÁGINA 2: QUEM SOMOS */}
         <section className="min-h-screen bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
-            <img 
-              src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" 
-              alt="Quem Somos - Olimpo Solar" 
-              className="w-full h-auto max-w-4xl"
-            />
+            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-4xl" />
           </div>
         </section>
 
@@ -173,11 +168,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Solar System Diagram */}
             <div className="flex justify-center mb-16">
-              <img 
-                src="/lovable-uploads/eec5512b-b132-4591-8437-18986fe56e01.png" 
-                alt="Como funciona a energia solar" 
-                className="max-w-full h-auto max-h-96 object-contain"
-              />
+              <img src="/lovable-uploads/eec5512b-b132-4591-8437-18986fe56e01.png" alt="Como funciona a energia solar" className="max-w-full h-auto max-h-96 object-contain" />
             </div>
 
             {/* Yellow banner */}
@@ -222,11 +213,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {/* PÁGINA 4: BENEFÍCIOS */}
         <section className="min-h-screen bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
-            <img 
-              src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" 
-              alt="Benefícios da Energia Solar" 
-              className="w-full h-auto max-w-4xl"
-            />
+            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-4xl" />
           </div>
         </section>
 
@@ -244,11 +231,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Projects Grid */}
             <div className="mb-16">
-              <img 
-                src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" 
-                alt="Grid de projetos da Olimpo Solar" 
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
+              <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" />
             </div>
 
             {/* Footer contact */}
@@ -264,135 +247,86 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 6: PROJETO 360° */}
-        <section 
-          className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center"
-          style={{
-            backgroundImage: "url('/lovable-uploads/a49ae0ec-e7fe-417a-9147-55a0c7735241.png')"
-          }}
-        >
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-12 text-center shadow-2xl border border-white/20">
-            <h2 className="text-4xl font-bold text-slate-800 mb-8">
-              Seu Projeto Solar
-            </h2>
-            <div className="space-y-6">
-              <div className="text-6xl font-bold text-yellow-600 mb-4">
-                {formatCurrency(calculations.totalValue)}
-              </div>
-              <div className="text-xl text-slate-600 font-semibold">
-                Valor Total do Projeto
-              </div>
-              <div className="grid grid-cols-2 gap-8 mt-8">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-slate-800">{formData.systemPower} kWp</div>
-                  <div className="text-sm text-slate-600">Potência do Sistema</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-slate-800">{calculations.monthlyGeneration} kWh</div>
-                  <div className="text-sm text-slate-600">Geração Mensal</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <section className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
+        backgroundImage: "url('/lovable-uploads/a49ae0ec-e7fe-417a-9147-55a0c7735241.png')"
+      }}>
+          
         </section>
 
         {/* PÁGINA 7: SEU PROJETO */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 p-8 page-break">
-          <div className="max-w-4xl mx-auto py-16">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
-            </div>
+       <section className="min-h-screen bg-white p-8 page-break">
+  <div className="max-w-5xl mx-auto relative">
 
-            <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
-              Seu Projeto:
-            </h2>
+    {/* Logo */}
+    <div className="absolute top-6 right-6">
+      <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
+    </div>
 
-            {/* Project Equipment Image Placeholder */}
-            <div className="bg-white rounded-lg p-8 mb-12 text-center">
-              <div className="w-80 h-60 mx-auto mb-8 flex items-center justify-center">
-                <img src="/lovable-uploads/898d9890-e943-4493-9ab7-cad6efc48286.png" alt="Equipamentos do Sistema Solar" className="max-h-full max-w-full object-contain" />
-              </div>
-              
-              {/* Equipment Icons */}
-              <div className="grid grid-cols-3 gap-6 max-w-lg mx-auto mb-8">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                    <Zap className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-sm text-slate-600">{formData.moduleQuantity} Painéis</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                    <Battery className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-sm text-slate-600">Inversor {formData.inverterBrand}</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                    <Wrench className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-sm text-slate-600">Estrutura</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                    <Lightbulb className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-sm text-slate-600">Monitoramento</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                    <DollarSign className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-sm text-slate-600">Economia</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-gray-300 rounded-lg mx-auto mb-2 flex items-center justify-center">
-                    <BarChart3 className="h-8 w-8 text-slate-600" />
-                  </div>
-                  <p className="text-sm text-slate-600">Potência {formData.systemPower}kWp</p>
-                </div>
-              </div>
-            </div>
+    <h2 className="text-4xl font-extrabold text-center text-slate-800 mb-12">Seu Projeto:</h2>
 
-            {/* Warranties Section */}
-            <div className="bg-slate-800 rounded-lg p-8 text-white">
-              <h3 className="text-3xl font-bold text-center mb-8">GARANTIAS</h3>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-3 border-b border-gray-600">
-                  <span className="font-semibold">Módulos solares</span>
-                  <span>25 anos de eficiência e 12 anos para defeito de fabricação</span>
-                </div>
-                <div className="flex justify-between items-center py-3 border-b border-gray-600">
-                  <span className="font-semibold">Inversores</span>
-                  <span>10 anos</span>
-                </div>
-                <div className="flex justify-between items-center py-3 border-b border-gray-600">
-                  <span className="font-semibold">Micro Inversores</span>
-                  <span>15 anos</span>
-                </div>
-                <div className="flex justify-between items-center py-3 border-b border-gray-600">
-                  <span className="font-semibold">Estrutura</span>
-                  <span>10 anos</span>
-                </div>
-                <div className="flex justify-between items-center py-3">
-                  <span className="font-semibold italic">Instalação</span>
-                  <span className="italic">12 meses</span>
-                </div>
-              </div>
-            </div>
+    {/* Imagem principal */}
+    <div className="bg-slate-50 border border-slate-200 rounded-2xl shadow-sm p-6 mb-12">
+      <div className="w-full h-64 flex items-center justify-center">
+        <img src="/lovable-uploads/898d9890-e943-4493-9ab7-cad6efc48286.png" alt="Equipamentos do Sistema Solar" className="max-h-full object-contain" />
+      </div>
+    </div>
 
-            {/* Footer contact */}
-            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
-              <div className="flex justify-center space-x-6 text-white text-sm">
-                <span>67 99668-0242</span>
-                <span>Olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-              </div>
-            </div>
+    {/* Ícones dos Equipamentos */}
+    <div className="grid grid-cols-3 gap-6 mb-12">
+      {[
+        { icon: <Zap />, label: `${formData.moduleQuantity} Painéis` },
+        { icon: <Battery />, label: `Inversor ${formData.inverterBrand}` },
+        { icon: <Wrench />, label: 'Estrutura' },
+        { icon: <Lightbulb />, label: 'Monitoramento' },
+        { icon: <DollarSign />, label: 'Economia' },
+        { icon: <BarChart3 />, label: `Potência ${formData.systemPower}kWp` }
+      ].map((item, idx) => (
+        <div key={idx} className="flex flex-col items-center bg-white rounded-xl border border-slate-200 shadow-md p-4 text-center">
+          <div className="w-14 h-14 flex items-center justify-center rounded-full bg-yellow-100 mb-3">
+            {React.cloneElement(item.icon, { className: "h-6 w-6 text-yellow-600" })}
           </div>
-        </section>
+          <p className="text-sm font-medium text-slate-700">{item.label}</p>
+        </div>
+      ))}
+    </div>
+
+    {/* Garantias */}
+    <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-8 mb-8">
+      <h3 className="text-2xl font-bold text-yellow-800 text-center mb-6">Garantias do Sistema</h3>
+      <div className="space-y-4 text-sm text-slate-700">
+        <div className="flex justify-between border-b pb-2">
+          <span className="font-semibold">Módulos solares</span>
+          <span>25 anos de eficiência / 12 anos fabricação</span>
+        </div>
+        <div className="flex justify-between border-b pb-2">
+          <span className="font-semibold">Inversores</span>
+          <span>10 anos</span>
+        </div>
+        <div className="flex justify-between border-b pb-2">
+          <span className="font-semibold">Micro Inversores</span>
+          <span>15 anos</span>
+        </div>
+        <div className="flex justify-between border-b pb-2">
+          <span className="font-semibold">Estrutura</span>
+          <span>10 anos</span>
+        </div>
+        <div className="flex justify-between italic">
+          <span>Instalação</span>
+          <span>12 meses</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Rodapé de Contato */}
+    <div className="bg-slate-800 text-white text-center text-sm rounded-xl py-4 mt-6">
+      <div className="space-y-2">
+        <p>📞 67 99668-0242 | 📱 @Olimpo.energiasolar</p>
+        <p>📧 adm.olimposolar@gmail.com</p>
+        <p>📍 R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande - MS</p>
+      </div>
+    </div>
+  </div>
+</section>
 
         {/* PÁGINA 8: RENTABILIDADE */}
         <section className="min-h-screen bg-white p-8 page-break">
@@ -408,51 +342,57 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
             {/* Horizontal Bar Chart - Rentabilidade */}
-            <div style={{ backgroundColor: '#022136' }} className="rounded-lg p-8 text-white mb-12">
+            <div style={{
+            backgroundColor: '#022136'
+          }} className="rounded-lg p-8 text-white mb-12">
               <h2 className="text-3xl font-bold text-center mb-8 text-white">
                 Rentabilidade: Comparativo de Investimento
               </h2>
               
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    layout="horizontal"
-                    data={[
-                      { name: 'Poupança', valor: 3 },
-                      { name: 'CBD', valor: 8 },
-                      { name: 'Energia Solar', valor: calculateSolarROI() }
-                    ]}
-                    margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
-                  >
+                  <BarChart layout="horizontal" data={[{
+                  name: 'Poupança',
+                  valor: 3
+                }, {
+                  name: 'CBD',
+                  valor: 8
+                }, {
+                  name: 'Energia Solar',
+                  valor: calculateSolarROI()
+                }]} margin={{
+                  top: 20,
+                  right: 30,
+                  left: 120,
+                  bottom: 20
+                }}>
                     <CartesianGrid stroke="#ffffff" strokeOpacity={0.3} />
-                    <XAxis 
-                      type="number" 
-                      domain={[0, 20]}
-                      axisLine={{ stroke: '#ffffff', strokeWidth: 1 }}
-                      tickLine={{ stroke: '#ffffff' }}
-                      tick={{ fill: '#ffffff', fontSize: 12 }}
-                    />
-                    <YAxis 
-                      type="category" 
-                      dataKey="name"
-                      axisLine={{ stroke: '#ffffff', strokeWidth: 1 }}
-                      tickLine={{ stroke: '#ffffff' }}
-                      tick={{ fill: '#ffffff', fontSize: 14, fontWeight: 'bold' }}
-                      width={120}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#022136', 
-                        border: '1px solid #ffffff',
-                        borderRadius: '8px',
-                        color: '#ffffff'
-                      }}
-                      formatter={(value) => [`${value}% a.a.`, 'Rentabilidade']}
-                    />
-                    <Bar 
-                      dataKey="valor" 
-                      radius={[0, 4, 4, 0]}
-                    >
+                    <XAxis type="number" domain={[0, 20]} axisLine={{
+                    stroke: '#ffffff',
+                    strokeWidth: 1
+                  }} tickLine={{
+                    stroke: '#ffffff'
+                  }} tick={{
+                    fill: '#ffffff',
+                    fontSize: 12
+                  }} />
+                    <YAxis type="category" dataKey="name" axisLine={{
+                    stroke: '#ffffff',
+                    strokeWidth: 1
+                  }} tickLine={{
+                    stroke: '#ffffff'
+                  }} tick={{
+                    fill: '#ffffff',
+                    fontSize: 14,
+                    fontWeight: 'bold'
+                  }} width={120} />
+                    <Tooltip contentStyle={{
+                    backgroundColor: '#022136',
+                    border: '1px solid #ffffff',
+                    borderRadius: '8px',
+                    color: '#ffffff'
+                  }} formatter={value => [`${value}% a.a.`, 'Rentabilidade']} />
+                    <Bar dataKey="valor" radius={[0, 4, 4, 0]}>
                       <Cell fill="#ef4444" />
                       <Cell fill="#f97316" />
                       <Cell fill="#22c55e" />
@@ -464,16 +404,22 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Vertical Bar Chart - Capacidade de Geração */}
             <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
-              <h3 className="text-2xl font-bold text-center mb-2" style={{ color: '#022136' }}>
+              <h3 className="text-2xl font-bold text-center mb-2" style={{
+              color: '#022136'
+            }}>
                 Capacidade de geração:
               </h3>
-              <p className="text-lg text-center mb-8" style={{ color: '#022136' }}>
+              <p className="text-lg text-center mb-8" style={{
+              color: '#022136'
+            }}>
                 Energia Consumida X Gerada (kWh/mês)
               </p>
 
               <div className="flex justify-center gap-8 mb-6">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#ffbf06' }}></div>
+                  <div className="w-4 h-4 rounded" style={{
+                  backgroundColor: '#ffbf06'
+                }}></div>
                   <span className="text-sm font-semibold">Geração</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -484,83 +430,114 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
               <div className="h-80 mb-8">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={(() => {
-                      // Calcular variação sazonal baseada no padrão de irradiação solar
-                      const baseGeneration = formData.systemPower * 5.0 * 30;
-                      const baseConsumption = calculations.monthlyGeneration;
-                      const monthlyData = [];
-                      
-                      // Variações sazonais de irradiação para Campo Grande
-                      const seasonalVariations = [
-                        { month: 'Jan', genVar: 1.15, consVar: 1.1 }, // Verão - mais geração e consumo
-                        { month: 'Fev', genVar: 1.1, consVar: 1.05 },
-                        { month: 'Mar', genVar: 1.0, consVar: 1.0 },
-                        { month: 'Abr', genVar: 0.95, consVar: 0.9 },
-                        { month: 'Mai', genVar: 0.85, consVar: 0.8 }, // Inverno - menos geração
-                        { month: 'Jun', genVar: 0.8, consVar: 0.75 },
-                        { month: 'Jul', genVar: 0.85, consVar: 0.8 },
-                        { month: 'Ago', genVar: 0.9, consVar: 0.85 },
-                        { month: 'Set', genVar: 1.0, consVar: 0.95 },
-                        { month: 'Out', genVar: 1.1, consVar: 1.05 },
-                        { month: 'Nov', genVar: 1.15, consVar: 1.1 },
-                        { month: 'Dez', genVar: 1.2, consVar: 1.15 }
-                      ];
-                      
-                      seasonalVariations.forEach(({ month, genVar, consVar }) => {
-                        monthlyData.push({
-                          month,
-                          generation: Math.round(baseGeneration * genVar),
-                          consumption: Math.round(baseConsumption * consVar)
-                        });
-                      });
-                      
-                      return monthlyData;
-                    })()}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                  >
+                  <BarChart data={(() => {
+                  // Calcular variação sazonal baseada no padrão de irradiação solar
+                  const baseGeneration = formData.systemPower * 5.0 * 30;
+                  const baseConsumption = calculations.monthlyGeneration;
+                  const monthlyData = [];
+
+                  // Variações sazonais de irradiação para Campo Grande
+                  const seasonalVariations = [{
+                    month: 'Jan',
+                    genVar: 1.15,
+                    consVar: 1.1
+                  },
+                  // Verão - mais geração e consumo
+                  {
+                    month: 'Fev',
+                    genVar: 1.1,
+                    consVar: 1.05
+                  }, {
+                    month: 'Mar',
+                    genVar: 1.0,
+                    consVar: 1.0
+                  }, {
+                    month: 'Abr',
+                    genVar: 0.95,
+                    consVar: 0.9
+                  }, {
+                    month: 'Mai',
+                    genVar: 0.85,
+                    consVar: 0.8
+                  },
+                  // Inverno - menos geração
+                  {
+                    month: 'Jun',
+                    genVar: 0.8,
+                    consVar: 0.75
+                  }, {
+                    month: 'Jul',
+                    genVar: 0.85,
+                    consVar: 0.8
+                  }, {
+                    month: 'Ago',
+                    genVar: 0.9,
+                    consVar: 0.85
+                  }, {
+                    month: 'Set',
+                    genVar: 1.0,
+                    consVar: 0.95
+                  }, {
+                    month: 'Out',
+                    genVar: 1.1,
+                    consVar: 1.05
+                  }, {
+                    month: 'Nov',
+                    genVar: 1.15,
+                    consVar: 1.1
+                  }, {
+                    month: 'Dez',
+                    genVar: 1.2,
+                    consVar: 1.15
+                  }];
+                  seasonalVariations.forEach(({
+                    month,
+                    genVar,
+                    consVar
+                  }) => {
+                    monthlyData.push({
+                      month,
+                      generation: Math.round(baseGeneration * genVar),
+                      consumption: Math.round(baseConsumption * consVar)
+                    });
+                  });
+                  return monthlyData;
+                })()} margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 20
+                }}>
                     <CartesianGrid stroke="#e5e7eb" strokeWidth={1} />
-                    <XAxis 
-                      dataKey="month"
-                      axisLine={{ stroke: '#022136', strokeWidth: 1 }}
-                      tickLine={{ stroke: '#022136' }}
-                      tick={{ fill: '#022136', fontSize: 12, fontWeight: 'bold' }}
-                    />
-                    <YAxis 
-                      domain={[0, 8000]}
-                      axisLine={{ stroke: '#022136', strokeWidth: 1 }}
-                      tickLine={{ stroke: '#022136' }}
-                      tick={{ fill: '#022136', fontSize: 12, fontWeight: 'bold' }}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#ffffff', 
-                        border: '1px solid #022136',
-                        borderRadius: '8px',
-                        color: '#022136'
-                      }}
-                      formatter={(value, name) => [
-                        `${value} kWh`, 
-                        name === 'generation' ? 'Geração' : 'Consumo'
-                      ]}
-                    />
-                    <Legend 
-                      verticalAlign="top"
-                      height={36}
-                      formatter={(value) => value === 'generation' ? 'Geração' : 'Consumo'}
-                    />
-                    <Bar 
-                      dataKey="generation" 
-                      fill="#ffbf06"
-                      name="generation"
-                      radius={[2, 2, 0, 0]}
-                    />
-                    <Bar 
-                      dataKey="consumption" 
-                      fill="#9ca3af"
-                      name="consumption"
-                      radius={[2, 2, 0, 0]}
-                    />
+                    <XAxis dataKey="month" axisLine={{
+                    stroke: '#022136',
+                    strokeWidth: 1
+                  }} tickLine={{
+                    stroke: '#022136'
+                  }} tick={{
+                    fill: '#022136',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                  }} />
+                    <YAxis domain={[0, 8000]} axisLine={{
+                    stroke: '#022136',
+                    strokeWidth: 1
+                  }} tickLine={{
+                    stroke: '#022136'
+                  }} tick={{
+                    fill: '#022136',
+                    fontSize: 12,
+                    fontWeight: 'bold'
+                  }} />
+                    <Tooltip contentStyle={{
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #022136',
+                    borderRadius: '8px',
+                    color: '#022136'
+                  }} formatter={(value, name) => [`${value} kWh`, name === 'generation' ? 'Geração' : 'Consumo']} />
+                    <Legend verticalAlign="top" height={36} formatter={value => value === 'generation' ? 'Geração' : 'Consumo'} />
+                    <Bar dataKey="generation" fill="#ffbf06" name="generation" radius={[2, 2, 0, 0]} />
+                    <Bar dataKey="consumption" fill="#9ca3af" name="consumption" radius={[2, 2, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -568,16 +545,28 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               {/* Métricas extras */}
               <div className="grid grid-cols-3 gap-6 text-center bg-gray-50 p-6 rounded-lg border">
                 <div>
-                  <div className="font-bold text-3xl" style={{ color: '#ffbf06' }}>{metricas.geracaoMedia.toLocaleString()}</div>
-                  <div className="text-sm font-semibold" style={{ color: '#022136' }}>Geração média (kWh)</div>
+                  <div className="font-bold text-3xl" style={{
+                  color: '#ffbf06'
+                }}>{metricas.geracaoMedia.toLocaleString()}</div>
+                  <div className="text-sm font-semibold" style={{
+                  color: '#022136'
+                }}>Geração média (kWh)</div>
                 </div>
                 <div>
-                  <div className="font-bold text-3xl" style={{ color: '#9ca3af' }}>{metricas.consumoMedio.toLocaleString()}</div>
-                  <div className="text-sm font-semibold" style={{ color: '#022136' }}>Consumo médio (kWh)</div>
+                  <div className="font-bold text-3xl" style={{
+                  color: '#9ca3af'
+                }}>{metricas.consumoMedio.toLocaleString()}</div>
+                  <div className="text-sm font-semibold" style={{
+                  color: '#022136'
+                }}>Consumo médio (kWh)</div>
                 </div>
                 <div>
-                  <div className="font-bold text-3xl" style={{ color: '#22c55e' }}>{metricas.economia}%</div>
-                  <div className="text-sm font-semibold" style={{ color: '#022136' }}>Economia mensal estimada</div>
+                  <div className="font-bold text-3xl" style={{
+                  color: '#22c55e'
+                }}>{metricas.economia}%</div>
+                  <div className="text-sm font-semibold" style={{
+                  color: '#022136'
+                }}>Economia mensal estimada</div>
                 </div>
               </div>
             </div>
