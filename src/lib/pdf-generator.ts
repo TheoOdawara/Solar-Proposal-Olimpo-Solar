@@ -76,4 +76,74 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   pdf.setTextColor(...darkColor);
   pdf.setFontSize(24);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('Proposta Comercial', pageWidth/2, y, {
+  pdf.text('Proposta Comercial', pageWidth/2, y, { align: 'center' });
+
+  // Dados do cliente
+  y += 30;
+  pdf.setFontSize(16);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`Cliente: ${formData.clientName}`, 20, y);
+  pdf.text(`Data: ${formatDate()}`, pageWidth - 20, y, { align: 'right' });
+
+  y += 20;
+  pdf.text(`Endereço: ${formData.address}, ${formData.number} - ${formData.neighborhood}`, 20, y);
+  
+  y += 10;
+  pdf.text(`Cidade: ${formData.city}`, 20, y);
+  
+  y += 10;  
+  pdf.text(`Telefone: ${formData.phone}`, 20, y);
+
+  // Dados do sistema
+  y += 30;
+  pdf.setFontSize(18);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Dados do Sistema Solar', 20, y);
+
+  y += 20;
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'normal');
+  
+  const systemData = [
+    ['Potência do Sistema', `${formData.systemPower} kWp`],
+    ['Quantidade de Módulos', `${formData.moduleQuantity} unidades`],
+    ['Marca dos Módulos', formData.moduleBrand],
+    ['Potência dos Módulos', `${formData.modulePower} W`],
+    ['Marca do Inversor', formData.inverterBrand],
+    ['Potência do Inversor', `${formData.inverterPower} W`],
+    ['Geração Mensal Estimada', `${calculations.monthlyGeneration} kWh`],
+    ['Economia Mensal Estimada', formatCurrency(calculations.monthlySavings)],
+    ['Área Necessária', `${calculations.requiredArea} m²`],
+    ['Valor Total do Projeto', formatCurrency(calculations.totalValue)],
+    ['Forma de Pagamento', formData.paymentMethod]
+  ];
+
+  autoTable(pdf, {
+    startY: y,
+    head: [['Item', 'Valor']],
+    body: systemData,
+    theme: 'grid',
+    headStyles: { fillColor: accentColor, textColor: darkColor },
+    bodyStyles: { textColor: darkColor },
+    alternateRowStyles: { fillColor: [245, 245, 245] }
+  });
+
+  // Observações se houver
+  if (formData.observations) {
+    pdf.addPage();
+    y = 30;
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Observações', 20, y);
+    
+    y += 20;
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    const splitText = pdf.splitTextToSize(formData.observations, pageWidth - 40);
+    pdf.text(splitText, 20, y);
+  }
+
+  // Salvar PDF
+  const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+  pdf.save(fileName);
+};

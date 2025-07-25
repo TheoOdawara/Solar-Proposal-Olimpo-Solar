@@ -265,11 +265,34 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 6: PROJETO 360° */}
         <section 
-          className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break"
+          className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center"
           style={{
             backgroundImage: "url('/lovable-uploads/a49ae0ec-e7fe-417a-9147-55a0c7735241.png')"
           }}
         >
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-12 text-center shadow-2xl border border-white/20">
+            <h2 className="text-4xl font-bold text-slate-800 mb-8">
+              Seu Projeto Solar
+            </h2>
+            <div className="space-y-6">
+              <div className="text-6xl font-bold text-yellow-600 mb-4">
+                {formatCurrency(calculations.totalValue)}
+              </div>
+              <div className="text-xl text-slate-600 font-semibold">
+                Valor Total do Projeto
+              </div>
+              <div className="grid grid-cols-2 gap-8 mt-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-slate-800">{formData.systemPower} kWp</div>
+                  <div className="text-sm text-slate-600">Potência do Sistema</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-slate-800">{calculations.monthlyGeneration} kWh</div>
+                  <div className="text-sm text-slate-600">Geração Mensal</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* PÁGINA 7: SEU PROJETO */}
