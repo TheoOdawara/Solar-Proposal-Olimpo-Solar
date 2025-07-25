@@ -208,7 +208,6 @@ const ProposalForm = ({
     }
     return true;
   };
-
   const isFormValid = () => {
     const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'paymentMethod'];
     return requiredFields.every(field => {
@@ -320,9 +319,7 @@ const ProposalForm = ({
           <div className="flex items-center justify-center gap-4 animate-scale-in">
             
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-solar bg-clip-text text-transparent">
-                Gerador de Propostas
-              </h1>
+              
               <p className="text-muted-foreground">
                 Sistema inteligente para criação de propostas solares
               </p>
@@ -508,13 +505,7 @@ const ProposalForm = ({
               Salvar Proposta
             </Button>
             
-            <Button 
-              onClick={generateProposal} 
-              size="lg" 
-              variant="hero" 
-              className="px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!isFormValid()}
-            >
+            <Button onClick={generateProposal} size="lg" variant="hero" className="px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isFormValid()}>
               <Eye className="mr-2 h-5 w-5" />
               Pré-visualizar Proposta
             </Button>
