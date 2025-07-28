@@ -94,7 +94,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       <div id="proposal-content" className="max-w-4xl mx-auto bg-white print-optimized">
         
         {/* PÁGINA 1: CAPA - Baseado na primeira imagem */}
-        <section className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden page-break">
+        <section className="a4-page bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden page-break">
           {/* Formas geométricas 3D amarelas/douradas */}
           <div className="absolute top-1/4 right-1/4 transform -translate-y-1/2">
             {/* Cubo grande */}
@@ -148,28 +148,28 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 2: QUEM SOMOS */}
-        <section className="min-h-screen bg-white p-8 page-break">
+        <section className="a4-page bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
             <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-4xl" />
           </div>
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
-        <section className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
+        <section className="a4-page p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
           backgroundImage: "url('/lovable-uploads/9ddc438a-746a-4847-96e7-d2a8ac899837.png')"
         }}>
           
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
-        <section className="min-h-screen bg-white p-8 page-break">
+        <section className="a4-page bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
             <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-4xl" />
           </div>
         </section>
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
-        <section className="min-h-screen bg-white p-8 page-break">
+        <section className="a4-page bg-white p-8 page-break">
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
@@ -198,14 +198,14 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 6: PROJETO 360° */}
-        <section className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
+        <section className="a4-page p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
         backgroundImage: "url('/lovable-uploads/a49ae0ec-e7fe-417a-9147-55a0c7735241.png')"
       }}>
           
         </section>
 
         {/* PÁGINA 7: SEU PROJETO */}
-       <section className="min-h-screen bg-white p-8 page-break">
+       <section className="a4-page bg-white p-8 page-break">
   <div className="max-w-5xl mx-auto relative">
 
     {/* Logo */}
@@ -280,7 +280,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 </section>
 
         {/* PÁGINA 8: RENTABILIDADE */}
-        <section className="min-h-screen bg-white p-8 page-break">
+        <section className="a4-page bg-white p-8 page-break">
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
@@ -535,7 +535,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-50 to-white p-8 page-break">
+        <section className="a4-page bg-gradient-to-b from-yellow-50 to-white p-8 page-break">
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
@@ -670,7 +670,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 10: TERMO DE COMPROMISSO - Baseado na imagem 10 */}
-        <section className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 p-8 page-break">
+        <section className="a4-page bg-gradient-to-b from-yellow-100 to-yellow-50 p-8 page-break">
           <div className="max-w-4xl mx-auto py-16">
             
             <h2 className="text-5xl font-bold text-slate-800 mb-12 leading-tight">

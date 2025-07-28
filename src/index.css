@@ -142,6 +142,18 @@ All colors MUST be HSL.
   background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-hover)));
 }
 
+/* A4 Page dimensions */
+.a4-page {
+  width: 100%;
+  max-width: 794px; /* A4 width in pixels at 96 DPI */
+  aspect-ratio: 210 / 297; /* A4 aspect ratio */
+  min-height: 1123px; /* A4 height in pixels at 96 DPI */
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
 /* PDF Print Optimization Styles */
 .print-optimized {
   print-color-adjust: exact;
@@ -155,6 +167,17 @@ All colors MUST be HSL.
 }
 
 @media print {
+  .a4-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
   .print-optimized * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
