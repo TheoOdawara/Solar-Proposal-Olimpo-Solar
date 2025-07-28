@@ -155,59 +155,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
-        <section className="min-h-screen bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto py-16">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
-            </div>
-
-            <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
-              Como Funciona:
-            </h2>
-
-            {/* Solar System Diagram */}
-            <div className="flex justify-center mb-16">
-              <img src="/lovable-uploads/eec5512b-b132-4591-8437-18986fe56e01.png" alt="Como funciona a energia solar" className="max-w-full h-auto max-h-96 object-contain" />
-            </div>
-
-            {/* Yellow banner */}
-            <div className="bg-yellow-400 py-4 px-8 rounded-lg mb-8">
-              <h3 className="text-2xl font-bold text-slate-800 text-center">
-                SIMPLES, ECONÔMICO E EFICIENTE
-              </h3>
-            </div>
-
-            {/* Steps explanation */}
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <span className="text-xl font-bold text-slate-800">1.</span>
-                <p className="text-lg text-slate-700">Placas solares captam energia do calor do sol.</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="text-xl font-bold text-slate-800">2.</span>
-                <p className="text-lg text-slate-700">O sistema converte essa energia para uso direto na residência ou indústria.</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="text-xl font-bold text-slate-800">3.</span>
-                <p className="text-lg text-slate-700">A energia convertida pode ser utilizada em todos os aparelhos elétricos.</p>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="text-xl font-bold text-slate-800">4.</span>
-                <p className="text-lg text-slate-700">A energia não usada é armazenada, gerando crédito na concessionária.</p>
-              </div>
-            </div>
-
-            {/* Footer contact */}
-            <div className="mt-16 bg-slate-800 py-4 text-center">
-              <div className="flex justify-center space-x-8 text-white text-sm">
-                <span>67 99668-0242</span>
-                <span>Olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-              </div>
-            </div>
-          </div>
+        <section className="min-h-screen p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
+          backgroundImage: "url('/lovable-uploads/9ddc438a-746a-4847-96e7-d2a8ac899837.png')"
+        }}>
+          
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
