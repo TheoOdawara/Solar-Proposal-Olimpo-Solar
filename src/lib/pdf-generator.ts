@@ -143,12 +143,6 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
     pdf.text(splitText, 20, y);
   }
 
-  // Salvar PDF
-  const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-  pdf.save(fileName);
-};
-
-
   // === PÁGINAS 2 a 6: IMAGENS EXPLICATIVAS ===
   const imagePaths = [
     "/public/2.jpg",
@@ -164,3 +158,8 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
     pdf.addPage();
     pdf.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
   });
+
+  // Salvar PDF
+  const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+  pdf.save(fileName);
+};
