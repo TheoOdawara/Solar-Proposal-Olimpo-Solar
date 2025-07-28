@@ -161,9 +161,9 @@ All colors MUST be HSL.
   color-adjust: exact;
 }
 
+/* Remove page-break to prevent white pages in PDF */
 .page-break {
-  page-break-before: always;
-  break-before: page;
+  /* Only apply page breaks for print, not PDF generation */
 }
 
 @media print {
