@@ -1,7 +1,7 @@
+
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// Extend jsPDF to include autoTable
 declare module 'jspdf' {
   interface jsPDF {
     autoTable: typeof autoTable;
@@ -32,37 +32,23 @@ interface Calculations {
   totalValue: number;
 }
 
-export const generateProposalPDF = (formData: FormData, calculations: Calculations) => {
+export const generateProposalPDF = async (formData: FormData, calculations: Calculations) => {
   const pdf = new jsPDF();
   const pageWidth = pdf.internal.pageSize.width;
   const pageHeight = pdf.internal.pageSize.height;
 
-  // Cores da Olimpo Solar
-  const darkColor: [number, number, number]   = [  2,  33,  54]; // #022136
-  const accentColor:[number, number, number] = [255, 191,   6]; // #ffbf06
-  const whiteColor:[number, number, number]  = [255, 255, 255]; // #ffffff
+  const darkColor: [number, number, number]   = [  2,  33,  54];
+  const accentColor:[number, number, number] = [255, 191,   6];
+  const whiteColor:[number, number, number]  = [255, 255, 255];
 
-  // Helper para formatação e data
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   const formatDate = () =>
     new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-  // Quebra de página dinâmica
-  const addNewPageIfNeeded = (currentY: number, contentHeight: number) => {
-    if (currentY + contentHeight > pageHeight - 30) {
-      pdf.addPage();
-      return 30;
-    }
-    return currentY;
-  };
-
   let y = 30;
 
-  // === PÁGINA 1: CAPA ===
-  y = addNewPageIfNeeded(y, 180);
-  // Logo
   pdf.setFillColor(...accentColor);
   pdf.rect(pageWidth/2 - 20, y, 40, 20, 'F');
   pdf.setTextColor(...whiteColor);
@@ -72,13 +58,11 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   pdf.text('SOLAR', pageWidth/2, y + 16, { align: 'center' });
 
   y += 40;
-  // Título
   pdf.setTextColor(...darkColor);
   pdf.setFontSize(24);
   pdf.setFont('helvetica', 'bold');
   pdf.text('Proposta Comercial', pageWidth/2, y, { align: 'center' });
 
-  // Dados do cliente
   y += 30;
   pdf.setFontSize(16);
   pdf.setFont('helvetica', 'normal');
@@ -87,14 +71,13 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
 
   y += 20;
   pdf.text(`Endereço: ${formData.address}, ${formData.number} - ${formData.neighborhood}`, 20, y);
-  
+
   y += 10;
   pdf.text(`Cidade: ${formData.city}`, 20, y);
-  
+
   y += 10;  
   pdf.text(`Telefone: ${formData.phone}`, 20, y);
 
-  // Dados do sistema
   y += 30;
   pdf.setFontSize(18);
   pdf.setFont('helvetica', 'bold');
@@ -103,47 +86,23 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
   y += 20;
   pdf.setFontSize(14);
   pdf.setFont('helvetica', 'normal');
-  
+
   const systemData = [
     ['Potência do Sistema', `${formData.systemPower} kWp`],
-    ['Quantidade de Módulos', `${formData.moduleQuantity} unidades`],
+    ['Qtd. Módulos', `${formData.moduleQuantity} x ${formData.modulePower}W`],
     ['Marca dos Módulos', formData.moduleBrand],
-    ['Potência dos Módulos', `${formData.modulePower} W`],
     ['Marca do Inversor', formData.inverterBrand],
     ['Potência do Inversor', `${formData.inverterPower} W`],
-    ['Geração Mensal Estimada', `${calculations.monthlyGeneration} kWh`],
-    ['Economia Mensal Estimada', formatCurrency(calculations.monthlySavings)],
-    ['Área Necessária', `${calculations.requiredArea} m²`],
-    ['Valor Total do Projeto', formatCurrency(calculations.totalValue)],
-    ['Forma de Pagamento', formData.paymentMethod]
+    ['Método de Pagamento', formData.paymentMethod],
+    ['Observações', formData.observations || 'Nenhuma']
   ];
 
-  autoTable(pdf, {
-    startY: y,
-    head: [['Item', 'Valor']],
-    body: systemData,
-    theme: 'grid',
-    headStyles: { fillColor: accentColor, textColor: darkColor },
-    bodyStyles: { textColor: darkColor },
-    alternateRowStyles: { fillColor: [245, 245, 245] }
+  systemData.forEach(([label, value]) => {
+    y += 10;
+    pdf.text(`${label}: ${value}`, 20, y);
   });
 
-  // Observações se houver
-  if (formData.observations) {
-    pdf.addPage();
-    y = 30;
-    pdf.setFontSize(18);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Observações', 20, y);
-    
-    y += 20;
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'normal');
-    const splitText = pdf.splitTextToSize(formData.observations, pageWidth - 40);
-    pdf.text(splitText, 20, y);
-  }
-
-  // === PÁGINAS 2 a 6: IMAGENS EXPLICATIVAS ===
+  // === IMAGENS EXPLICATIVAS NAS PÁGINAS 2 a 6 ===
   const imagePaths = [
     "/public/2.jpg",
     "/public/3.jpg",
@@ -152,14 +111,79 @@ export const generateProposalPDF = (formData: FormData, calculations: Calculatio
     "/public/6.jpg"
   ];
 
-  imagePaths.forEach((imgUrl) => {
-    const img = new Image();
-    img.src = imgUrl;
-    pdf.addPage();
-    pdf.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
-  });
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+    });
+  };
 
-  // Salvar PDF
-  const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-  pdf.save(fileName);
+  const addImagePages = async () => {
+    for (const path of imagePaths) {
+      const img = await loadImage(path);
+      pdf.addPage();
+      pdf.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
+    }
+  };
+
+  
+  // IMAGEM 1
+  const img1 = await loadImage("/public/2.jpg");
+  pdf.addPage();
+  pdf.addImage(img1, "JPEG", 0, 0, pageWidth, pageHeight);
+
+  // IMAGEM 2
+  const img2 = await loadImage("/public/3.jpg");
+  pdf.addPage();
+  pdf.addImage(img2, "JPEG", 0, 0, pageWidth, pageHeight);
+
+  // CONTEÚDO PERSONALIZADO NA PÁGINA 4
+  pdf.addPage();
+  pdf.setFontSize(18);
+  pdf.setTextColor(...darkColor);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text("Resumo da Economia Estimada", pageWidth / 2, 30, { align: "center" });
+
+  pdf.setFontSize(14);
+  pdf.setFont('helvetica', 'normal');
+  const economiaMensal = formatCurrency(calculations.monthlySavings);
+  const economiaAnual = formatCurrency(calculations.monthlySavings * 12);
+  const economia25anos = formatCurrency(calculations.monthlySavings * 12 * 25);
+
+  pdf.text(`Economia Mensal Estimada: ${economiaMensal}`, 20, 60);
+  pdf.text(`Economia Anual Estimada: ${economiaAnual}`, 20, 75);
+  pdf.text(`Economia em 25 anos: ${economia25anos}`, 20, 90);
+
+  // IMAGEM 3
+  const img3 = await loadImage("/public/4.jpg");
+  pdf.addPage();
+  pdf.addImage(img3, "JPEG", 0, 0, pageWidth, pageHeight);
+
+  // IMAGEM 4
+  const img4 = await loadImage("/public/5.jpg");
+  pdf.addPage();
+  pdf.addImage(img4, "JPEG", 0, 0, pageWidth, pageHeight);
+
+  // IMAGEM 5
+  const img5 = await loadImage("/public/6.jpg");
+  pdf.addPage();
+  pdf.addImage(img5, "JPEG", 0, 0, pageWidth, pageHeight);
+
+  // PÁGINA FINAL COM QR CODE
+  pdf.addPage();
+  pdf.setFontSize(18);
+  pdf.text("Fale agora com um consultor Olimpo", pageWidth / 2, 40, { align: "center" });
+
+  const qrImage = await loadImage("/public/qr-whatsapp.png");
+  pdf.addImage(qrImage, "PNG", pageWidth / 2 - 40, 60, 80, 80);
+  pdf.setFontSize(12);
+  pdf.text("Escaneie o QR Code acima ou acesse:", pageWidth / 2, 150, { align: "center" });
+  pdf.setTextColor(0, 102, 204);
+  pdf.textWithLink("https://wa.me/seunumerowhatsapp", pageWidth / 2, 165, {
+    align: "center",
+    url: "https://wa.me/seunumerowhatsapp"
+  });
+    
 };
