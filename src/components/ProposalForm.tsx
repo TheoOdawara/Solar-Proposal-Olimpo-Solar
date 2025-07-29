@@ -33,6 +33,10 @@ interface FormData {
   inverterBrand: string;
   inverterPower: number;
 
+  // Dados da economia
+  averageBill: number;
+  connectionType: string;
+
   // Complementos
   paymentMethod: string;
   observations: string;
@@ -81,6 +85,8 @@ const ProposalForm = ({
     moduleBrand: '',
     inverterBrand: '',
     inverterPower: 0,
+    averageBill: 0,
+    connectionType: '',
     paymentMethod: '',
     observations: ''
   });
@@ -195,7 +201,7 @@ const ProposalForm = ({
     handleInputChange('phone', formatted);
   };
   const validateForm = () => {
-    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'paymentMethod'];
+    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'averageBill', 'connectionType', 'paymentMethod'];
     for (const field of requiredFields) {
       if (!formData[field as keyof FormData]) {
         toast({
@@ -206,14 +212,25 @@ const ProposalForm = ({
         return false;
       }
     }
+    
+    // Validação específica para averageBill
+    if (formData.averageBill <= 0) {
+      toast({
+        title: "Valor inválido",
+        description: "O valor médio da conta de luz deve ser um número positivo.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
     return true;
   };
   const isFormValid = () => {
-    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'paymentMethod'];
+    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'averageBill', 'connectionType', 'paymentMethod'];
     return requiredFields.every(field => {
       const value = formData[field as keyof FormData];
       return value !== '' && value !== 0;
-    });
+    }) && formData.averageBill > 0;
   };
   const generateProposal = () => {
     if (!validateForm()) return;
@@ -424,6 +441,39 @@ const ProposalForm = ({
               <div>
                 <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
                 <Input id="inverterPower" type="number" value={formData.inverterPower || ''} onChange={e => handleInputChange('inverterPower', parseInt(e.target.value) || 0)} placeholder="5000" />
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+            
+            {/* Dados para Cálculo de Economia */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-muted-foreground">Dados para Cálculo de Economia</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="averageBill">Valor médio da conta de luz (R$/mês) *</Label>
+                  <Input 
+                    id="averageBill" 
+                    type="number" 
+                    step="0.01"
+                    value={formData.averageBill || ''} 
+                    onChange={e => handleInputChange('averageBill', parseFloat(e.target.value) || 0)} 
+                    placeholder="380.00" 
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="connectionType">Tipo de ligação elétrica *</Label>
+                  <Select value={formData.connectionType} onValueChange={value => handleInputChange('connectionType', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo de ligação" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bifasico">Bifásico</SelectItem>
+                      <SelectItem value="trifasico">Trifásico</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </CardContent>
