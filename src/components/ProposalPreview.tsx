@@ -210,7 +210,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
     {/* Logo */}
     <div className="absolute top-6 right-6">
-      <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
+      
     </div>
 
     <h2 className="text-4xl font-extrabold text-center text-slate-800 mb-12">Seu Projeto:</h2>
