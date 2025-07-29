@@ -156,8 +156,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 3: COMO FUNCIONA */}
         <section className="a4-page p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
-          backgroundImage: "url('/lovable-uploads/9ddc438a-746a-4847-96e7-d2a8ac899837.png')"
-        }}>
+        backgroundImage: "url('/lovable-uploads/9ddc438a-746a-4847-96e7-d2a8ac899837.png')"
+      }}>
           
         </section>
 
@@ -224,21 +224,32 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
     {/* Ícones dos Equipamentos */}
     <div className="grid grid-cols-3 gap-6 mb-12">
-      {[
-        { icon: <Zap />, label: `${formData.moduleQuantity} Painéis` },
-        { icon: <Battery />, label: `Inversor ${formData.inverterBrand}` },
-        { icon: <Wrench />, label: 'Estrutura' },
-        { icon: <Lightbulb />, label: 'Monitoramento' },
-        { icon: <DollarSign />, label: 'Economia' },
-        { icon: <BarChart3 />, label: `Potência ${formData.systemPower}kWp` }
-      ].map((item, idx) => (
-        <div key={idx} className="flex flex-col items-center bg-white rounded-xl border border-slate-200 shadow-md p-4 text-center">
+      {[{
+              icon: <Zap />,
+              label: `${formData.moduleQuantity} Painéis`
+            }, {
+              icon: <Battery />,
+              label: `Inversor ${formData.inverterBrand}`
+            }, {
+              icon: <Wrench />,
+              label: 'Estrutura'
+            }, {
+              icon: <Lightbulb />,
+              label: 'Monitoramento'
+            }, {
+              icon: <DollarSign />,
+              label: 'Economia'
+            }, {
+              icon: <BarChart3 />,
+              label: `Potência ${formData.systemPower}kWp`
+            }].map((item, idx) => <div key={idx} className="flex flex-col items-center bg-white rounded-xl border border-slate-200 shadow-md p-4 text-center">
           <div className="w-14 h-14 flex items-center justify-center rounded-full bg-yellow-100 mb-3">
-            {React.cloneElement(item.icon, { className: "h-6 w-6 text-yellow-600" })}
+            {React.cloneElement(item.icon, {
+                  className: "h-6 w-6 text-yellow-600"
+                })}
           </div>
           <p className="text-sm font-medium text-slate-700">{item.label}</p>
-        </div>
-      ))}
+        </div>)}
     </div>
 
     {/* Garantias */}
@@ -269,15 +280,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
     </div>
 
     {/* Rodapé de Contato */}
-    <div className="bg-slate-800 text-white text-center text-sm rounded-xl py-4 mt-6">
-      <div className="space-y-2">
-        <p>📞 67 99668-0242 | 📱 @Olimpo.energiasolar</p>
-        <p>📧 adm.olimposolar@gmail.com</p>
-        <p>📍 R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande - MS</p>
-      </div>
-    </div>
+    
   </div>
-</section>
+      </section>
 
         {/* PÁGINA 8: RENTABILIDADE */}
         <section className="a4-page bg-white p-8 page-break">
