@@ -85,13 +85,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
     // Definir valor da conta com energia solar baseado no tipo de ligação
     const solarBill = formData.connectionType === 'bifasico' ? 120 : 300;
-    
+
     // Cálculos
     const currentBillPerYear = formData.averageBill * 12;
     const billWithSolarPerYear = solarBill * 12;
     const savingsPerMonth = formData.averageBill - solarBill;
     const savingsPerYear = currentBillPerYear - billWithSolarPerYear;
-
     return {
       currentBillPerYear,
       currentBillPerMonth: formData.averageBill,
@@ -101,7 +100,6 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       savingsPerMonth
     };
   };
-
   const metricas = calculateRealMetrics();
   const economyData = calculateEconomyData();
   return <div className="min-h-screen bg-background">
@@ -314,8 +312,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       </section>
 
         {/* PÁGINA 8: SUA ECONOMIA - Nova seção */}
-        {economyData && (
-          <section className="a4-page page-break" style={{backgroundColor: '#022136'}}>
+        {economyData && <section className="a4-page page-break" style={{
+        backgroundColor: '#022136'
+      }}>
             <div className="max-w-4xl mx-auto py-16 px-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
@@ -323,8 +322,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               {/* Título */}
-              <h2 className="text-4xl font-bold text-center mb-16" style={{color: '#ffffff'}}>
-                SUA <span style={{color: '#ffbf06'}}>ECONOMIA</span>
+              <h2 className="text-4xl font-bold text-center mb-16" style={{
+            color: '#ffffff'
+          }}>
+                SUA <span style={{
+              color: '#ffbf06'
+            }}>ECONOMIA</span>
               </h2>
 
               {/* Three columns layout */}
@@ -364,11 +367,15 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   <h3 className="text-xl font-bold mb-8">Sua economia será de:</h3>
                   <div className="space-y-4">
                     <div>
-                      <div className="text-3xl font-bold" style={{color: '#ffbf06'}}>{formatCurrency(economyData.savingsPerYear)}</div>
+                      <div className="text-3xl font-bold" style={{
+                    color: '#ffbf06'
+                  }}>{formatCurrency(economyData.savingsPerYear)}</div>
                       <div className="text-lg">/ ano</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold" style={{color: '#ffbf06'}}>{formatCurrency(economyData.savingsPerMonth)}</div>
+                      <div className="text-2xl font-bold" style={{
+                    color: '#ffbf06'
+                  }}>{formatCurrency(economyData.savingsPerMonth)}</div>
                       <div className="text-base">/ mês</div>
                     </div>
                   </div>
@@ -376,7 +383,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               {/* Footer contact */}
-              <div className="mt-16 py-4 text-center rounded-lg" style={{backgroundColor: '#ffbf06'}}>
+              <div className="mt-16 py-4 text-center rounded-lg" style={{
+            backgroundColor: '#ffbf06'
+          }}>
                 <div className="flex justify-center space-x-6 text-black text-sm font-semibold">
                   <span>(67) 99668-0242</span>
                   <span>olimpo.energiasolar</span>
@@ -385,12 +394,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 </div>
               </div>
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* GRÁFICOS INFORMATIVOS - SEU RETORNO E SUA RENTABILIDADE */}
-        {economyData && (
-          <section className="a4-page page-break" style={{backgroundColor: '#022136'}}>
+        {economyData && <section className="a4-page page-break" style={{
+        backgroundColor: '#022136'
+      }}>
             <div className="max-w-4xl mx-auto py-16 px-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
@@ -400,38 +409,42 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               {/* GRÁFICO 1: SEU RETORNO */}
               <div className="mb-16">
                 {(() => {
-                  // Calcular dados do retorno
-                  const annualSavings = economyData.savingsPerYear;
-                  const investmentValue = calculations.totalValue;
-                  const paybackYears = Math.ceil(investmentValue / annualSavings);
-                  
-                  // Gerar dados para 25 anos
-                  const returnData = [];
-                  let cumulativeReturn = -investmentValue; // Começar negativo (investimento)
-                  
-                  for (let year = 0; year <= 25; year++) {
-                    if (year === 0) {
-                      returnData.push({
-                        year: `Ano ${year}`,
-                        accumulated: cumulativeReturn,
-                        color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e'
-                      });
-                    } else {
-                      cumulativeReturn += annualSavings;
-                      returnData.push({
-                        year: `Ano ${year}`,
-                        accumulated: cumulativeReturn,
-                        color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e'
-                      });
-                    }
-                  }
+              // Calcular dados do retorno
+              const annualSavings = economyData.savingsPerYear;
+              const investmentValue = calculations.totalValue;
+              const paybackYears = Math.ceil(investmentValue / annualSavings);
 
-                  return (
-                    <>
-                      <h2 className="text-4xl font-bold text-center mb-4" style={{color: '#ffffff'}}>
-                        SEU <span style={{color: '#ffbf06'}}>RETORNO</span>
+              // Gerar dados para 25 anos
+              const returnData = [];
+              let cumulativeReturn = -investmentValue; // Começar negativo (investimento)
+
+              for (let year = 0; year <= 25; year++) {
+                if (year === 0) {
+                  returnData.push({
+                    year: `Ano ${year}`,
+                    accumulated: cumulativeReturn,
+                    color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e'
+                  });
+                } else {
+                  cumulativeReturn += annualSavings;
+                  returnData.push({
+                    year: `Ano ${year}`,
+                    accumulated: cumulativeReturn,
+                    color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e'
+                  });
+                }
+              }
+              return <>
+                      <h2 className="text-4xl font-bold text-center mb-4" style={{
+                  color: '#ffffff'
+                }}>
+                        SEU <span style={{
+                    color: '#ffbf06'
+                  }}>RETORNO</span>
                       </h2>
-                      <h3 className="text-xl text-center mb-8" style={{color: '#ffffff'}}>
+                      <h3 className="text-xl text-center mb-8" style={{
+                  color: '#ffffff'
+                }}>
                         Retorno de investimento em {paybackYears} anos
                       </h3>
                       
@@ -439,40 +452,38 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                         <div className="h-80">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={returnData.filter((_, index) => index % 2 === 0 || index <= 10)} margin={{
-                              top: 20,
-                              right: 30,
-                              left: 20,
-                              bottom: 20
-                            }}>
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 20
+                      }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                              <XAxis 
-                                dataKey="year" 
-                                axisLine={{ stroke: '#374151', strokeWidth: 1 }}
-                                tickLine={{ stroke: '#374151' }}
-                                tick={{ fill: '#374151', fontSize: 12 }}
-                                angle={-45}
-                                textAnchor="end"
-                                height={60}
-                              />
-                              <YAxis 
-                                axisLine={{ stroke: '#374151', strokeWidth: 1 }}
-                                tickLine={{ stroke: '#374151' }}
-                                tick={{ fill: '#374151', fontSize: 12 }}
-                                tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
-                              />
-                              <Tooltip 
-                                contentStyle={{
-                                  backgroundColor: '#ffffff',
-                                  border: '1px solid #374151',
-                                  borderRadius: '8px',
-                                  color: '#374151'
-                                }}
-                                formatter={(value) => [formatCurrency(Number(value)), 'Retorno Acumulado']}
-                              />
+                              <XAxis dataKey="year" axisLine={{
+                          stroke: '#374151',
+                          strokeWidth: 1
+                        }} tickLine={{
+                          stroke: '#374151'
+                        }} tick={{
+                          fill: '#374151',
+                          fontSize: 12
+                        }} angle={-45} textAnchor="end" height={60} />
+                              <YAxis axisLine={{
+                          stroke: '#374151',
+                          strokeWidth: 1
+                        }} tickLine={{
+                          stroke: '#374151'
+                        }} tick={{
+                          fill: '#374151',
+                          fontSize: 12
+                        }} tickFormatter={value => `R$ ${(value / 1000).toFixed(0)}k`} />
+                              <Tooltip contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #374151',
+                          borderRadius: '8px',
+                          color: '#374151'
+                        }} formatter={value => [formatCurrency(Number(value)), 'Retorno Acumulado']} />
                               <Bar dataKey="accumulated" radius={[2, 2, 0, 0]}>
-                                {returnData.filter((_, index) => index % 2 === 0 || index <= 10).map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
+                                {returnData.filter((_, index) => index % 2 === 0 || index <= 10).map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                               </Bar>
                               {/* Linha de referência no zero */}
                               <ReferenceLine y={0} stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" />
@@ -480,89 +491,77 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                           </ResponsiveContainer>
                         </div>
                       </div>
-                    </>
-                  );
-                })()}
+                    </>;
+            })()}
               </div>
 
               {/* GRÁFICO 2: SUA RENTABILIDADE */}
               <div className="mb-8">
                 {(() => {
-                  // Dados para comparação (valores em 5 anos para R$ 50.000)
-                  const investmentBase = 50000;
-                  const rentabilityData = [
-                    {
-                      investment: 'Poupança',
-                      percentage: 27,
-                      value: investmentBase * 1.27,
-                      color: '#9ca3af'
-                    },
-                    {
-                      investment: 'CDB',
-                      percentage: 45,
-                      value: investmentBase * 1.45,
-                      color: '#f97316'
-                    },
-                    {
-                      investment: 'Energia Solar',
-                      percentage: 180,
-                      value: investmentBase * 1.80,
-                      color: '#ffbf06'
-                    }
-                  ];
-
-                  return (
-                    <>
-                      <h2 className="text-4xl font-bold text-center mb-8" style={{color: '#ffffff'}}>
-                        SUA <span style={{color: '#ffbf06'}}>RENTABILIDADE</span>
+              // Dados para comparação (valores em 5 anos para R$ 50.000)
+              const investmentBase = 50000;
+              const rentabilityData = [{
+                investment: 'Poupança',
+                percentage: 27,
+                value: investmentBase * 1.27,
+                color: '#9ca3af'
+              }, {
+                investment: 'CDB',
+                percentage: 45,
+                value: investmentBase * 1.45,
+                color: '#f97316'
+              }, {
+                investment: 'Energia Solar',
+                percentage: 180,
+                value: investmentBase * 1.80,
+                color: '#ffbf06'
+              }];
+              return <>
+                      <h2 className="text-4xl font-bold text-center mb-8" style={{
+                  color: '#ffffff'
+                }}>
+                        SUA <span style={{
+                    color: '#ffbf06'
+                  }}>RENTABILIDADE</span>
                       </h2>
                       
                       <div className="bg-white rounded-lg p-6">
                         <div className="h-80">
                           <ResponsiveContainer width="100%" height="100%">
-                            <BarChart 
-                              layout="horizontal" 
-                              data={rentabilityData} 
-                              margin={{
-                                top: 20,
-                                right: 30,
-                                left: 120,
-                                bottom: 20
-                              }}
-                            >
+                            <BarChart layout="horizontal" data={rentabilityData} margin={{
+                        top: 20,
+                        right: 30,
+                        left: 120,
+                        bottom: 20
+                      }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                              <XAxis 
-                                type="number" 
-                                domain={[0, 100000]}
-                                axisLine={{ stroke: '#374151', strokeWidth: 1 }}
-                                tickLine={{ stroke: '#374151' }}
-                                tick={{ fill: '#374151', fontSize: 12 }}
-                                tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
-                              />
-                              <YAxis 
-                                type="category" 
-                                dataKey="investment" 
-                                axisLine={{ stroke: '#374151', strokeWidth: 1 }}
-                                tickLine={{ stroke: '#374151' }}
-                                tick={{ fill: '#374151', fontSize: 14, fontWeight: 'bold' }}
-                                width={120}
-                              />
-                              <Tooltip 
-                                contentStyle={{
-                                  backgroundColor: '#ffffff',
-                                  border: '1px solid #374151',
-                                  borderRadius: '8px',
-                                  color: '#374151'
-                                }}
-                                formatter={(value, name, props) => [
-                                  `${formatCurrency(Number(value))} (${props.payload.percentage}%)`,
-                                  'Retorno em 5 anos'
-                                ]}
-                              />
+                              <XAxis type="number" domain={[0, 100000]} axisLine={{
+                          stroke: '#374151',
+                          strokeWidth: 1
+                        }} tickLine={{
+                          stroke: '#374151'
+                        }} tick={{
+                          fill: '#374151',
+                          fontSize: 12
+                        }} tickFormatter={value => `R$ ${(value / 1000).toFixed(0)}k`} />
+                              <YAxis type="category" dataKey="investment" axisLine={{
+                          stroke: '#374151',
+                          strokeWidth: 1
+                        }} tickLine={{
+                          stroke: '#374151'
+                        }} tick={{
+                          fill: '#374151',
+                          fontSize: 14,
+                          fontWeight: 'bold'
+                        }} width={120} />
+                              <Tooltip contentStyle={{
+                          backgroundColor: '#ffffff',
+                          border: '1px solid #374151',
+                          borderRadius: '8px',
+                          color: '#374151'
+                        }} formatter={(value, name, props) => [`${formatCurrency(Number(value))} (${props.payload.percentage}%)`, 'Retorno em 5 anos']} />
                               <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                                {rentabilityData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
+                                {rentabilityData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                               </Bar>
                             </BarChart>
                           </ResponsiveContainer>
@@ -573,13 +572,14 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                           <p>Comparação baseada em investimento de R$ 50.000 em 5 anos</p>
                         </div>
                       </div>
-                    </>
-                  );
-                })()}
+                    </>;
+            })()}
               </div>
 
               {/* Footer contact */}
-              <div className="mt-16 py-4 text-center rounded-lg" style={{backgroundColor: '#ffbf06'}}>
+              <div className="mt-16 py-4 text-center rounded-lg" style={{
+            backgroundColor: '#ffbf06'
+          }}>
                 <div className="flex justify-center space-x-6 text-black text-sm font-semibold">
                   <span>(67) 99668-0242</span>
                   <span>olimpo.energiasolar</span>
@@ -588,8 +588,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 </div>
               </div>
             </div>
-          </section>
-        )}
+          </section>}
 
         {/* PÁGINA 9: RENTABILIDADE */}
         <section className="a4-page bg-white p-8 page-break">
@@ -600,70 +599,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
             {/* Aerial View Placeholder */}
-            <div className="bg-gray-200 h-64 rounded-lg mb-12 flex items-center justify-center">
-              <p className="text-gray-500">Vista Aérea - Imagem Personalizada do Cliente: {formData.clientName}</p>
-            </div>
+            
 
             {/* Horizontal Bar Chart - Rentabilidade */}
-            <div style={{
-            backgroundColor: '#022136'
-          }} className="rounded-lg p-8 text-white mb-12">
-              <h2 className="text-3xl font-bold text-center mb-8 text-white">
-                Rentabilidade: Comparativo de Investimento
-              </h2>
-              
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart layout="horizontal" data={[{
-                  name: 'Poupança',
-                  valor: 3
-                }, {
-                  name: 'CBD',
-                  valor: 8
-                }, {
-                  name: 'Energia Solar',
-                  valor: calculateSolarROI()
-                }]} margin={{
-                  top: 20,
-                  right: 30,
-                  left: 120,
-                  bottom: 20
-                }}>
-                    <CartesianGrid stroke="#ffffff" strokeOpacity={0.3} />
-                    <XAxis type="number" domain={[0, 20]} axisLine={{
-                    stroke: '#ffffff',
-                    strokeWidth: 1
-                  }} tickLine={{
-                    stroke: '#ffffff'
-                  }} tick={{
-                    fill: '#ffffff',
-                    fontSize: 12
-                  }} />
-                    <YAxis type="category" dataKey="name" axisLine={{
-                    stroke: '#ffffff',
-                    strokeWidth: 1
-                  }} tickLine={{
-                    stroke: '#ffffff'
-                  }} tick={{
-                    fill: '#ffffff',
-                    fontSize: 14,
-                    fontWeight: 'bold'
-                  }} width={120} />
-                    <Tooltip contentStyle={{
-                    backgroundColor: '#022136',
-                    border: '1px solid #ffffff',
-                    borderRadius: '8px',
-                    color: '#ffffff'
-                  }} formatter={value => [`${value}% a.a.`, 'Rentabilidade']} />
-                    <Bar dataKey="valor" radius={[0, 4, 4, 0]}>
-                      <Cell fill="#ef4444" />
-                      <Cell fill="#f97316" />
-                      <Cell fill="#22c55e" />
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            
 
             {/* Vertical Bar Chart - Capacidade de Geração */}
             <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
