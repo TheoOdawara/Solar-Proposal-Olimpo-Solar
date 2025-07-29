@@ -17,6 +17,8 @@ interface FormData {
   moduleBrand: string;
   inverterBrand: string;
   inverterPower: number;
+  averageBill: number;
+  connectionType: string;
   paymentMethod: string;
   observations: string;
 }
@@ -74,7 +76,34 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
     const roi = annualSavings / calculations.totalValue * 100;
     return Math.round(roi * 10) / 10; // arredondar para 1 casa decimal
   };
+
+  // Cálculos da economia baseados nos novos campos
+  const calculateEconomyData = () => {
+    if (!formData.averageBill || !formData.connectionType) {
+      return null;
+    }
+
+    // Definir valor da conta com energia solar baseado no tipo de ligação
+    const solarBill = formData.connectionType === 'bifasico' ? 120 : 300;
+    
+    // Cálculos
+    const currentBillPerYear = formData.averageBill * 12;
+    const billWithSolarPerYear = solarBill * 12;
+    const savingsPerMonth = formData.averageBill - solarBill;
+    const savingsPerYear = currentBillPerYear - billWithSolarPerYear;
+
+    return {
+      currentBillPerYear,
+      currentBillPerMonth: formData.averageBill,
+      billWithSolarPerYear,
+      billWithSolarPerMonth: solarBill,
+      savingsPerYear,
+      savingsPerMonth
+    };
+  };
+
   const metricas = calculateRealMetrics();
+  const economyData = calculateEconomyData();
   return <div className="min-h-screen bg-background">
       {/* Navegação */}
       <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
@@ -284,7 +313,82 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   </div>
       </section>
 
-        {/* PÁGINA 8: RENTABILIDADE */}
+        {/* PÁGINA 8: SUA ECONOMIA - Nova seção */}
+        {economyData && (
+          <section className="a4-page page-break" style={{backgroundColor: '#022136'}}>
+            <div className="max-w-4xl mx-auto py-16 px-8">
+              {/* Logo */}
+              <div className="absolute top-8 right-8">
+                <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
+              </div>
+
+              {/* Título */}
+              <h2 className="text-4xl font-bold text-center mb-16" style={{color: '#ffffff'}}>
+                SUA <span style={{color: '#ffbf06'}}>ECONOMIA</span>
+              </h2>
+
+              {/* Three columns layout */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-white">
+                {/* Sem energia solar */}
+                <div className="space-y-6">
+                  <h3 className="text-xl font-bold mb-8">Sem energia solar</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-3xl font-bold">{formatCurrency(economyData.currentBillPerYear)}</div>
+                      <div className="text-lg">/ ano</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold">{formatCurrency(economyData.currentBillPerMonth)}</div>
+                      <div className="text-base">/ mês</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Com energia solar */}
+                <div className="space-y-6">
+                  <h3 className="text-xl font-bold mb-8">Com energia solar</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-3xl font-bold">{formatCurrency(economyData.billWithSolarPerYear)}</div>
+                      <div className="text-lg">/ ano</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold">{formatCurrency(economyData.billWithSolarPerMonth)}</div>
+                      <div className="text-base">/ mês</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sua economia será de */}
+                <div className="space-y-6">
+                  <h3 className="text-xl font-bold mb-8">Sua economia será de:</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-3xl font-bold" style={{color: '#ffbf06'}}>{formatCurrency(economyData.savingsPerYear)}</div>
+                      <div className="text-lg">/ ano</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold" style={{color: '#ffbf06'}}>{formatCurrency(economyData.savingsPerMonth)}</div>
+                      <div className="text-base">/ mês</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer contact */}
+              <div className="mt-16 py-4 text-center rounded-lg" style={{backgroundColor: '#ffbf06'}}>
+                <div className="flex justify-center space-x-6 text-black text-sm font-semibold">
+                  <span>(67) 99668-0242</span>
+                  <span>olimpo.energiasolar</span>
+                  <span>adm.olimposolar@gmail.com</span>
+                  <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* PÁGINA 9: RENTABILIDADE */}
         <section className="a4-page bg-white p-8 page-break">
           <div className="max-w-4xl mx-auto py-16">
             {/* Logo */}
@@ -376,7 +480,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   <div className="w-4 h-4 rounded" style={{
                   backgroundColor: '#ffbf06'
                 }}></div>
-                  
+                  <span className="text-sm font-semibold">Geração</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-gray-400 rounded"></div>
