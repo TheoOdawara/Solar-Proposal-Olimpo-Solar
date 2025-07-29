@@ -118,7 +118,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       </div>
 
       {/* Conteúdo da Proposta */}
-      <div id="proposal-content" className="max-w-4xl mx-auto bg-white print-optimized">
+      <div id="pdf-content" className="max-w-4xl mx-auto bg-white print-optimized">
         
         {/* PÁGINA 1: CAPA - Baseado na primeira imagem */}
         <section className="a4-page bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden page-break">

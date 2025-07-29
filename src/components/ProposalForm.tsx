@@ -238,7 +238,7 @@ const ProposalForm = ({
   };
   const generatePDFFromHTML = async () => {
     try {
-      const element = document.getElementById('proposal-content');
+      const element = document.getElementById('pdf-content');
       if (!element) {
         throw new Error('Elemento de proposta não encontrado');
       }
