@@ -176,7 +176,7 @@ const AuthPage = () => {
                         <Input
                           id="confirm-password"
                           type="password"
-                          placeholder="•• refresher foram"
+                          placeholder="••••••••"
                           className="pl-10 border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200"
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
