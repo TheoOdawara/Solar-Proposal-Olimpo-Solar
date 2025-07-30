@@ -79,21 +79,21 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
   // Cálculos da economia baseados nos novos campos
   const calculateEconomyData = () => {
-    if (!formData.averageBill || !formData.connectionType) {
-      return null;
-    }
+    // Usar valores padrão quando os dados não estão disponíveis
+    const averageBill = formData.averageBill || 500; // Valor padrão: R$ 500
+    const connectionType = formData.connectionType || 'bifasico'; // Tipo padrão: bifásico
 
     // Definir valor da conta com energia solar baseado no tipo de ligação
-    const solarBill = formData.connectionType === 'bifasico' ? 120 : 300;
+    const solarBill = connectionType === 'bifasico' ? 120 : 300;
 
     // Cálculos
-    const currentBillPerYear = formData.averageBill * 12;
+    const currentBillPerYear = averageBill * 12;
     const billWithSolarPerYear = solarBill * 12;
-    const savingsPerMonth = formData.averageBill - solarBill;
+    const savingsPerMonth = averageBill - solarBill;
     const savingsPerYear = currentBillPerYear - billWithSolarPerYear;
     return {
       currentBillPerYear,
-      currentBillPerMonth: formData.averageBill,
+      currentBillPerMonth: averageBill,
       billWithSolarPerYear,
       billWithSolarPerMonth: solarBill,
       savingsPerYear,
@@ -397,7 +397,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           </section>}
 
         {/* GRÁFICOS INFORMATIVOS - SEU RETORNO E SUA RENTABILIDADE */}
-        {economyData && <section className="a4-page page-break" style={{
+        <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
             <div className="max-w-4xl mx-auto py-16 px-8">
@@ -588,7 +588,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 </div>
               </div>
             </div>
-          </section>}
+          </section>
 
         {/* PÁGINA 9: RENTABILIDADE */}
         <section className="a4-page bg-white p-8 page-break">
