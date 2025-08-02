@@ -21,6 +21,8 @@ interface FormData {
   number: string;
   neighborhood: string;
   city: string;
+  state: string;
+  cep: string;
   phone: string;
 
   // Dados do projeto
@@ -76,6 +78,8 @@ const ProposalForm = ({
     number: '',
     neighborhood: '',
     city: '',
+    state: '',
+    cep: '',
     phone: '',
     monthlyConsumption: 0,
     desiredKwh: 0,
@@ -96,6 +100,7 @@ const ProposalForm = ({
     requiredArea: 0,
     totalValue: 0
   });
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   // Cálculos automáticos baseados nos dados do projeto
   useEffect(() => {
@@ -188,25 +193,104 @@ const ProposalForm = ({
       currency: 'BRL'
     }).format(value);
   };
-  const formatPhone = (phone: string) => {
-    const cleaned = phone.replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
-    if (match) {
-      return `(${match[1]}) ${match[2]}-${match[3]}`;
-    }
-    return phone;
+  // Formatação de telefone aprimorada
+  const formatPhone = (value: string) => {
+    return value
+      .replace(/\D/g, "")
+      .replace(/^(\d{2})(\d)/g, "($1) $2")
+      .replace(/(\d{5})(\d{4})$/, "$1-$2");
   };
+
   const handlePhoneChange = (value: string) => {
     const formatted = formatPhone(value);
     handleInputChange('phone', formatted);
   };
-  const validateForm = () => {
-    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'systemPower', 'moduleQuantity', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'averageBill', 'connectionType', 'paymentMethod'];
-    for (const field of requiredFields) {
-      if (!formData[field as keyof FormData]) {
+
+  // Formatação de CEP
+  const formatCep = (value: string) => {
+    return value
+      .replace(/\D/g, "")
+      .replace(/^(\d{5})(\d)/, "$1-$2")
+      .substring(0, 9);
+  };
+
+  // Busca endereço via ViaCEP
+  const fetchAddressByCep = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, "");
+    
+    if (cleanCep.length !== 8) return;
+    
+    setIsLoadingCep(true);
+    
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const data = await response.json();
+      
+      if (data.erro) {
         toast({
-          title: "Campos obrigatórios",
-          description: "Por favor, preencha todos os campos obrigatórios.",
+          title: "CEP não encontrado",
+          description: "Verifique o CEP digitado e tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setFormData((prev) => ({
+        ...prev,
+        city: data.localidade || "",
+        state: data.uf || "",
+        neighborhood: data.bairro || prev.neighborhood,
+        address: data.logradouro || prev.address,
+      }));
+
+      toast({
+        title: "Endereço encontrado!",
+        description: "Dados preenchidos automaticamente via CEP.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao buscar CEP",
+        description: "Não foi possível buscar o endereço. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingCep(false);
+    }
+  };
+
+  const handleCepChange = (value: string) => {
+    const formatted = formatCep(value);
+    handleInputChange('cep', formatted);
+    
+    // Busca automaticamente quando CEP tiver 8 dígitos
+    const cleanCep = formatted.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      fetchAddressByCep(formatted);
+    }
+  };
+  // Validação aprimorada com campos obrigatórios
+  const validateForm = () => {
+    const requiredFields = [
+      { field: 'clientName', label: 'Nome do Cliente' },
+      { field: 'cep', label: 'CEP' },
+      { field: 'phone', label: 'Telefone' },
+      { field: 'monthlyConsumption', label: 'Consumo Mensal' },
+      { field: 'desiredKwh', label: 'kWh Desejados' },
+      { field: 'modulePower', label: 'Potência do Módulo' },
+      { field: 'moduleBrand', label: 'Marca dos Módulos' },
+      { field: 'inverterBrand', label: 'Marca do Inversor' },
+      { field: 'inverterPower', label: 'Potência do Inversor' },
+      { field: 'averageBill', label: 'Valor Médio da Conta' },
+      { field: 'connectionType', label: 'Tipo de Ligação' },
+      { field: 'paymentMethod', label: 'Forma de Pagamento' }
+    ];
+
+    for (const { field, label } of requiredFields) {
+      const value = formData[field as keyof FormData];
+      if (!value || value === 0 || value === '') {
+        toast({
+          title: "Campo obrigatório",
+          description: `Por favor, preencha o campo: ${label}.`,
           variant: "destructive"
         });
         return false;
@@ -218,6 +302,17 @@ const ProposalForm = ({
       toast({
         title: "Valor inválido",
         description: "O valor médio da conta de luz deve ser um número positivo.",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    // Validação do CEP
+    const cleanCep = formData.cep.replace(/\D/g, "");
+    if (cleanCep.length !== 8) {
+      toast({
+        title: "CEP inválido",
+        description: "Por favor, digite um CEP válido com 8 dígitos.",
         variant: "destructive"
       });
       return false;
@@ -367,35 +462,104 @@ const ProposalForm = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Label htmlFor="clientName">Nome do Cliente *</Label>
-                <Input id="clientName" value={formData.clientName} onChange={e => handleInputChange('clientName', e.target.value)} placeholder="Nome completo do cliente" />
+                <Input 
+                  id="clientName" 
+                  value={formData.clientName} 
+                  onChange={e => handleInputChange('clientName', e.target.value)} 
+                  placeholder="Nome completo do cliente" 
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                />
               </div>
               
               <div>
-                <Label htmlFor="address">Endereço *</Label>
-                <Input id="address" value={formData.address} onChange={e => handleInputChange('address', e.target.value)} placeholder="Rua, Avenida..." />
+                <Label htmlFor="cep">CEP *</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input 
+                    id="cep" 
+                    value={formData.cep} 
+                    onChange={e => handleCepChange(e.target.value)} 
+                    placeholder="00000-000" 
+                    className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    disabled={isLoadingCep}
+                  />
+                  {isLoadingCep && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    </div>
+                  )}
+                </div>
               </div>
-              
+
               <div>
-                <Label htmlFor="number">Número *</Label>
-                <Input id="number" value={formData.number} onChange={e => handleInputChange('number', e.target.value)} placeholder="123" />
-              </div>
-              
-              <div>
-                <Label htmlFor="neighborhood">Bairro *</Label>
-                <Input id="neighborhood" value={formData.neighborhood} onChange={e => handleInputChange('neighborhood', e.target.value)} placeholder="Nome do bairro" />
-              </div>
-              
-              <div>
-                <Label htmlFor="city">Cidade *</Label>
-                <Input id="city" value={formData.city} onChange={e => handleInputChange('city', e.target.value)} placeholder="Campo Grande" />
-              </div>
-              
-              <div className="md:col-span-2">
                 <Label htmlFor="phone">Telefone *</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="phone" value={formData.phone} onChange={e => handlePhoneChange(e.target.value)} placeholder="(67) 99999-9999" className="pl-10" />
+                  <Input 
+                    id="phone" 
+                    value={formData.phone} 
+                    onChange={e => handlePhoneChange(e.target.value)} 
+                    placeholder="(67) 99999-9999" 
+                    className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    maxLength={15}
+                  />
                 </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="address">Endereço</Label>
+                <Input 
+                  id="address" 
+                  value={formData.address} 
+                  onChange={e => handleInputChange('address', e.target.value)} 
+                  placeholder="Rua, Avenida..." 
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="number">Número</Label>
+                <Input 
+                  id="number" 
+                  value={formData.number} 
+                  onChange={e => handleInputChange('number', e.target.value)} 
+                  placeholder="123" 
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="neighborhood">Bairro</Label>
+                <Input 
+                  id="neighborhood" 
+                  value={formData.neighborhood} 
+                  onChange={e => handleInputChange('neighborhood', e.target.value)} 
+                  placeholder="Nome do bairro" 
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="city">Cidade</Label>
+                <Input 
+                  id="city" 
+                  value={formData.city} 
+                  onChange={e => handleInputChange('city', e.target.value)} 
+                  placeholder="Campo Grande" 
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="state">Estado</Label>
+                <Input 
+                  id="state" 
+                  value={formData.state} 
+                  onChange={e => handleInputChange('state', e.target.value)} 
+                  placeholder="MS" 
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                  maxLength={2}
+                />
               </div>
             </div>
           </CardContent>
