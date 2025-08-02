@@ -4,12 +4,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell, ReferenceLine } from 'recharts';
 import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
+import ProposalCoverPage from "./ProposalCoverPage";
 interface FormData {
   clientName: string;
   address: string;
   number: string;
   neighborhood: string;
   city: string;
+  state: string;
   phone: string;
   systemPower: number;
   moduleQuantity: number;
@@ -120,7 +122,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       {/* Conteúdo da Proposta */}
       <div id="pdf-content" className="max-w-4xl mx-auto bg-white print-optimized">
         
-        {/* PÁGINA 1: CAPA - Baseado na primeira imagem */}
+        {/* PÁGINA 1: NOVA CAPA PERSONALIZADA */}
+        <ProposalCoverPage 
+          formData={formData} 
+          calculations={calculations}
+        />
+        
+        {/* PÁGINA 2: CAPA ANTERIOR - Baseado na primeira imagem */}
         <section className="a4-page bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden page-break">
           {/* Formas geométricas 3D amarelas/douradas */}
           <div className="absolute top-1/4 right-1/4 transform -translate-y-1/2">
