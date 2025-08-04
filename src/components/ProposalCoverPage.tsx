@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, Zap, Calendar, Home } from 'lucide-react';
-import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
+import olimpoLogo from "../assets/olimpo-solar-logo.png";
 
 interface FormData {
   clientName: string;
