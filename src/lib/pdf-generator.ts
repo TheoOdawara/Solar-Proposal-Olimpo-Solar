@@ -30,16 +30,26 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   const pageHeight = pdf.internal.pageSize.height;
   const margin = 20;
   const maxWidth = pageWidth - (margin * 2);
-  const footerHeight = 30;
+  const footerHeight = 25;
   const usableHeight = pageHeight - margin - footerHeight;
 
-  // Spacing constants for consistency
+  // Consistent spacing system
   const SPACING = {
-    SMALL: 6,
-    MEDIUM: 10,
-    LARGE: 15,
-    SECTION: 25,
-    TITLE: 30
+    TINY: 3,
+    SMALL: 5,
+    MEDIUM: 8,
+    LARGE: 12,
+    SECTION: 18,
+    PAGE_TITLE: 20
+  };
+
+  // Font sizes
+  const FONT_SIZES = {
+    TITLE: 20,
+    SUBTITLE: 16,
+    SECTION_HEADER: 14,
+    BODY: 12,
+    FOOTER: 10
   };
 
   let currentY = margin;
@@ -47,19 +57,27 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
-  // Check if content fits on current page, add new page if needed
-  const checkPageBreak = (requiredHeight: number): number => {
+  // Intelligent page break control
+  const checkPageBreak = (requiredHeight: number): boolean => {
     if (currentY + requiredHeight > usableHeight) {
+      addFooter();
       pdf.addPage();
       currentY = margin;
+      return true;
     }
-    return currentY;
+    return false;
   };
 
-  // Add text with automatic page break checking
-  const addText = (text: string, x: number, fontSize: number = 12, fontStyle: string = 'normal', align: 'left' | 'center' | 'right' = 'left') => {
-    const lineHeight = fontSize * 1.2;
-    currentY = checkPageBreak(lineHeight);
+  // Add text with automatic page break and spacing optimization
+  const addText = (
+    text: string, 
+    fontSize: number = FONT_SIZES.BODY, 
+    fontStyle: string = 'normal', 
+    align: 'left' | 'center' | 'right' = 'left',
+    spacing: keyof typeof SPACING = 'SMALL'
+  ) => {
+    const lineHeight = fontSize * 1.15; // Optimized line height
+    checkPageBreak(lineHeight + SPACING[spacing]);
     
     pdf.setFontSize(fontSize);
     pdf.setFont('helvetica', fontStyle);
@@ -69,110 +87,120 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     } else if (align === 'right') {
       pdf.text(text, pageWidth - margin, currentY, { align: 'right' });
     } else {
-      pdf.text(text, x, currentY);
+      pdf.text(text, margin, currentY);
     }
     
-    currentY += lineHeight;
+    currentY += lineHeight + SPACING[spacing];
   };
 
-  // Add multiline text with page break handling
-  const addMultilineText = (text: string, x: number, fontSize: number = 12) => {
-    const lines = pdf.splitTextToSize(text, maxWidth);
-    const lineHeight = fontSize * 1.2;
-    const totalHeight = lines.length * lineHeight;
+  // Add multiline text with intelligent wrapping and page breaks
+  const addMultilineText = (
+    text: string, 
+    fontSize: number = FONT_SIZES.BODY,
+    spacing: keyof typeof SPACING = 'SMALL'
+  ) => {
+    if (!text || !text.trim()) return;
     
-    currentY = checkPageBreak(totalHeight);
+    const lines = pdf.splitTextToSize(text, maxWidth);
+    const lineHeight = fontSize * 1.15;
     
     pdf.setFontSize(fontSize);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(lines, x, currentY);
     
-    currentY += totalHeight;
+    lines.forEach((line: string, index: number) => {
+      checkPageBreak(lineHeight + (index === lines.length - 1 ? SPACING[spacing] : 0));
+      pdf.text(line, margin, currentY);
+      currentY += lineHeight;
+    });
+    
+    currentY += SPACING[spacing];
   };
 
-  // Add spacing
-  const addSpacing = (type: keyof typeof SPACING) => {
-    currentY += SPACING[type];
+  // Add section with optimized spacing
+  const addSection = (title: string, spacing: keyof typeof SPACING = 'SECTION') => {
+    currentY += SPACING[spacing];
+    addText(title, FONT_SIZES.SECTION_HEADER, 'bold', 'left', 'MEDIUM');
   };
 
-  // Add footer to current page
+  // Add list items with consistent formatting
+  const addListItem = (text: string, spacing: keyof typeof SPACING = 'TINY') => {
+    addText(text, FONT_SIZES.BODY, 'normal', 'left', spacing);
+  };
+
+  // Dynamic footer
   const addFooter = () => {
-    const footerY = pageHeight - 20;
-    pdf.setFontSize(10);
+    const footerY = pageHeight - 15;
+    pdf.setFontSize(FONT_SIZES.FOOTER);
     pdf.setFont('helvetica', 'bold');
     pdf.text("OLIMPO SOLAR", pageWidth / 2, footerY, { align: 'center' });
     
     pdf.setFont('helvetica', 'normal');
-    pdf.text("Energia Solar Fotovoltaica", pageWidth / 2, footerY + 6, { align: 'center' });
+    pdf.text("Energia Solar Fotovoltaica", pageWidth / 2, footerY + 5, { align: 'center' });
   };
 
-  // Page 1 - Cover
-  currentY = margin + SPACING.LARGE;
-  addText("PROPOSTA COMERCIAL", 0, 24, 'bold', 'center');
-  addSpacing('MEDIUM');
-  addText("SISTEMA SOLAR FOTOVOLTAICO", 0, 20, 'normal', 'center');
+  // Page 1 - Cover Page (Optimized Layout)
+  currentY = margin + SPACING.PAGE_TITLE;
   
-  addSpacing('SECTION');
-  addText(`Cliente: ${formData.clientName}`, margin, 16);
-  addSpacing('MEDIUM');
-  addText(`Endereço: ${formData.address}, ${formData.number}`, margin, 12);
-  addSpacing('SMALL');
-  addText(`${formData.neighborhood} - ${formData.city}`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Telefone: ${formData.phone}`, margin, 12);
+  addText("PROPOSTA COMERCIAL", FONT_SIZES.TITLE, 'bold', 'center', 'MEDIUM');
+  addText("SISTEMA SOLAR FOTOVOLTAICO", FONT_SIZES.SUBTITLE, 'normal', 'center', 'SECTION');
   
-  addSpacing('SECTION');
-  addText("ESPECIFICAÇÕES DO SISTEMA", margin, 14, 'bold');
-  addSpacing('LARGE');
+  // Client Information
+  addText(`Cliente: ${formData.clientName}`, FONT_SIZES.SUBTITLE, 'normal', 'left', 'MEDIUM');
+  addText(`${formData.address}, ${formData.number}`, FONT_SIZES.BODY, 'normal', 'left', 'TINY');
+  addText(`${formData.neighborhood} - ${formData.city}`, FONT_SIZES.BODY, 'normal', 'left', 'TINY');
+  addText(`Telefone: ${formData.phone}`, FONT_SIZES.BODY, 'normal', 'left', 'MEDIUM');
   
-  addText(`Potência do Sistema: ${formData.systemPower} kWp`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Quantidade de Módulos: ${formData.moduleQuantity} unidades`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Potência dos Módulos: ${formData.modulePower} W`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Marca dos Módulos: ${formData.moduleBrand}`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Marca do Inversor: ${formData.inverterBrand}`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Potência do Inversor: ${formData.inverterPower} W`, margin, 12);
+  // System Specifications
+  addSection("ESPECIFICAÇÕES DO SISTEMA");
+  
+  const specifications = [
+    `Potência do Sistema: ${formData.systemPower} kWp`,
+    `Quantidade de Módulos: ${formData.moduleQuantity} unidades`,
+    `Potência dos Módulos: ${formData.modulePower} W`,
+    `Marca dos Módulos: ${formData.moduleBrand}`,
+    `Marca do Inversor: ${formData.inverterBrand}`,
+    `Potência do Inversor: ${formData.inverterPower} W`
+  ];
+  
+  specifications.forEach(spec => addListItem(spec));
 
   addFooter();
 
-  // Page 2 - Financial Details
+  // Page 2 - Financial Analysis (Optimized Layout)
   pdf.addPage();
-  currentY = margin + SPACING.LARGE;
+  currentY = margin + SPACING.PAGE_TITLE;
   
-  addText("ANÁLISE FINANCEIRA", 0, 18, 'bold', 'center');
-  addSpacing('TITLE');
+  addText("ANÁLISE FINANCEIRA", FONT_SIZES.TITLE, 'bold', 'center', 'SECTION');
   
-  addText("GERAÇÃO E ECONOMIA", margin, 14, 'bold');
-  addSpacing('LARGE');
+  // Generation and Savings
+  addSection("GERAÇÃO E ECONOMIA", 'MEDIUM');
   
-  addText(`Geração Mensal Estimada: ${calculations.monthlyGeneration.toFixed(0)} kWh`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Economia Mensal: ${formatCurrency(calculations.monthlySavings)}`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Economia Anual: ${formatCurrency(calculations.monthlySavings * 12)}`, margin, 12);
+  const financialData = [
+    `Geração Mensal Estimada: ${calculations.monthlyGeneration.toFixed(0)} kWh`,
+    `Economia Mensal: ${formatCurrency(calculations.monthlySavings)}`,
+    `Economia Anual: ${formatCurrency(calculations.monthlySavings * 12)}`
+  ];
   
-  addSpacing('SECTION');
-  addText("INVESTIMENTO", margin, 14, 'bold');
-  addSpacing('LARGE');
+  financialData.forEach(data => addListItem(data));
   
-  addText(`Valor Total do Sistema: ${formatCurrency(calculations.totalValue)}`, margin, 12);
-  addSpacing('SMALL');
-  addText(`Forma de Pagamento: ${formData.paymentMethod}`, margin, 12);
-  addSpacing('MEDIUM');
-  addText(`Área Necessária: ${calculations.requiredArea.toFixed(0)} m²`, margin, 12);
+  // Investment
+  addSection("INVESTIMENTO", 'MEDIUM');
+  
+  const investmentData = [
+    `Valor Total do Sistema: ${formatCurrency(calculations.totalValue)}`,
+    `Forma de Pagamento: ${formData.paymentMethod}`,
+    `Área Necessária: ${calculations.requiredArea.toFixed(0)} m²`
+  ];
+  
+  investmentData.forEach(data => addListItem(data));
 
   addFooter();
 
-  // Page 3 - Benefits and Observations
+  // Page 3 - Benefits and Observations (Optimized Layout)
   pdf.addPage();
-  currentY = margin + SPACING.LARGE;
+  currentY = margin + SPACING.PAGE_TITLE;
   
-  addText("BENEFÍCIOS DO SISTEMA SOLAR", 0, 18, 'bold', 'center');
-  addSpacing('TITLE');
+  addText("BENEFÍCIOS DO SISTEMA SOLAR", FONT_SIZES.TITLE, 'bold', 'center', 'SECTION');
   
   const benefits = [
     "• Redução significativa na conta de energia elétrica",
@@ -185,25 +213,21 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     "• Baixa manutenção"
   ];
   
-  benefits.forEach(benefit => {
-    addText(benefit, margin, 12);
-  });
+  benefits.forEach(benefit => addListItem(benefit));
   
+  // Observations (with intelligent text handling)
   if (formData.observations && formData.observations.trim()) {
-    addSpacing('SECTION');
-    addText("OBSERVAÇÕES:", margin, 12, 'bold');
-    addSpacing('MEDIUM');
-    addMultilineText(formData.observations, margin, 12);
+    addSection("OBSERVAÇÕES:", 'MEDIUM');
+    addMultilineText(formData.observations, FONT_SIZES.BODY, 'SMALL');
   }
 
   addFooter();
   
-  // Page 4 - Terms and Conditions
+  // Page 4 - Terms and Conditions (Optimized Layout)
   pdf.addPage();
-  currentY = margin + SPACING.LARGE;
+  currentY = margin + SPACING.PAGE_TITLE;
   
-  addText("TERMOS E CONDIÇÕES", 0, 18, 'bold', 'center');
-  addSpacing('TITLE');
+  addText("TERMOS E CONDIÇÕES", FONT_SIZES.TITLE, 'bold', 'center', 'SECTION');
   
   const terms = [
     "• Proposta válida por 30 dias",
@@ -214,9 +238,7 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     "• Acompanhamento do processo de homologação junto à concessionária"
   ];
   
-  terms.forEach(term => {
-    addText(term, margin, 12);
-  });
+  terms.forEach(term => addListItem(term));
 
   addFooter();
   
