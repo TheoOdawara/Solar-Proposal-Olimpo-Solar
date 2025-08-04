@@ -824,10 +824,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Bandeiras de cartão */}
             <div className="flex justify-center gap-4 mb-6">
-              <div className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-bold">VISA</div>
-              <div className="bg-blue-400 text-white px-3 py-1 rounded text-sm font-bold">AMERICAN EXPRESS</div>
-              <div className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold">MASTERCARD</div>
-              <div className="bg-blue-500 text-white px-3 py-1 rounded text-sm font-bold">ELO</div>
+              <img src="/lovable-uploads/49c651a9-aa2e-42d3-ae77-f741c6d2caf9.png" alt="Bandeiras de cartão aceitas" className="h-8 object-contain" />
             </div>
 
             {/* Logos dos bancos */}
