@@ -30,105 +30,149 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   const pageHeight = pdf.internal.pageSize.height;
   const margin = 20;
   const maxWidth = pageWidth - (margin * 2);
+  const footerHeight = 30;
+  const usableHeight = pageHeight - margin - footerHeight;
+
+  // Spacing constants for consistency
+  const SPACING = {
+    SMALL: 6,
+    MEDIUM: 10,
+    LARGE: 15,
+    SECTION: 25,
+    TITLE: 30
+  };
+
+  let currentY = margin;
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
+  // Check if content fits on current page, add new page if needed
+  const checkPageBreak = (requiredHeight: number): number => {
+    if (currentY + requiredHeight > usableHeight) {
+      pdf.addPage();
+      currentY = margin;
+    }
+    return currentY;
+  };
+
+  // Add text with automatic page break checking
+  const addText = (text: string, x: number, fontSize: number = 12, fontStyle: string = 'normal', align: 'left' | 'center' | 'right' = 'left') => {
+    const lineHeight = fontSize * 1.2;
+    currentY = checkPageBreak(lineHeight);
+    
+    pdf.setFontSize(fontSize);
+    pdf.setFont('helvetica', fontStyle);
+    
+    if (align === 'center') {
+      pdf.text(text, pageWidth / 2, currentY, { align: 'center' });
+    } else if (align === 'right') {
+      pdf.text(text, pageWidth - margin, currentY, { align: 'right' });
+    } else {
+      pdf.text(text, x, currentY);
+    }
+    
+    currentY += lineHeight;
+  };
+
+  // Add multiline text with page break handling
+  const addMultilineText = (text: string, x: number, fontSize: number = 12) => {
+    const lines = pdf.splitTextToSize(text, maxWidth);
+    const lineHeight = fontSize * 1.2;
+    const totalHeight = lines.length * lineHeight;
+    
+    currentY = checkPageBreak(totalHeight);
+    
+    pdf.setFontSize(fontSize);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(lines, x, currentY);
+    
+    currentY += totalHeight;
+  };
+
+  // Add spacing
+  const addSpacing = (type: keyof typeof SPACING) => {
+    currentY += SPACING[type];
+  };
+
+  // Add footer to current page
+  const addFooter = () => {
+    const footerY = pageHeight - 20;
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text("OLIMPO SOLAR", pageWidth / 2, footerY, { align: 'center' });
+    
+    pdf.setFont('helvetica', 'normal');
+    pdf.text("Energia Solar Fotovoltaica", pageWidth / 2, footerY + 6, { align: 'center' });
+  };
+
   // Page 1 - Cover
-  let y = 40;
-  pdf.setFontSize(24);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("PROPOSTA COMERCIAL", pageWidth / 2, y, { align: 'center' });
+  currentY = margin + SPACING.LARGE;
+  addText("PROPOSTA COMERCIAL", 0, 24, 'bold', 'center');
+  addSpacing('MEDIUM');
+  addText("SISTEMA SOLAR FOTOVOLTAICO", 0, 20, 'normal', 'center');
   
-  y += 20;
-  pdf.setFontSize(20);
-  pdf.text("SISTEMA SOLAR FOTOVOLTAICO", pageWidth / 2, y, { align: 'center' });
+  addSpacing('SECTION');
+  addText(`Cliente: ${formData.clientName}`, margin, 16);
+  addSpacing('MEDIUM');
+  addText(`Endereço: ${formData.address}, ${formData.number}`, margin, 12);
+  addSpacing('SMALL');
+  addText(`${formData.neighborhood} - ${formData.city}`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Telefone: ${formData.phone}`, margin, 12);
   
-  y += 40;
-  pdf.setFontSize(16);
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(`Cliente: ${formData.clientName}`, margin, y);
+  addSpacing('SECTION');
+  addText("ESPECIFICAÇÕES DO SISTEMA", margin, 14, 'bold');
+  addSpacing('LARGE');
   
-  y += 20;
-  pdf.text(`Endereço: ${formData.address}, ${formData.number}`, margin, y);
-  
-  y += 10;
-  pdf.text(`${formData.neighborhood} - ${formData.city}`, margin, y);
-  
-  y += 10;
-  pdf.text(`Telefone: ${formData.phone}`, margin, y);
-  
-  y += 40;
-  pdf.setFontSize(14);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("ESPECIFICAÇÕES DO SISTEMA", margin, y);
-  
-  y += 20;
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(`Potência do Sistema: ${formData.systemPower} kWp`, margin, y);
-  
-  y += 10;
-  pdf.text(`Quantidade de Módulos: ${formData.moduleQuantity} unidades`, margin, y);
-  
-  y += 10;
-  pdf.text(`Potência dos Módulos: ${formData.modulePower} W`, margin, y);
-  
-  y += 10;
-  pdf.text(`Marca dos Módulos: ${formData.moduleBrand}`, margin, y);
-  
-  y += 10;
-  pdf.text(`Marca do Inversor: ${formData.inverterBrand}`, margin, y);
-  
-  y += 10;
-  pdf.text(`Potência do Inversor: ${formData.inverterPower} W`, margin, y);
+  addText(`Potência do Sistema: ${formData.systemPower} kWp`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Quantidade de Módulos: ${formData.moduleQuantity} unidades`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Potência dos Módulos: ${formData.modulePower} W`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Marca dos Módulos: ${formData.moduleBrand}`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Marca do Inversor: ${formData.inverterBrand}`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Potência do Inversor: ${formData.inverterPower} W`, margin, 12);
+
+  addFooter();
 
   // Page 2 - Financial Details
   pdf.addPage();
-  y = 40;
+  currentY = margin + SPACING.LARGE;
   
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("ANÁLISE FINANCEIRA", pageWidth / 2, y, { align: 'center' });
+  addText("ANÁLISE FINANCEIRA", 0, 18, 'bold', 'center');
+  addSpacing('TITLE');
   
-  y += 30;
-  pdf.setFontSize(14);
-  pdf.text("GERAÇÃO E ECONOMIA", margin, y);
+  addText("GERAÇÃO E ECONOMIA", margin, 14, 'bold');
+  addSpacing('LARGE');
   
-  y += 20;
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(`Geração Mensal Estimada: ${calculations.monthlyGeneration.toFixed(0)} kWh`, margin, y);
+  addText(`Geração Mensal Estimada: ${calculations.monthlyGeneration.toFixed(0)} kWh`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Economia Mensal: ${formatCurrency(calculations.monthlySavings)}`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Economia Anual: ${formatCurrency(calculations.monthlySavings * 12)}`, margin, 12);
   
-  y += 10;
-  pdf.text(`Economia Mensal: ${formatCurrency(calculations.monthlySavings)}`, margin, y);
+  addSpacing('SECTION');
+  addText("INVESTIMENTO", margin, 14, 'bold');
+  addSpacing('LARGE');
   
-  y += 10;
-  pdf.text(`Economia Anual: ${formatCurrency(calculations.monthlySavings * 12)}`, margin, y);
-  
-  y += 30;
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("INVESTIMENTO", margin, y);
-  
-  y += 20;
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(`Valor Total do Sistema: ${formatCurrency(calculations.totalValue)}`, margin, y);
-  
-  y += 10;
-  pdf.text(`Forma de Pagamento: ${formData.paymentMethod}`, margin, y);
-  
-  y += 20;
-  pdf.text(`Área Necessária: ${calculations.requiredArea.toFixed(0)} m²`, margin, y);
+  addText(`Valor Total do Sistema: ${formatCurrency(calculations.totalValue)}`, margin, 12);
+  addSpacing('SMALL');
+  addText(`Forma de Pagamento: ${formData.paymentMethod}`, margin, 12);
+  addSpacing('MEDIUM');
+  addText(`Área Necessária: ${calculations.requiredArea.toFixed(0)} m²`, margin, 12);
+
+  addFooter();
 
   // Page 3 - Benefits and Observations
   pdf.addPage();
-  y = 40;
+  currentY = margin + SPACING.LARGE;
   
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("BENEFÍCIOS DO SISTEMA SOLAR", pageWidth / 2, y, { align: 'center' });
-  
-  y += 30;
-  pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'normal');
+  addText("BENEFÍCIOS DO SISTEMA SOLAR", 0, 18, 'bold', 'center');
+  addSpacing('TITLE');
   
   const benefits = [
     "• Redução significativa na conta de energia elétrica",
@@ -142,32 +186,24 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   ];
   
   benefits.forEach(benefit => {
-    pdf.text(benefit, margin, y);
-    y += 8;
+    addText(benefit, margin, 12);
   });
   
   if (formData.observations && formData.observations.trim()) {
-    y += 20;
-    pdf.setFont('helvetica', 'bold');
-    pdf.text("OBSERVAÇÕES:", margin, y);
-    
-    y += 15;
-    pdf.setFont('helvetica', 'normal');
-    const lines = pdf.splitTextToSize(formData.observations, maxWidth);
-    pdf.text(lines, margin, y);
+    addSpacing('SECTION');
+    addText("OBSERVAÇÕES:", margin, 12, 'bold');
+    addSpacing('MEDIUM');
+    addMultilineText(formData.observations, margin, 12);
   }
+
+  addFooter();
   
   // Page 4 - Terms and Conditions
   pdf.addPage();
-  y = 40;
+  currentY = margin + SPACING.LARGE;
   
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("TERMOS E CONDIÇÕES", pageWidth / 2, y, { align: 'center' });
-  
-  y += 30;
-  pdf.setFontSize(12);
-  pdf.setFont('helvetica', 'normal');
+  addText("TERMOS E CONDIÇÕES", 0, 18, 'bold', 'center');
+  addSpacing('TITLE');
   
   const terms = [
     "• Proposta válida por 30 dias",
@@ -179,19 +215,10 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   ];
   
   terms.forEach(term => {
-    pdf.text(term, margin, y);
-    y += 8;
+    addText(term, margin, 12);
   });
-  
-  // Footer with company info
-  y = pageHeight - 40;
-  pdf.setFontSize(10);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text("OLIMPO SOLAR", pageWidth / 2, y, { align: 'center' });
-  
-  y += 6;
-  pdf.setFont('helvetica', 'normal');
-  pdf.text("Energia Solar Fotovoltaica", pageWidth / 2, y, { align: 'center' });
+
+  addFooter();
   
   // Save the PDF
   pdf.save("proposta-olimpo-solar.pdf");
