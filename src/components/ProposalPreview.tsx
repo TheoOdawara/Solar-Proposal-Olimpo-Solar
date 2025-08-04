@@ -452,8 +452,20 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               {/* GRÁFICO 2: SUA RENTABILIDADE */}
               <div className="mb-8">
                 {(() => {
-              // Dados para comparação (valores em 5 anos para R$ 50.000)
-              const investmentBase = 50000;
+              // Validação e cálculos baseados em dados reais
+              const investmentBase = calculations.totalValue || 50000;
+              const annualSavings = calculations.monthlySavings * 12;
+              const fiveYearsSavings = annualSavings * 5;
+              
+              // Cálculo da rentabilidade real da energia solar
+              const solarRentabilityPercentage = investmentBase > 0 
+                ? Math.round((fiveYearsSavings / investmentBase) * 100)
+                : 180;
+              
+              // Ajuste proporcional das outras opções baseado no investimento real
+              const savingsPercentage = Math.round((investmentBase * 0.27) / 1000) * 1000;
+              const cdbPercentage = Math.round((investmentBase * 0.45) / 1000) * 1000;
+              
               const rentabilityData = [{
                 investment: 'Poupança',
                 percentage: 27,
@@ -466,8 +478,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 color: '#f97316'
               }, {
                 investment: 'Energia Solar',
-                percentage: 180,
-                value: investmentBase * 1.80,
+                percentage: solarRentabilityPercentage,
+                value: investmentBase + fiveYearsSavings,
                 color: '#ffbf06'
               }];
               return <>
@@ -523,7 +535,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                         
                         {/* Texto explicativo */}
                         <div className="mt-4 text-center text-sm text-gray-600">
-                          <p>Comparação baseada em investimento de R$ 50.000 em 5 anos</p>
+                          <p>Comparação baseada em investimento de {formatCurrency(investmentBase)} em 5 anos</p>
                         </div>
                       </div>
                     </>;
