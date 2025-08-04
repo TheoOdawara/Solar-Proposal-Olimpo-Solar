@@ -34,6 +34,7 @@ interface FormData {
   moduleBrand: string;
   inverterBrand: string;
   inverterPower: number;
+  pricePerKwp: number;
 
   // Dados da economia
   averageBill: number;
@@ -89,6 +90,7 @@ const ProposalForm = ({
     moduleBrand: '',
     inverterBrand: '',
     inverterPower: 0,
+    pricePerKwp: 2450,
     averageBill: 0,
     connectionType: '',
     paymentMethod: '',
@@ -106,8 +108,20 @@ const ProposalForm = ({
   useEffect(() => {
     const {
       desiredKwh,
-      modulePower
+      modulePower,
+      monthlyConsumption,
+      pricePerKwp
     } = formData;
+
+    // Calcular valor médio da conta de luz automaticamente
+    if (monthlyConsumption > 0) {
+      const calculatedAverageBill = monthlyConsumption * 1.27;
+      setFormData(prev => ({
+        ...prev,
+        averageBill: Math.round(calculatedAverageBill * 100) / 100
+      }));
+    }
+
     if (desiredKwh > 0) {
       // Calcular potência necessária: potência = kWh desejados / (5.5 × 30 × 0.80)
       const calculatedSystemPower = desiredKwh / (5.5 * 30 * 0.80);
@@ -148,8 +162,8 @@ const ProposalForm = ({
       const moduleQuantityForArea = calculatedModuleQuantity || formData.moduleQuantity;
       const requiredArea = moduleQuantityForArea * 2.8;
 
-      // 4. Valor total do projeto usando a potência calculada
-      const totalValue = calculatedSystemPower * 1850;
+      // 4. Valor total do projeto usando o preço por kWp definido
+      const totalValue = calculatedSystemPower * pricePerKwp;
       const newCalculations = {
         monthlyGeneration: Math.round(monthlyGeneration),
         monthlySavings: Math.round(monthlySavings),
@@ -167,7 +181,7 @@ const ProposalForm = ({
         totalValue: 0
       });
     }
-  }, [formData.desiredKwh, formData.modulePower]);
+  }, [formData.desiredKwh, formData.modulePower, formData.monthlyConsumption, formData.pricePerKwp]);
 
   // Notifica o componente pai sobre mudanças nos dados da proposta
   useEffect(() => {
@@ -280,6 +294,7 @@ const ProposalForm = ({
       { field: 'moduleBrand', label: 'Marca dos Módulos' },
       { field: 'inverterBrand', label: 'Marca do Inversor' },
       { field: 'inverterPower', label: 'Potência do Inversor' },
+      { field: 'pricePerKwp', label: 'Preço por kWp' },
       { field: 'averageBill', label: 'Valor Médio da Conta' },
       { field: 'connectionType', label: 'Tipo de Ligação' },
       { field: 'paymentMethod', label: 'Forma de Pagamento' }
@@ -321,11 +336,11 @@ const ProposalForm = ({
     return true;
   };
   const isFormValid = () => {
-    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'averageBill', 'connectionType', 'paymentMethod'];
+    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'pricePerKwp', 'averageBill', 'connectionType', 'paymentMethod'];
     return requiredFields.every(field => {
       const value = formData[field as keyof FormData];
       return value !== '' && value !== 0;
-    }) && formData.averageBill > 0;
+    }) && formData.averageBill > 0 && formData.pricePerKwp > 0;
   };
   const generateProposal = () => {
     if (!validateForm()) return;
@@ -596,7 +611,7 @@ const ProposalForm = ({
               <Input id="moduleBrand" value={formData.moduleBrand} onChange={e => handleInputChange('moduleBrand', e.target.value)} placeholder="Canadian Solar" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="inverterBrand">Marca do Inversor *</Label>
                 <Input id="inverterBrand" value={formData.inverterBrand} onChange={e => handleInputChange('inverterBrand', e.target.value)} placeholder="Fronius" />
@@ -605,6 +620,18 @@ const ProposalForm = ({
               <div>
                 <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
                 <Input id="inverterPower" type="number" value={formData.inverterPower || ''} onChange={e => handleInputChange('inverterPower', parseInt(e.target.value) || 0)} placeholder="5000" />
+              </div>
+
+              <div>
+                <Label htmlFor="pricePerKwp">Preço por kWp (R$) *</Label>
+                <Input 
+                  id="pricePerKwp" 
+                  type="number" 
+                  step="0.01"
+                  value={formData.pricePerKwp || ''} 
+                  onChange={e => handleInputChange('pricePerKwp', parseFloat(e.target.value) || 0)} 
+                  placeholder="2450.00" 
+                />
               </div>
             </div>
 
@@ -615,14 +642,15 @@ const ProposalForm = ({
               <h3 className="text-lg font-semibold text-muted-foreground">Dados para Cálculo de Economia</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="averageBill">Valor médio da conta de luz (R$/mês) *</Label>
+                  <Label htmlFor="averageBill">Valor médio da conta de luz (R$/mês) * <span className="text-xs text-muted-foreground">(Calculado automaticamente)</span></Label>
                   <Input 
                     id="averageBill" 
                     type="number" 
                     step="0.01"
                     value={formData.averageBill || ''} 
-                    onChange={e => handleInputChange('averageBill', parseFloat(e.target.value) || 0)} 
-                    placeholder="380.00" 
+                    readOnly
+                    className="bg-muted/50 cursor-not-allowed"
+                    placeholder="Será calculado automaticamente com base no consumo mensal" 
                   />
                 </div>
                 
