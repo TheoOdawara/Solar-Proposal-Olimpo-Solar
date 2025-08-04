@@ -835,39 +835,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
             {/* Seção de rentabilidade - baseado na parte inferior da imagem 9 */}
-            <div className="bg-slate-800 rounded-lg p-8 text-white">
-              <h3 className="text-3xl font-bold text-center mb-8">Sua rentabilidade:</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div>
-                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br />sem Energia Solar:</h4>
-                  <div className="text-2xl font-bold text-red-400">R$ 8.000,00 / ano</div>
-                  <div className="text-lg">R$ 8.000,00 / mês</div>
-                </div>
-
-                <div>
-                  <h4 className="font-bold mb-4 text-lg">Sua conta de energia<br />com Energia Solar:</h4>
-                  <div className="text-2xl font-bold text-green-400">R$ 3.840,00 / ano</div>
-                  <div className="text-lg">R$ 320,00 / mês</div>
-                </div>
-
-                <div>
-                  <h4 className="font-bold mb-4 text-lg">Sua economia será de:</h4>
-                  <div className="text-2xl font-bold text-yellow-400">R$ 90.852 / ano</div>
-                  <div className="text-lg">R$ 7.571,00 / mês</div>
-                </div>
-              </div>
-            </div>
+            
 
             {/* Footer contact */}
-            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
-              <div className="flex justify-center space-x-6 text-white text-sm">
-                <span>67 99668-0242</span>
-                <span>Olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-              </div>
-            </div>
+            
           </div>
         </section>
 
