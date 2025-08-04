@@ -123,64 +123,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       <div id="pdf-content" className="max-w-4xl mx-auto bg-white print-optimized">
         
         {/* PÁGINA 1: NOVA CAPA PERSONALIZADA */}
-        <ProposalCoverPage 
-          formData={formData} 
-          calculations={calculations}
-        />
+        <ProposalCoverPage formData={formData} calculations={calculations} />
         
         {/* PÁGINA 2: CAPA ANTERIOR - Baseado na primeira imagem */}
-        <section className="a4-page bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden page-break">
-          {/* Formas geométricas 3D amarelas/douradas */}
-          <div className="absolute top-1/4 right-1/4 transform -translate-y-1/2">
-            {/* Cubo grande */}
-            <div className="relative">
-              <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-yellow-500 transform rotate-12 shadow-2xl"></div>
-              <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-yellow-300 to-yellow-400 transform rotate-45 shadow-xl"></div>
-              <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-yellow-200 to-yellow-300 transform rotate-12 shadow-lg"></div>
-            </div>
-          </div>
-
-          {/* Padrão de pontos no lado esquerdo */}
-          <div className="absolute left-8 top-1/2 -translate-y-1/2">
-            <div className="grid grid-cols-3 gap-3">
-              {[...Array(9)].map((_, i) => <div key={i} className="w-3 h-3 bg-white rounded-full opacity-80"></div>)}
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="relative z-10 flex-1 flex items-center justify-between px-16 py-16">
-            {/* Main Title */}
-            <div className="max-w-xl">
-              <h1 className="text-7xl font-bold text-white leading-none mb-4">
-                PROPOSTA<br />
-                COMERCIAL
-              </h1>
-              <p className="text-xl text-gray-300 font-light">
-                Sistema fotovoltaico
-              </p>
-              
-              {/* Cliente info integrado no design */}
-              <div className="mt-12 space-y-2 text-white/90">
-                <div className="text-lg font-semibold">{formData.clientName}</div>
-                <div className="text-sm">{formData.address}, {formData.number} - {formData.neighborhood}</div>
-                <div className="text-sm">{formData.city}</div>
-                <div className="text-sm">{formData.phone}</div>
-                <div className="text-sm">Data: {formatDate()}</div>
-              </div>
-
-              {/* Box com potência do sistema */}
-              <div className="mt-8 bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 px-6 py-3 rounded-lg inline-block transform -rotate-3 shadow-xl">
-                <div className="font-bold text-lg">{formData.systemPower} kWp</div>
-                <div className="text-sm">Sistema Solar</div>
-              </div>
-            </div>
-
-            {/* Logo */}
-            <div className="absolute bottom-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-24 w-auto brightness-0 invert" />
-            </div>
-          </div>
-        </section>
+        
 
         {/* PÁGINA 2: QUEM SOMOS */}
         <section className="a4-page bg-white p-8 page-break">
