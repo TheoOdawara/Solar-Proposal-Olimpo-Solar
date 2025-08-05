@@ -14,6 +14,8 @@ import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
 import ProposalPreview from "@/components/ProposalPreview";
 import { SplineHero } from "@/components/SplineHero";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { motion } from "framer-motion";
 import html2pdf from 'html2pdf.js';
 interface FormData {
   // Dados do cliente
@@ -440,8 +442,18 @@ const ProposalForm = ({
   if (showPreview) {
     return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} />;
   }
-  return <div className="min-h-screen p-4">
-      <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+  return (
+    <AuroraBackground className="min-h-screen">
+      <motion.div
+        initial={{ opacity: 0.0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 0.8,
+          ease: "easeInOut",
+        }}
+        className="relative w-full max-w-4xl mx-auto space-y-6 p-4"
+      >
         {/* Spline Hero Section */}
         <SplineHero />
 
@@ -464,6 +476,7 @@ const ProposalForm = ({
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* ... keep existing code (client form fields) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Label htmlFor="clientName">Nome do Cliente *</Label>
@@ -579,6 +592,7 @@ const ProposalForm = ({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* ... keep existing code (project form fields) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="monthlyConsumption">Consumo Médio Mensal (kWh) *</Label>
@@ -627,7 +641,6 @@ const ProposalForm = ({
 
             <Separator className="my-6" />
             
-            {/* Dados para Cálculo de Economia */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-muted-foreground">Dados para Cálculo de Economia</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -748,7 +761,8 @@ const ProposalForm = ({
         {showHistory && <ProposalsHistory onLoadProposal={loadProposal} />}
 
         <div className="pb-8"></div>
-      </div>
-    </div>;
+      </motion.div>
+    </AuroraBackground>
+  );
 };
 export default ProposalForm;
