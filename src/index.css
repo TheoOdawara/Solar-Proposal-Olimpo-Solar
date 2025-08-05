@@ -223,3 +223,19 @@ All colors MUST be HSL.
     print-color-adjust: exact !important;
   }
 }
+
+/* Spotlight animation */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-spotlight {
+  animation: spotlight 2s ease-out;
+}

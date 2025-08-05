@@ -13,6 +13,7 @@ import { useProposals, ProposalData } from "@/hooks/useProposals";
 import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
 import ProposalPreview from "@/components/ProposalPreview";
+import { SplineHero } from "@/components/SplineHero";
 import html2pdf from 'html2pdf.js';
 interface FormData {
   // Dados do cliente
@@ -441,19 +442,8 @@ const ProposalForm = ({
   }
   return <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
-        {/* Enhanced hero section */}
-        <div className="text-center space-y-4 py-8">
-          <div className="flex items-center justify-center gap-4 animate-scale-in">
-            
-            <div>
-              
-              <p className="text-muted-foreground">
-                Sistema inteligente para criação de propostas solares
-              </p>
-            </div>
-          </div>
-          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent w-1/2 mx-auto"></div>
-        </div>
+        {/* Spline Hero Section */}
+        <SplineHero />
 
         {/* Client data section with enhanced design */}
         <Card className="bg-gradient-surface shadow-floating border-0 animate-slide-up">
