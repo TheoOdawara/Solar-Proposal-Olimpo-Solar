@@ -680,7 +680,7 @@ const ProposalForm = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/20">
                 <div className="text-2xl font-bold text-primary">{calculations.monthlyGeneration}</div>
                 <div className="text-sm text-muted-foreground">kWh/mês</div>
@@ -697,12 +697,6 @@ const ProposalForm = ({
                 <div className="text-2xl font-bold text-accent-foreground">{calculations.requiredArea} m²</div>
                 <div className="text-sm text-muted-foreground">Área Necessária</div>
                 <div className="text-xs text-muted-foreground mt-1">Mínima</div>
-              </div>
-              
-              <div className="text-center p-4 bg-gradient-solar/10 rounded-lg border border-primary/30">
-                <div className="text-2xl font-bold bg-gradient-solar bg-clip-text text-transparent">{formatCurrency(calculations.totalValue)}</div>
-                <div className="text-sm text-muted-foreground">Valor Total</div>
-                <div className="text-xs text-muted-foreground mt-1">do Projeto</div>
               </div>
             </div>
           </CardContent>
