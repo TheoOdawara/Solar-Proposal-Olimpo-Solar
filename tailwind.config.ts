@@ -125,15 +125,7 @@ export default {
 				'float': {
 					'0%, 100%': { transform: 'translateY(0px)' },
 					'50%': { transform: 'translateY(-4px)' }
-				},
-				aurora: {
-					from: {
-						backgroundPosition: "50% 50%, 50% 50%",
-					},
-					to: {
-						backgroundPosition: "350% 50%, 350% 50%",
-					},
-				},
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -142,8 +134,7 @@ export default {
 				'scale-in': 'scale-in 0.4s ease-out',
 				'slide-up': 'slide-up 0.5s ease-out',
 				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
-				'float': 'float 3s ease-in-out infinite',
-				aurora: "aurora 60s linear infinite",
+				'float': 'float 3s ease-in-out infinite'
 			}
 		}
 	},
