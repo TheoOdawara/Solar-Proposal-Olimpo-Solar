@@ -137,6 +137,20 @@ All colors MUST be HSL.
   }
 }
 
+/* Typography utilities */
+.text-summary-number {
+  @apply text-2xl font-bold font-inter;
+}
+
+.text-summary-label {
+  @apply text-sm font-medium font-inter text-muted-foreground;
+}
+
+/* Sticky actions bar */
+.sticky-actions {
+  @apply sticky bottom-4 bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-floating p-4 z-20;
+}
+
 /* Mobile touch targets */
 @media (max-width: 640px) {
   input, select, textarea, button {

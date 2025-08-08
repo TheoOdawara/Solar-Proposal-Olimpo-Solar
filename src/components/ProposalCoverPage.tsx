@@ -102,15 +102,19 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-[#ffbf06] rounded-full flex items-center justify-center">
-                    <MapPin className="h-6 w-6 text-[#022136]" />
+                {(formData.city || formData.state) && (
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-[#ffbf06] rounded-full flex items-center justify-center">
+                      <MapPin className="h-6 w-6 text-[#022136]" />
+                    </div>
+                    <div>
+                      <p className="text-white/60 text-sm uppercase tracking-wide">Local</p>
+                      <p className="text-white text-lg">
+                        {[formData.city, formData.state].filter(Boolean).join(', ') || 'Local não informado'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-white/60 text-sm uppercase tracking-wide">Local</p>
-                    <p className="text-white text-lg">{formData.city}, {formData.state}</p>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* System info */}

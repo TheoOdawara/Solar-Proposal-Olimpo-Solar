@@ -6,14 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History, Eye } from "lucide-react";
+import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History, Eye, CheckCircle, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { useProposals, ProposalData } from "@/hooks/useProposals";
 import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
 import ProposalPreview from "@/components/ProposalPreview";
 import { SplineHero } from "@/components/SplineHero";
+import ProposalSummary from "@/components/ProposalSummary";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 interface FormData {
@@ -105,6 +108,7 @@ const ProposalForm = ({
     totalValue: 0
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [hasNoAddress, setHasNoAddress] = useState(false);
 
   // Cálculos automáticos baseados nos dados do projeto
   useEffect(() => {
@@ -278,17 +282,32 @@ const ProposalForm = ({
     const formatted = formatCep(value);
     handleInputChange('cep', formatted);
     
-    // Busca automaticamente quando CEP tiver 8 dígitos
+    // Busca automaticamente quando CEP tiver 8 dígitos e não estiver com "não tenho endereço" marcado
     const cleanCep = formatted.replace(/\D/g, "");
-    if (cleanCep.length === 8) {
+    if (cleanCep.length === 8 && !hasNoAddress) {
       fetchAddressByCep(formatted);
     }
   };
-  // Validação aprimorada com campos obrigatórios
+
+  const handleNoAddressChange = (checked: boolean) => {
+    setHasNoAddress(checked);
+    if (checked) {
+      // Limpar campos de endereço quando marcado
+      setFormData(prev => ({
+        ...prev,
+        cep: '',
+        address: '',
+        number: '',
+        neighborhood: '',
+        city: '',
+        state: ''
+      }));
+    }
+  };
+  // Validação aprimorada com campos obrigatórios (endereço opcional)
   const validateForm = () => {
     const requiredFields = [
       { field: 'clientName', label: 'Nome do Cliente' },
-      { field: 'cep', label: 'CEP' },
       { field: 'phone', label: 'Telefone' },
       { field: 'monthlyConsumption', label: 'Consumo Mensal' },
       { field: 'desiredKwh', label: 'kWh Desejados' },
@@ -324,21 +343,23 @@ const ProposalForm = ({
       return false;
     }
     
-    // Validação do CEP
-    const cleanCep = formData.cep.replace(/\D/g, "");
-    if (cleanCep.length !== 8) {
-      toast({
-        title: "CEP inválido",
-        description: "Por favor, digite um CEP válido com 8 dígitos.",
-        variant: "destructive"
-      });
-      return false;
+    // Validação do CEP apenas se não tiver marcado "não tenho endereço"
+    if (!hasNoAddress) {
+      const cleanCep = formData.cep.replace(/\D/g, "");
+      if (cleanCep.length !== 8) {
+        toast({
+          title: "CEP inválido",
+          description: "Por favor, digite um CEP válido com 8 dígitos ou marque que não tem o endereço.",
+          variant: "destructive"
+        });
+        return false;
+      }
     }
     
     return true;
   };
   const isFormValid = () => {
-    const requiredFields = ['clientName', 'address', 'number', 'neighborhood', 'city', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'pricePerKwp', 'averageBill', 'connectionType', 'paymentMethod'];
+    const requiredFields = ['clientName', 'phone', 'desiredKwh', 'modulePower', 'moduleBrand', 'inverterBrand', 'inverterPower', 'pricePerKwp', 'averageBill', 'connectionType', 'paymentMethod'];
     return requiredFields.every(field => {
       const value = formData[field as keyof FormData];
       return value !== '' && value !== 0;
@@ -478,308 +499,343 @@ const generatePDFFromHTML = async () => {
     return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} />;
   }
   return <div className="min-h-screen p-4">
-      <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+      <div className="max-w-6xl mx-auto animate-fade-in">
         {/* Spline Hero Section */}
-        <SplineHero />
+        <div className="mb-8">
+          <SplineHero />
+        </div>
 
-        {/* Client data section with enhanced design */}
-        <Card className="bg-gradient-surface shadow-floating border-0 animate-slide-up">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
-                  <Home className="h-5 w-5 text-white" />
-                </div>
-                Dados do Cliente
-              </CardTitle>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setShowHistory(!showHistory)} className="hover:bg-primary/5 hover:border-primary/40 transition-smooth">
-                  <History className="h-4 w-4 mr-2" />
-                  Histórico
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Form - 3 columns */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* História de propostas */}
+            <div className="flex justify-end">
+              <Button variant="outline" size="sm" onClick={() => setShowHistory(!showHistory)} className="hover:bg-primary/5 hover:border-primary/40 transition-smooth">
+                <History className="h-4 w-4 mr-2" />
+                {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
+              </Button>
+            </div>
+
+            {/* Accordion Form Structure */}
+            <Accordion type="single" collapsible defaultValue="client" className="space-y-4">
+              {/* Client data section */}
+              <AccordionItem value="client" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
+                      <Home className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-xl font-inter font-semibold">Dados do Cliente</span>
+                    {formData.clientName && (
+                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
+                    )}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <div className="space-y-4">
+                    <div className="md:col-span-2">
+                      <Label htmlFor="clientName">Nome do Cliente *</Label>
+                      <Input 
+                        id="clientName" 
+                        value={formData.clientName} 
+                        onChange={e => handleInputChange('clientName', e.target.value)} 
+                        placeholder="Nome completo do cliente" 
+                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="phone">Telefone *</Label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          id="phone" 
+                          value={formData.phone} 
+                          onChange={e => handlePhoneChange(e.target.value)} 
+                          placeholder="(67) 99999-9999" 
+                          className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                          maxLength={15}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Endereço opcional */}
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id="hasNoAddress" 
+                          checked={hasNoAddress} 
+                          onCheckedChange={handleNoAddressChange}
+                        />
+                        <Label htmlFor="hasNoAddress" className="text-sm font-medium text-muted-foreground">
+                          Não tenho o endereço agora
+                        </Label>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="cep">CEP {!hasNoAddress && "*"}</Label>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input 
+                              id="cep" 
+                              value={formData.cep} 
+                              onChange={e => handleCepChange(e.target.value)} 
+                              placeholder="00000-000" 
+                              className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                              disabled={isLoadingCep || hasNoAddress}
+                            />
+                            {isLoadingCep && (
+                              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="address">Endereço</Label>
+                          <Input 
+                            id="address" 
+                            value={formData.address} 
+                            onChange={e => handleInputChange('address', e.target.value)} 
+                            placeholder="Rua, Avenida..." 
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                            disabled={hasNoAddress}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="number">Número</Label>
+                          <Input 
+                            id="number" 
+                            value={formData.number} 
+                            onChange={e => handleInputChange('number', e.target.value)} 
+                            placeholder="123" 
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                            disabled={hasNoAddress}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="neighborhood">Bairro</Label>
+                          <Input 
+                            id="neighborhood" 
+                            value={formData.neighborhood} 
+                            onChange={e => handleInputChange('neighborhood', e.target.value)} 
+                            placeholder="Nome do bairro" 
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                            disabled={hasNoAddress}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="city">Cidade</Label>
+                          <Input 
+                            id="city" 
+                            value={formData.city} 
+                            onChange={e => handleInputChange('city', e.target.value)} 
+                            placeholder="Campo Grande" 
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                            disabled={hasNoAddress}
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="state">Estado</Label>
+                          <Input 
+                            id="state" 
+                            value={formData.state} 
+                            onChange={e => handleInputChange('state', e.target.value)} 
+                            placeholder="MS" 
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                            maxLength={2}
+                            disabled={hasNoAddress}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Projeto Solar section */}
+              <AccordionItem value="project" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-secondary to-secondary-hover rounded-lg">
+                      <Settings className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="text-xl font-inter font-semibold">Dados do Projeto Solar</span>
+                    {formData.desiredKwh > 0 && formData.moduleBrand && (
+                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
+                    )}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="monthlyConsumption">Consumo Médio Mensal (kWh) *</Label>
+                        <Input id="monthlyConsumption" type="number" step="1" value={formData.monthlyConsumption || ''} onChange={e => handleInputChange('monthlyConsumption', parseFloat(e.target.value) || 0)} placeholder="800" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="desiredKwh">Quantidade de kWh desejados/mês *</Label>
+                        <Input id="desiredKwh" type="number" step="1" value={formData.desiredKwh || ''} onChange={e => handleInputChange('desiredKwh', parseFloat(e.target.value) || 0)} placeholder="600" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="modulePower">Potência do Módulo (W) *</Label>
+                        <Input id="modulePower" type="number" value={formData.modulePower || ''} onChange={e => handleInputChange('modulePower', parseInt(e.target.value) || 0)} placeholder="450" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="moduleBrand">Marca dos Módulos *</Label>
+                      <Input id="moduleBrand" value={formData.moduleBrand} onChange={e => handleInputChange('moduleBrand', e.target.value)} placeholder="Canadian Solar" />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="inverterBrand">Marca do Inversor *</Label>
+                        <Input id="inverterBrand" value={formData.inverterBrand} onChange={e => handleInputChange('inverterBrand', e.target.value)} placeholder="Fronius" />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
+                        <Input id="inverterPower" type="number" value={formData.inverterPower || ''} onChange={e => handleInputChange('inverterPower', parseInt(e.target.value) || 0)} placeholder="5000" />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="pricePerKwp">Preço por kWp (R$) *</Label>
+                        <Input 
+                          id="pricePerKwp" 
+                          type="number" 
+                          step="0.01"
+                          value={formData.pricePerKwp || ''} 
+                          onChange={e => handleInputChange('pricePerKwp', parseFloat(e.target.value) || 0)} 
+                          placeholder="2450.00" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Economia section */}
+              <AccordionItem value="economy" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
+                      <Calculator className="h-5 w-5 text-white" />
+                    </div>
+                    <span className="text-xl font-inter font-semibold">Dados de Economia</span>
+                    {formData.connectionType && formData.averageBill > 0 && (
+                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
+                    )}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="averageBill">Valor médio da conta de luz (R$/mês) *</Label>
+                      <p className="text-xs text-muted-foreground mb-2">Calculado automaticamente com base no consumo</p>
+                      <Input 
+                        id="averageBill" 
+                        type="number" 
+                        step="0.01"
+                        value={formData.averageBill || ''} 
+                        readOnly
+                        className="bg-muted/50 cursor-not-allowed"
+                        placeholder="Será calculado automaticamente" 
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="connectionType">Tipo de ligação elétrica *</Label>
+                      <Select value={formData.connectionType} onValueChange={value => handleInputChange('connectionType', value)}>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue placeholder="Selecione o tipo de ligação" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white z-50">
+                          <SelectItem value="bifasico">Bifásico</SelectItem>
+                          <SelectItem value="trifasico">Trifásico</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Complementos section */}
+              <AccordionItem value="extras" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-accent to-accent rounded-lg">
+                      <Zap className="h-5 w-5 text-accent-foreground" />
+                    </div>
+                    <span className="text-xl font-inter font-semibold">Complementos</span>
+                    {formData.paymentMethod && (
+                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
+                    )}
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
+                      <Select value={formData.paymentMethod} onValueChange={value => handleInputChange('paymentMethod', value)}>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue placeholder="Selecione a forma de pagamento" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white z-50">
+                          <SelectItem value="pix">PIX</SelectItem>
+                          <SelectItem value="cartao">Cartão de Crédito</SelectItem>
+                          <SelectItem value="financiamento">Financiamento</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="observations">Observações Gerais</Label>
+                      <Textarea id="observations" value={formData.observations} onChange={e => handleInputChange('observations', e.target.value)} placeholder="Informações adicionais sobre o projeto..." className="min-h-[100px]" />
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Desktop sticky actions */}
+            <div className="hidden sm:block sticky-actions">
+              <div className="flex gap-4 justify-center">
+                <Button onClick={saveCurrentProposal} size="lg" variant="secondary" className="px-6 py-3 transition-smooth">
+                  <Save className="mr-2 h-5 w-5" />
+                  Salvar Proposta
+                </Button>
+                
+                <Button 
+                  onClick={generateProposal} 
+                  size="lg" 
+                  disabled={!isFormValid()} 
+                  className="px-8 py-3 text-lg font-semibold transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={!isFormValid() ? "Complete todos os campos obrigatórios para pré-visualizar" : ""}
+                >
+                  <Eye className="mr-2 h-5 w-5" />
+                  Pré-visualizar Proposta
                 </Button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <Label htmlFor="clientName">Nome do Cliente *</Label>
-                <Input 
-                  id="clientName" 
-                  value={formData.clientName} 
-                  onChange={e => handleInputChange('clientName', e.target.value)} 
-                  placeholder="Nome completo do cliente" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="cep">CEP *</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    id="cep" 
-                    value={formData.cep} 
-                    onChange={e => handleCepChange(e.target.value)} 
-                    placeholder="00000-000" 
-                    className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                    disabled={isLoadingCep}
-                  />
-                  {isLoadingCep && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    </div>
-                  )}
-                </div>
-              </div>
+          </div>
 
-              <div>
-                <Label htmlFor="phone">Telefone *</Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    id="phone" 
-                    value={formData.phone} 
-                    onChange={e => handlePhoneChange(e.target.value)} 
-                    placeholder="(67) 99999-9999" 
-                    className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                    maxLength={15}
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="address">Endereço</Label>
-                <Input 
-                  id="address" 
-                  value={formData.address} 
-                  onChange={e => handleInputChange('address', e.target.value)} 
-                  placeholder="Rua, Avenida..." 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="number">Número</Label>
-                <Input 
-                  id="number" 
-                  value={formData.number} 
-                  onChange={e => handleInputChange('number', e.target.value)} 
-                  placeholder="123" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="neighborhood">Bairro</Label>
-                <Input 
-                  id="neighborhood" 
-                  value={formData.neighborhood} 
-                  onChange={e => handleInputChange('neighborhood', e.target.value)} 
-                  placeholder="Nome do bairro" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="city">Cidade</Label>
-                <Input 
-                  id="city" 
-                  value={formData.city} 
-                  onChange={e => handleInputChange('city', e.target.value)} 
-                  placeholder="Campo Grande" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="state">Estado</Label>
-                <Input 
-                  id="state" 
-                  value={formData.state} 
-                  onChange={e => handleInputChange('state', e.target.value)} 
-                  placeholder="MS" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                  maxLength={2}
-                />
-              </div>
+          {/* Sidebar - 1 column */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-4 space-y-4">
+              <ProposalSummary calculations={calculations} />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Dados do Projeto Solar */}
-        <Card className="bg-gradient-card shadow-card border-0">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Settings className="h-5 w-5 text-secondary" />
-              Dados do Projeto Solar
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="monthlyConsumption">Consumo Médio Mensal (kWh) *</Label>
-                <Input id="monthlyConsumption" type="number" step="1" value={formData.monthlyConsumption || ''} onChange={e => handleInputChange('monthlyConsumption', parseFloat(e.target.value) || 0)} placeholder="800" />
-              </div>
-              
-              <div>
-                <Label htmlFor="desiredKwh">Quantidade de kWh desejados/mês *</Label>
-                <Input id="desiredKwh" type="number" step="1" value={formData.desiredKwh || ''} onChange={e => handleInputChange('desiredKwh', parseFloat(e.target.value) || 0)} placeholder="600" />
-              </div>
-              
-              <div>
-                <Label htmlFor="modulePower">Potência do Módulo (W) *</Label>
-                <Input id="modulePower" type="number" value={formData.modulePower || ''} onChange={e => handleInputChange('modulePower', parseInt(e.target.value) || 0)} placeholder="450" />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="moduleBrand">Marca dos Módulos *</Label>
-              <Input id="moduleBrand" value={formData.moduleBrand} onChange={e => handleInputChange('moduleBrand', e.target.value)} placeholder="Canadian Solar" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="inverterBrand">Marca do Inversor *</Label>
-                <Input id="inverterBrand" value={formData.inverterBrand} onChange={e => handleInputChange('inverterBrand', e.target.value)} placeholder="Fronius" />
-              </div>
-              
-              <div>
-                <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
-                <Input id="inverterPower" type="number" value={formData.inverterPower || ''} onChange={e => handleInputChange('inverterPower', parseInt(e.target.value) || 0)} placeholder="5000" />
-              </div>
-
-              <div>
-                <Label htmlFor="pricePerKwp">Preço por kWp (R$) *</Label>
-                <Input 
-                  id="pricePerKwp" 
-                  type="number" 
-                  step="0.01"
-                  value={formData.pricePerKwp || ''} 
-                  onChange={e => handleInputChange('pricePerKwp', parseFloat(e.target.value) || 0)} 
-                  placeholder="2450.00" 
-                />
-              </div>
-            </div>
-
-            <Separator className="my-6" />
-            
-            {/* Dados para Cálculo de Economia */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-muted-foreground">Dados para Cálculo de Economia</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="averageBill">Valor médio da conta de luz (R$/mês) * <span className="text-xs text-muted-foreground">(Calculado automaticamente)</span></Label>
-                  <Input 
-                    id="averageBill" 
-                    type="number" 
-                    step="0.01"
-                    value={formData.averageBill || ''} 
-                    readOnly
-                    className="bg-muted/50 cursor-not-allowed"
-                    placeholder="Será calculado automaticamente com base no consumo mensal" 
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="connectionType">Tipo de ligação elétrica *</Label>
-                  <Select value={formData.connectionType} onValueChange={value => handleInputChange('connectionType', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o tipo de ligação" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="bifasico">Bifásico</SelectItem>
-                      <SelectItem value="trifasico">Trifásico</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Cálculos Automáticos */}
-        <Card className="bg-gradient-card shadow-card border-0">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Calculator className="h-5 w-5 text-primary" />
-              Cálculos Automáticos
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-primary/5 rounded-lg border border-primary/20">
-                <div className="text-2xl font-bold text-primary">{calculations.monthlyGeneration}</div>
-                <div className="text-sm text-muted-foreground">kWh/mês</div>
-                <div className="text-xs text-muted-foreground mt-1">Geração Estimada</div>
-              </div>
-              
-              <div className="text-center p-4 bg-secondary/5 rounded-lg border border-secondary/20">
-                <div className="text-2xl font-bold text-secondary">{formatCurrency(calculations.monthlySavings)}</div>
-                <div className="text-sm text-muted-foreground">Economia/mês</div>
-                <div className="text-xs text-muted-foreground mt-1">Estimada</div>
-              </div>
-              
-              <div className="text-center p-4 bg-accent/20 rounded-lg border border-accent">
-                <div className="text-2xl font-bold text-accent-foreground">{calculations.requiredArea} m²</div>
-                <div className="text-sm text-muted-foreground">Área Necessária</div>
-                <div className="text-xs text-muted-foreground mt-1">Mínima</div>
-              </div>
-              
-              <div className="text-center p-4 bg-muted/20 rounded-lg border border-muted-foreground/20">
-                <div className="text-2xl font-bold text-foreground">{formatCurrency(calculations.totalValue)}</div>
-                <div className="text-sm text-muted-foreground">Valor Total</div>
-                <div className="text-xs text-muted-foreground mt-1">do Projeto</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Complementos */}
-        <Card className="bg-gradient-card shadow-card border-0">
-          <CardContent className="pt-6 space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
-                <Select onValueChange={value => handleInputChange('paymentMethod', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a forma de pagamento" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pix">PIX</SelectItem>
-                    <SelectItem value="cartao">Cartão de Crédito</SelectItem>
-                    <SelectItem value="financiamento">Financiamento</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="observations">Observações Gerais</Label>
-              <Textarea id="observations" value={formData.observations} onChange={e => handleInputChange('observations', e.target.value)} placeholder="Informações adicionais sobre o projeto..." className="min-h-[100px]" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ações */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={() => setShowHistory(!showHistory)} size="lg" variant="outline" className="px-6 py-3">
-              <History className="mr-2 h-5 w-5" />
-              {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
-            </Button>
-            
-            <Button onClick={saveCurrentProposal} size="lg" variant="secondary" className="px-6 py-3">
-              <Save className="mr-2 h-5 w-5" />
-              Salvar Proposta
-            </Button>
-            
-            <Button onClick={generateProposal} size="lg" variant="hero" className="px-8 py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isFormValid()}>
-              <Eye className="mr-2 h-5 w-5" />
-              Pré-visualizar Proposta
-            </Button>
           </div>
         </div>
+
 
         {/* Histórico de Propostas */}
         {showHistory && <ProposalsHistory onLoadProposal={loadProposal} />}
