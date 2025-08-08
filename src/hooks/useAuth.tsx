@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { useToast } from "@/hooks/use-toast";
 import { setupFirstAdmin } from '@/utils/adminSetup';
+import { errorLogger } from '@/utils/errorLogger';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -44,6 +45,26 @@ export const useAuth = () => {
   const signUp = async (email: string, password: string) => {
     try {
       setLoading(true);
+      
+      // Clean existing auth state before signup
+      const cleanupAuthState = () => {
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
+      };
+      
+      cleanupAuthState();
+      
+      // Attempt to sign out any existing session
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+        errorLogger.logAuthError(err, { context: 'signup_cleanup' });
+      }
+      
       const redirectUrl = `${window.location.origin}/`;
       
       const { error } = await supabase.auth.signUp({
@@ -54,16 +75,20 @@ export const useAuth = () => {
         }
       });
       
-      if (error) throw error;
+      if (error) {
+        errorLogger.logAuthError(error, { context: 'signup', email });
+        throw error;
+      }
       
       toast({
         title: "Conta criada com sucesso!",
         description: "Você foi logado automaticamente.",
       });
     } catch (error: any) {
+      errorLogger.logAuthError(error, { context: 'signup', email });
       toast({
         title: "Erro no cadastro",
-        description: error.message,
+        description: error.message || "Erro desconhecido no cadastro",
         variant: "destructive"
       });
       throw error;
@@ -76,12 +101,34 @@ export const useAuth = () => {
     try {
       setLoading(true);
       
+      // Clean existing auth state before signin
+      const cleanupAuthState = () => {
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+            localStorage.removeItem(key);
+          }
+        });
+      };
+      
+      cleanupAuthState();
+      
+      // Attempt to sign out any existing session
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+        errorLogger.logAuthError(err, { context: 'signin_cleanup' });
+      }
+      
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      if (error) throw error;
+      if (error) {
+        errorLogger.logAuthError(error, { context: 'signin', email });
+        throw error;
+      }
       
       toast({
         title: "Login realizado com sucesso!",
@@ -91,9 +138,10 @@ export const useAuth = () => {
       // Force page reload for clean state
       window.location.href = '/';
     } catch (error: any) {
+      errorLogger.logAuthError(error, { context: 'signin', email });
       toast({
         title: "Erro no login",
-        description: error.message,
+        description: error.message || "Erro desconhecido no login",
         variant: "destructive"
       });
       throw error;
@@ -122,6 +170,7 @@ export const useAuth = () => {
         await supabase.auth.signOut({ scope: 'global' });
       } catch (err) {
         // Continue even if this fails
+        errorLogger.logAuthError(err, { context: 'signout' });
       }
       
       toast({
@@ -132,9 +181,10 @@ export const useAuth = () => {
       // Force page reload for clean state
       window.location.href = '/auth';
     } catch (error: any) {
+      errorLogger.logAuthError(error, { context: 'signout' });
       toast({
         title: "Erro no logout",
-        description: error.message,
+        description: error.message || "Erro desconhecido no logout",
         variant: "destructive"
       });
     } finally {

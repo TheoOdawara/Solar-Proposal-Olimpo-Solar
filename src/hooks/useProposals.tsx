@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { errorLogger } from '@/utils/errorLogger';
 
 export interface ProposalData {
   id?: string;
@@ -80,9 +81,10 @@ export const useProposals = () => {
       })));
     } catch (error: any) {
       console.error('Error fetching proposals:', error);
+      errorLogger.logDatabaseError(error, { context: 'fetchProposals' });
       toast({
         title: "Erro ao carregar propostas",
-        description: error.message,
+        description: error.message || "Erro desconhecido ao carregar propostas",
         variant: "destructive"
       });
     } finally {
