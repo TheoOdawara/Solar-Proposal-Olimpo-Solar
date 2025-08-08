@@ -154,23 +154,23 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="relative max-w-4xl mx-auto py-16">
+          <div className="relative max-w-4xl mx-auto py-8">
             {/* Logo */}
-            <div className="absolute top-8 right-8">
+            <div className="absolute top-4 right-4">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
-            <h2 className="text-4xl font-bold text-slate-800 mb-16 text-center">
+            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
               Nossos Projetos:
             </h2>
 
             {/* Projects Grid */}
-            <div className="mb-16">
+            <div className="mb-8">
               <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" loading="lazy" />
             </div>
 
             {/* Footer contact */}
-            <div className="mt-16 bg-slate-800 py-4 text-center rounded-lg">
+            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
               <div className="flex justify-center space-x-6 text-white text-sm">
                 <span>(67) 99668-0242</span>
                 <span>olimpo.energiasolar</span>
@@ -271,24 +271,24 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   </div>
       </section>
 
-        {/* PÁGINA 8: SUA ECONOMIA - Nova seção */}
-        {economyData && <section className="a4-page page-break" style={{
+         {/* PÁGINA 8: SUA ECONOMIA - Nova seção */}
+         {economyData && <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-16">
+            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
               </div>
 
-              {/* Título */}
-              <h2 className="text-4xl font-bold text-center mb-16" style={{
+               {/* Título */}
+               <h2 className="text-4xl font-bold text-center mb-8" style={{
             color: '#ffffff'
           }}>
-                SUA <span style={{
+                 SUA <span style={{
               color: '#ffbf06'
             }}>ECONOMIA</span>
-              </h2>
+               </h2>
 
               {/* Three columns layout */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-white">
@@ -347,18 +347,18 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
           </section>}
 
-        {/* GRÁFICOS INFORMATIVOS - SEU RETORNO E SUA RENTABILIDADE */}
-        <section className="a4-page page-break" style={{
+         {/* GRÁFICOS INFORMATIVOS - SEU RETORNO E SUA RENTABILIDADE */}
+         <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-16">
+            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
               </div>
 
-              {/* GRÁFICO 1: SEU RETORNO */}
-              <div className="mb-16">
+               {/* GRÁFICO 1: SEU RETORNO */}
+               <div className="mb-8">
                 {(() => {
               // Calcular dados do retorno
               const annualSavings = economyData.savingsPerYear;
@@ -393,11 +393,11 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                     color: '#ffbf06'
                   }}>RETORNO</span>
                       </h2>
-                      <h3 className="text-xl text-center mb-8" style={{
+                       <h3 className="text-xl text-center mb-4" style={{
                   color: '#ffffff'
                 }}>
-                        Retorno de investimento em {paybackYears} anos
-                      </h3>
+                         Retorno de investimento em {paybackYears} anos
+                       </h3>
                       
                       <div className="bg-white rounded-lg p-6">
                         <div className="h-80">
@@ -552,7 +552,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 9: RENTABILIDADE */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto py-16">
+          <div className="max-w-4xl mx-auto py-8">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -734,7 +734,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
             {/* Footer contact */}
-            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
+            <div className="mt-6 bg-slate-800 py-4 text-center rounded-lg">
               <div className="flex justify-center space-x-6 text-white text-sm">
                 <span>67 99668-0242</span>
                 <span>Olimpo.energiasolar</span>
@@ -747,7 +747,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
         <section className="a4-page bg-gradient-to-b from-yellow-50 to-white p-8 page-break">
-          <div className="max-w-4xl mx-auto py-16">
+          <div className="max-w-4xl mx-auto py-8">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -840,14 +840,14 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 10: TERMO DE COMPROMISSO - Baseado na imagem 10 */}
         <section className="a4-page bg-gradient-to-b from-yellow-100 to-yellow-50 p-8 page-break">
-          <div className="max-w-4xl mx-auto py-16">
+          <div className="max-w-4xl mx-auto py-8">
             
             <h2 className="text-5xl font-bold text-slate-800 mb-12 leading-tight">
               Termo de<br />
               compromisso:
             </h2>
 
-            <div className="space-y-6 text-base text-slate-800 leading-relaxed mb-20">
+            <div className="space-y-6 text-base text-slate-800 leading-relaxed mb-12">
               <p>
                 Para o entendimento da contratação de ambas as partes, logo abaixo se encontram algumas informações 
                 importantes para todo o processo de aquisição da usina solar.
@@ -869,7 +869,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
             {/* Signature Section - Exatamente como na imagem */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
               <div className="text-center">
                 <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]">
                   {/* Espaço para assinatura */}
