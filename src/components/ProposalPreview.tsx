@@ -182,89 +182,11 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 6: PROJETO 360° */}
-        <section className="a4-page bg-white p-6 page-break">
-          <div className="max-w-4xl mx-auto h-full flex flex-col">
-            {/* Logo */}
-            <div className="flex justify-end mb-6">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-12 w-auto" loading="lazy" />
-            </div>
-
-            {/* Título */}
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-slate-800">Projeto</h2>
-              <p className="text-sm text-slate-600 mt-2 max-w-2xl mx-auto">
-                Nosso compromisso é satisfazer as necessidades e expectativas até o
-                fim de cada projeto fotovoltaico. Por isso, temos um processo de 
-                gerenciamento que torna mais ágeis as seguintes etapas:
-              </p>
-            </div>
-
-            {/* Grade de ícones baseada na segunda imagem - layout otimizado */}
-            <div className="flex-1 grid grid-cols-3 gap-4 items-center max-h-96">
-              {/* Estudo de Necessidade */}
-              <div className="avoid-break flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center mb-2">
-                  <BarChart3 className="h-8 w-8 text-slate-700" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">Estudo de</h3>
-                <h3 className="text-sm font-bold text-slate-800">Necessidade</h3>
-              </div>
-
-              {/* Apresentação da Proposta */}
-              <div className="avoid-break flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center mb-2">
-                  <FileText className="h-8 w-8 text-slate-700" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">Apresentação da</h3>
-                <h3 className="text-sm font-bold text-slate-800">Proposta</h3>
-              </div>
-
-              {/* Instalação */}
-              <div className="avoid-break flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center mb-2">
-                  <Wrench className="h-8 w-8 text-slate-700" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">Instalação</h3>
-              </div>
-
-              {/* Botão START */}
-              <div className="avoid-break flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-yellow-400 rounded-lg flex items-center justify-center mb-2">
-                  <div className="flex items-center space-x-1 text-black font-bold">
-                    <span className="text-lg">▶</span>
-                    <span className="text-xs">START</span>
-                  </div>
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">Início do</h3>
-                <h3 className="text-sm font-bold text-slate-800">Projeto</h3>
-              </div>
-
-              {/* Apresentação do Canal do Cliente */}
-              <div className="avoid-break flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center mb-2">
-                  <Globe className="h-8 w-8 text-slate-700" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">Apresentação do</h3>
-                <h3 className="text-sm font-bold text-slate-800">Canal do Cliente</h3>
-              </div>
-
-              {/* Homologação */}
-              <div className="avoid-break flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center mb-2">
-                  <CheckCircle className="h-8 w-8 text-slate-700" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-800">Homologação</h3>
-              </div>
-            </div>
-
-            {/* Footer de contato - compacto */}
-            <div className="mt-auto bg-slate-800 py-3 text-center rounded-lg">
-              <div className="flex flex-wrap justify-center gap-4 text-white text-xs">
-                <span>(67) 99668-0242</span>
-                <span>olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-              </div>
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
+            {/* Imagem da página 6 */}
+            <div className="flex items-center justify-center h-full">
+              <img src="/lovable-uploads/ba096a62-b496-4bc5-928a-8a98fdb7ba88.png" alt="Projeto 360° - Olimpo Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
             </div>
           </div>
         </section>
