@@ -14,7 +14,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { signIn, signUp, loading } = useAuth();
+  const { signIn, signUp, signInWithGoogle, loading } = useAuth();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +27,14 @@ const AuthPage = () => {
     if (!email || !password || !confirmPassword) return;
     if (password !== confirmPassword) return;
     try { await signUp(email, password); } catch {}
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      // Error handling is done in the useAuth hook
+    }
   };
 
   return (

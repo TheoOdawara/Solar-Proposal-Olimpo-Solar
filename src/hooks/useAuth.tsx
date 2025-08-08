@@ -192,12 +192,40 @@ export const useAuth = () => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        errorLogger.logAuthError(error, { context: 'google_signin' });
+        throw error;
+      }
+    } catch (error: any) {
+      errorLogger.logAuthError(error, { context: 'google_signin' });
+      toast({
+        title: "Erro no login com Google",
+        description: error.message || "Erro desconhecido no login",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     user,
     session,
     loading,
     signUp,
     signIn,
+    signInWithGoogle,
     signOut
   };
 };
