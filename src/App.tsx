@@ -47,7 +47,7 @@ const App = () => (
             path="/*"
             element={
               <ProtectedRoute>
-                <div className="min-h-screen flex w-full">
+                <div className="min-h-screen flex flex-col md:flex-row w-full">
                   <AppSidebar />
                   <main className="flex-1">
                     <Routes>

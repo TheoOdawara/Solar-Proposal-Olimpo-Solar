@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { NavLink, useLocation } from "react-router-dom";
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Home, FileText, History, BarChart3, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -124,6 +124,7 @@ export const MobileSidebar = ({
           <Menu
             className="text-foreground cursor-pointer"
             onClick={() => setOpen(!open)}
+            aria-label="Abrir menu"
           />
         </div>
         <AnimatePresence>
@@ -258,6 +259,11 @@ export function AppSidebar() {
   const currentPath = location.pathname;
   const [open, setOpen] = useState(false);
 
+  // Auto-close sidebar on route change (mobile)
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
   const items = [
     { label: "Dashboard", href: "/dashboard", icon: <Home className="h-5 w-5 flex-shrink-0" /> },
     { label: "Gerar Proposta", href: "/", icon: <FileText className="h-5 w-5 flex-shrink-0" /> },
@@ -281,6 +287,7 @@ export function AppSidebar() {
                 key={idx} 
                 link={item} 
                 isActive={isActive(item.href)}
+                onClick={() => setOpen(false)}
               />
             ))}
           </div>
