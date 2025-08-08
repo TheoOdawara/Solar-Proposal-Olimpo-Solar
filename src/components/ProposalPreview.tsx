@@ -136,82 +136,11 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
-        <section className="a4-page bg-white p-6 page-break">
-          <div className="max-w-4xl mx-auto h-full flex flex-col">
-            {/* Logo */}
-            <div className="flex justify-end mb-6">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-12 w-auto" loading="lazy" />
-            </div>
-
-            {/* Título */}
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-slate-800">Como Funciona</h2>
-            </div>
-
-            {/* Conteúdo baseado na primeira imagem do usuário */}
-            <div className="flex-1 flex flex-col items-center justify-center">
-              {/* Sol */}
-              <div className="mb-6">
-                <div className="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center relative">
-                  {/* Raios do sol simplificados */}
-                  <div className="absolute inset-0">
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-0.5 h-4 bg-yellow-400"></div>
-                    <div className="absolute right-0 top-1/2 transform translate-x-1 -translate-y-1/2 w-4 h-0.5 bg-yellow-400"></div>
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 w-0.5 h-4 bg-yellow-400"></div>
-                    <div className="absolute left-0 top-1/2 transform -translate-x-1 -translate-y-1/2 w-4 h-0.5 bg-yellow-400"></div>
-                  </div>
-                  <Zap className="h-8 w-8 text-yellow-600" />
-                </div>
-              </div>
-
-              {/* Número 1 */}
-              <div className="mb-8">
-                <div className="w-12 h-12 bg-slate-800 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                  1
-                </div>
-              </div>
-
-              {/* Casa com painéis solares - versão compacta */}
-              <div className="relative mb-6">
-                {/* Casa */}
-                <div className="w-64 h-36 bg-orange-400 relative rounded-lg">
-                  {/* Telhado */}
-                  <div className="absolute -top-6 left-0 right-0 h-12 bg-red-500 transform -skew-x-12 rounded-t-lg"></div>
-                  
-                  {/* Painéis solares no telhado - compactos */}
-                  <div className="absolute -top-3 left-6 flex space-x-1">
-                    {Array.from({length: 3}).map((_, idx) => (
-                      <div key={idx} className="w-12 h-8 bg-slate-800 border border-yellow-400 rounded grid grid-cols-3 gap-0.5 p-0.5">
-                        {Array.from({length: 6}).map((_, i) => (
-                          <div key={i} className="bg-slate-600 rounded-sm"></div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Porta */}
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-18 bg-red-600 rounded-t-lg"></div>
-                  
-                  {/* Janelas */}
-                  <div className="absolute bottom-12 left-6 w-8 h-8 bg-yellow-300 rounded"></div>
-                  <div className="absolute bottom-12 right-6 w-8 h-8 bg-yellow-300 rounded"></div>
-
-                  {/* Medidor */}
-                  <div className="absolute bottom-6 right-3 w-6 h-8 bg-white border border-slate-400 rounded flex items-center justify-center">
-                    <div className="w-3 h-4 bg-slate-200 rounded-sm"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer de contato - compacto */}
-            <div className="mt-auto bg-slate-800 py-3 text-center rounded-lg">
-              <div className="flex flex-wrap justify-center gap-4 text-white text-xs">
-                <span>(67) 99668-0242</span>
-                <span>olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-              </div>
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
+            {/* Imagem da página 3 */}
+            <div className="flex items-center justify-center h-full">
+              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
             </div>
           </div>
         </section>
