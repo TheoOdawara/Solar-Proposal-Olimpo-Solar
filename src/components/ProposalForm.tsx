@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { generateProposalPDF } from "@/lib/pdf-generator";
+
 import { useProposals, ProposalData } from "@/hooks/useProposals";
 import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
@@ -385,6 +385,10 @@ const generatePDFFromHTML = async () => {
           allowTaint: true,
           backgroundColor: '#ffffff',
           logging: false,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: page.scrollWidth,
+          windowHeight: page.scrollHeight,
         });
 
         const imgData = canvas.toDataURL('image/jpeg', 0.98);

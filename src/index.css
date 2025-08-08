@@ -145,13 +145,12 @@ All colors MUST be HSL.
 /* A4 Page dimensions */
 .a4-page {
   width: 100%;
-  max-width: 794px; /* A4 width in pixels at 96 DPI */
-  aspect-ratio: 210 / 297; /* A4 aspect ratio */
-  min-height: 1123px; /* A4 height in pixels at 96 DPI */
+  max-width: 794px; /* A4 width at 96 DPI */
+  height: 1123px; /* A4 height at 96 DPI */
   margin: 0 auto;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
+  background: hsl(var(--background));
 }
 
 /* PDF Print Optimization Styles */

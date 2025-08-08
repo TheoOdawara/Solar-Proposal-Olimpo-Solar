@@ -151,7 +151,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto py-16">
+          <div className="relative max-w-4xl mx-auto py-16">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -269,7 +269,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {economyData && <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="max-w-4xl mx-auto py-16 px-8">
+            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-16">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
@@ -337,7 +337,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               {/* Footer contact */}
-              <div className="mt-16 py-4 text-center rounded-lg" style={{
+              <div className="mt-auto py-4 text-center rounded-lg" style={{
             backgroundColor: '#ffbf06'
           }}>
                 <div className="flex justify-center space-x-6 text-black text-sm font-semibold">
@@ -354,7 +354,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="max-w-4xl mx-auto py-16 px-8">
+            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-16">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
