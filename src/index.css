@@ -137,6 +137,13 @@ All colors MUST be HSL.
   }
 }
 
+/* Mobile touch targets */
+@media (max-width: 640px) {
+  input, select, textarea, button {
+    min-height: 44px;
+  }
+}
+
 /* Gradient utilities */
 .bg-gradient-solar {
   background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-hover)));

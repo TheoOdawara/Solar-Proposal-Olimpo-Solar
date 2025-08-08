@@ -106,7 +106,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   const economyData = calculateEconomyData();
   return <div className="min-h-screen bg-background">
       {/* Navegação */}
-      <div className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
+      <div data-hide-in-pdf className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <Button onClick={onEdit} variant="outline" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
@@ -131,7 +131,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {/* PÁGINA 2: QUEM SOMOS */}
         <section className="a4-page bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
-            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-4xl" />
+            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
           </div>
         </section>
 
@@ -145,7 +145,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {/* PÁGINA 4: BENEFÍCIOS */}
         <section className="a4-page bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
-            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-4xl" />
+            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
           </div>
         </section>
 
@@ -163,7 +163,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Projects Grid */}
             <div className="mb-16">
-              <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" />
+              <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" loading="lazy" />
             </div>
 
             {/* Footer contact */}
@@ -199,7 +199,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
     {/* Imagem principal */}
     <div className="bg-slate-50 border border-slate-200 rounded-2xl shadow-sm p-6 mb-12">
       <div className="w-full h-64 flex items-center justify-center">
-        <img src="/lovable-uploads/898d9890-e943-4493-9ab7-cad6efc48286.png" alt="Equipamentos do Sistema Solar" className="max-h-full object-contain" />
+        <img src="/lovable-uploads/898d9890-e943-4493-9ab7-cad6efc48286.png" alt="Equipamentos do Sistema Solar" className="max-h-full object-contain" loading="lazy" />
       </div>
     </div>
 
@@ -836,7 +836,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Bandeiras de cartão */}
             <div className="flex justify-center gap-4 mb-6">
-              <img src="/lovable-uploads/49c651a9-aa2e-42d3-ae77-f741c6d2caf9.png" alt="Bandeiras de cartão aceitas" className="h-8 object-contain" />
+              <img src="/lovable-uploads/49c651a9-aa2e-42d3-ae77-f741c6d2caf9.png" alt="Bandeiras de cartão aceitas" className="h-8 object-contain" loading="lazy" />
             </div>
 
             {/* Logos dos bancos */}
@@ -914,7 +914,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Logo e informações da empresa */}
             <div className="flex justify-center mb-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" loading="lazy" />
             </div>
 
             {/* Footer da empresa */}

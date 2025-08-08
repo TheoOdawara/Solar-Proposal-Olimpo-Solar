@@ -349,11 +349,16 @@ const ProposalForm = ({
     setShowPreview(true);
   };
 const generatePDFFromHTML = async () => {
+    // Ocultar elementos sticky/nav apenas durante a captura
+    const container = document.getElementById('pdf-content');
     try {
-      const container = document.getElementById('pdf-content');
       if (!container) {
         throw new Error('Elemento de proposta não encontrado');
       }
+
+      const hiddenEls = Array.from(container.querySelectorAll('[data-hide-in-pdf]')) as HTMLElement[];
+      const prevVisibilities = hiddenEls.map((el) => el.style.visibility);
+      hiddenEls.forEach((el) => (el.style.visibility = 'hidden'));
 
       const pages = Array.from(container.querySelectorAll('.a4-page')) as HTMLElement[];
       if (pages.length === 0) {
@@ -367,7 +372,7 @@ const generatePDFFromHTML = async () => {
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i];
 
-        // Wait for images to load
+        // Esperar imagens carregarem
         const imgs = Array.from(page.querySelectorAll('img')) as HTMLImageElement[];
         await Promise.all(
           imgs.map((img) => {
@@ -410,6 +415,13 @@ const generatePDFFromHTML = async () => {
         description: "Ocorreu um erro ao gerar a proposta. Tente novamente.",
         variant: "destructive",
       });
+    } finally {
+      // Restaurar visibilidade
+      const container = document.getElementById('pdf-content');
+      if (container) {
+        const hiddenEls = Array.from(container.querySelectorAll('[data-hide-in-pdf]')) as HTMLElement[];
+        hiddenEls.forEach((el) => (el.style.visibility = ''));
+      }
     }
   };
   const saveCurrentProposal = async () => {
@@ -772,8 +784,20 @@ const generatePDFFromHTML = async () => {
         {/* Histórico de Propostas */}
         {showHistory && <ProposalsHistory onLoadProposal={loadProposal} />}
 
-        <div className="pb-8"></div>
+        {/* Barra de ações fixa no mobile */}
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t border-border p-3">
+          <div className="max-w-4xl mx-auto flex gap-3">
+            <Button onClick={saveCurrentProposal} variant="secondary" className="flex-1">
+              <Save className="mr-2 h-5 w-5" /> Salvar
+            </Button>
+            <Button onClick={generateProposal} disabled={!isFormValid()} className="flex-1">
+              <Eye className="mr-2 h-5 w-5" /> Pré-visualizar
+            </Button>
+          </div>
+        </div>
+
+        <div className="pb-24"></div>
       </div>
     </div>;
-};
-export default ProposalForm;
+  };
+  export default ProposalForm;
