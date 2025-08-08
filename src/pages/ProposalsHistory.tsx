@@ -38,6 +38,35 @@ const ProposalsHistory = () => {
     );
   }
 
+  // Show message if no proposals exist
+  if (!loading && proposals.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
+        <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Histórico de Propostas
+            </h1>
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Card>
+            <CardContent className="text-center py-12">
+              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">Nenhuma proposta encontrada</h3>
+              <p className="text-muted-foreground mb-4">
+                Você ainda não criou nenhuma proposta. Comece criando sua primeira proposta!
+              </p>
+              <Button asChild>
+                <a href="/">Criar Primeira Proposta</a>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">

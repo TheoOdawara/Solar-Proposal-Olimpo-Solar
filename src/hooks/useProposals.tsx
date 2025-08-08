@@ -47,17 +47,39 @@ export const useProposals = () => {
   const fetchProposals = async () => {
     try {
       setLoading(true);
+      console.log('Fetching proposals...');
+      
+      // Check authentication first
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.error('Auth error:', authError);
+        throw new Error('Usuário não autenticado');
+      }
+      
+      if (!user) {
+        console.error('No user found');
+        throw new Error('Usuário não encontrado');
+      }
+      
+      console.log('User authenticated:', user.id);
+      
       const { data, error } = await supabase
         .from('proposals')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+      
+      console.log('Proposals fetched:', data?.length || 0);
       setProposals((data || []).map(item => ({
         ...item,
         status: item.status as ProposalData['status'] || 'draft'
       })));
     } catch (error: any) {
+      console.error('Error fetching proposals:', error);
       toast({
         title: "Erro ao carregar propostas",
         description: error.message,

@@ -287,7 +287,6 @@ export function AppSidebar() {
                 key={idx} 
                 link={item} 
                 isActive={isActive(item.href)}
-                onClick={() => setOpen(false)}
               />
             ))}
           </div>
