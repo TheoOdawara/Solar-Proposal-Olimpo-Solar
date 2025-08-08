@@ -14,7 +14,8 @@ import { useAuth } from "@/hooks/useAuth";
 import ProposalsHistory from "@/components/ProposalsHistory";
 import ProposalPreview from "@/components/ProposalPreview";
 import { SplineHero } from "@/components/SplineHero";
-import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 interface FormData {
   // Dados do cliente
   clientName: string;
@@ -347,43 +348,63 @@ const ProposalForm = ({
     if (!validateForm()) return;
     setShowPreview(true);
   };
-  const generatePDFFromHTML = async () => {
+const generatePDFFromHTML = async () => {
     try {
-      const element = document.getElementById('pdf-content');
-      if (!element) {
+      const container = document.getElementById('pdf-content');
+      if (!container) {
         throw new Error('Elemento de proposta não encontrado');
       }
-      const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
-      const options = {
-        margin: 0,
-        filename: fileName,
-        image: {
-          type: 'jpeg',
-          quality: 0.98
-        },
-        html2canvas: {
+
+      const pages = Array.from(container.querySelectorAll('.a4-page')) as HTMLElement[];
+      if (pages.length === 0) {
+        pages.push(container as HTMLElement);
+      }
+
+      const pdf = new jsPDF('portrait', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+
+        // Wait for images to load
+        const imgs = Array.from(page.querySelectorAll('img')) as HTMLImageElement[];
+        await Promise.all(
+          imgs.map((img) => {
+            if (img.complete) return Promise.resolve(true);
+            return new Promise((resolve) => {
+              img.onload = () => resolve(true);
+              img.onerror = () => resolve(true);
+            });
+          })
+        );
+
+        const canvas = await html2canvas(page, {
           scale: 2,
           useCORS: true,
-          letterRendering: true,
-          allowTaint: true
-        },
-        jsPDF: {
-          unit: 'mm',
-          format: 'a4',
-          orientation: 'portrait'
-        }
-      };
-      await html2pdf().set(options).from(element).save();
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.98);
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      }
+
+      const fileName = `Proposta_${formData.clientName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+
       toast({
         title: "Proposta gerada com sucesso!",
-        description: "O PDF foi baixado automaticamente."
+        description: "O PDF foi baixado automaticamente.",
       });
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       toast({
         title: "Erro ao gerar PDF",
         description: "Ocorreu um erro ao gerar a proposta. Tente novamente.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };

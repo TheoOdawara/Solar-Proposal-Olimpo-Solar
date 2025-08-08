@@ -53,7 +53,7 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <section className="a4-page page-break print-optimized relative overflow-hidden bg-white">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#022136] via-[#022136] to-[#033249]"></div>
       
@@ -63,7 +63,7 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
       <div className="absolute top-1/2 right-10 w-16 h-16 bg-white rounded-full opacity-5"></div>
 
       {/* Content container */}
-      <div className="relative z-10 min-h-screen flex flex-col">
+      <div className="relative z-10 h-full flex flex-col">
         
         {/* Header with logo */}
         <div className="flex justify-center pt-12 mb-8">
@@ -193,8 +193,8 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
             </div>
           </div>
         </div>
-      </div>
-    </div>
+        </div>
+    </section>
   );
 };
 

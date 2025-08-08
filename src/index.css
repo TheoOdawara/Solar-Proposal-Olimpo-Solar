@@ -166,6 +166,12 @@ All colors MUST be HSL.
   /* Only apply page breaks for print, not PDF generation */
 }
 
+/* Prevent internal element breaks */
+.avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
 @media print {
   .a4-page {
     width: 210mm !important;
