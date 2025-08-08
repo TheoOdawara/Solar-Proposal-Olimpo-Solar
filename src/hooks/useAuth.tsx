@@ -12,34 +12,71 @@ export const useAuth = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('🔵 [Auth State] Configurando listener de mudanças de estado...');
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔵 [Auth State] Mudança detectada:', { event, userId: session?.user?.id });
+        console.log('🔵 [Auth State] Detalhes da sessão:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          userEmail: session?.user?.email,
+          provider: session?.user?.app_metadata?.provider
+        });
+        
         setSession(session);
         setUser(session?.user ?? null);
         
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('🟢 [Auth State] Login bem-sucedido para:', session.user.email);
+          console.log('🔵 [Auth State] Configurando primeiro admin...');
+          
           // Set up roles for users
           setTimeout(async () => {
-            await setupFirstAdmin(session.user.id);
+            try {
+              await setupFirstAdmin(session.user.id);
+              console.log('🟢 [Auth State] Primeiro admin configurado com sucesso');
+            } catch (error) {
+              console.error('🔴 [Auth State] Erro ao configurar primeiro admin:', error);
+            }
           }, 0);
           setTimeout(() => {
             setLoading(false);
           }, 0);
         } else if (event === 'SIGNED_OUT') {
+          console.log('🟡 [Auth State] Usuário deslogado');
           setLoading(false);
+        } else if (event === 'TOKEN_REFRESHED') {
+          console.log('🔵 [Auth State] Token renovado');
+        } else {
+          console.log('🔵 [Auth State] Evento não tratado:', event);
         }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    console.log('🔵 [Auth State] Verificando sessão existente...');
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('🔴 [Auth State] Erro ao obter sessão:', error);
+      } else {
+        console.log('🔵 [Auth State] Sessão existente:', {
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          userEmail: session?.user?.email
+        });
+      }
+      
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('🔵 [Auth State] Removendo listener de autenticação');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string) => {
@@ -194,20 +231,60 @@ export const useAuth = () => {
 
   const signInWithGoogle = async () => {
     try {
+      console.log('🔵 [Google Auth] Iniciando login com Google...');
+      console.log('🔵 [Google Auth] URL atual:', window.location.href);
+      console.log('🔵 [Google Auth] Origin:', window.location.origin);
+      
       setLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
+      
+      const redirectTo = `${window.location.origin}/`;
+      console.log('🔵 [Google Auth] Redirect URL configurado:', redirectTo);
+      
+      // Verificar configuração do cliente Supabase
+      console.log('🔵 [Google Auth] Cliente Supabase inicializado');
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`
+          redirectTo,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       });
       
+      console.log('🔵 [Google Auth] Resposta do signInWithOAuth:', { data, error });
+      
       if (error) {
-        errorLogger.logAuthError(error, { context: 'google_signin' });
+        console.error('🔴 [Google Auth] Erro no signInWithOAuth:', error);
+        console.error('🔴 [Google Auth] Código do erro:', error.message);
+        console.error('🔴 [Google Auth] Stack trace:', error.stack);
+        
+        errorLogger.logAuthError(error, { 
+          context: 'google_signin',
+          redirectTo,
+          currentUrl: window.location.href,
+          userAgent: navigator.userAgent
+        });
         throw error;
       }
+      
+      console.log('🟢 [Google Auth] Redirecionamento iniciado com sucesso');
+      
     } catch (error: any) {
-      errorLogger.logAuthError(error, { context: 'google_signin' });
+      console.error('🔴 [Google Auth] Erro geral no login:', error);
+      console.error('🔴 [Google Auth] Tipo do erro:', typeof error);
+      console.error('🔴 [Google Auth] Propriedades do erro:', Object.keys(error));
+      
+      errorLogger.logAuthError(error, { 
+        context: 'google_signin_catch',
+        currentUrl: window.location.href,
+        userAgent: navigator.userAgent,
+        errorType: typeof error,
+        errorKeys: Object.keys(error)
+      });
+      
       toast({
         title: "Erro no login com Google",
         description: error.message || "Erro desconhecido no login",
@@ -215,6 +292,7 @@ export const useAuth = () => {
       });
       throw error;
     } finally {
+      console.log('🔵 [Google Auth] Finalizando processo de login');
       setLoading(false);
     }
   };
