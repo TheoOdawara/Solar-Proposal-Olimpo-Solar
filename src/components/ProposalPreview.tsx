@@ -343,16 +343,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               {/* Footer contact */}
-              <div className="mt-auto py-4 text-center rounded-lg" style={{
-            backgroundColor: '#ffbf06'
-          }}>
-                <div className="flex justify-center space-x-6 text-black text-sm font-semibold">
-                  <span>(67) 99668-0242</span>
-                  <span>olimpo.energiasolar</span>
-                  <span>adm.olimposolar@gmail.com</span>
-                  <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
-                </div>
-              </div>
+              
             </div>
           </section>}
 
@@ -462,16 +453,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               const investmentBase = calculations.totalValue || 50000;
               const annualSavings = calculations.monthlySavings * 12;
               const fiveYearsSavings = annualSavings * 5;
-              
+
               // Cálculo da rentabilidade real da energia solar
-              const solarRentabilityPercentage = investmentBase > 0 
-                ? Math.round((fiveYearsSavings / investmentBase) * 100)
-                : 180;
-              
+              const solarRentabilityPercentage = investmentBase > 0 ? Math.round(fiveYearsSavings / investmentBase * 100) : 180;
+
               // Ajuste proporcional das outras opções baseado no investimento real
-              const savingsPercentage = Math.round((investmentBase * 0.27) / 1000) * 1000;
-              const cdbPercentage = Math.round((investmentBase * 0.45) / 1000) * 1000;
-              
+              const savingsPercentage = Math.round(investmentBase * 0.27 / 1000) * 1000;
+              const cdbPercentage = Math.round(investmentBase * 0.45 / 1000) * 1000;
               const rentabilityData = [{
                 investment: 'Poupança',
                 percentage: 27,
