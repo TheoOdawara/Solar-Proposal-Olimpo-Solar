@@ -833,12 +833,6 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               <img src="/lovable-uploads/49c651a9-aa2e-42d3-ae77-f741c6d2caf9.png" alt="Bandeiras de cartão aceitas" className="h-8 object-contain" loading="lazy" />
             </div>
 
-            {/* Logos dos bancos */}
-            <div className="grid grid-cols-7 gap-4 mb-12 max-w-3xl mx-auto">
-              {['BV', 'Sicredi', 'Sol Agora', 'SICOOB', 'Viacredi', 'Santander', 'BNDES'].map(bank => <div key={bank} className="bg-gray-200 h-12 rounded flex items-center justify-center text-xs font-bold text-slate-600">
-                  {bank}
-                </div>)}
-            </div>
 
             {/* Seção de rentabilidade - baseado na parte inferior da imagem 9 */}
             
