@@ -828,10 +828,6 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </p>
             </div>
 
-            {/* Bandeiras de cartão */}
-            <div className="flex justify-center gap-4 mb-6">
-              <img src="/lovable-uploads/49c651a9-aa2e-42d3-ae77-f741c6d2caf9.png" alt="Bandeiras de cartão aceitas" className="h-8 object-contain" loading="lazy" />
-            </div>
 
 
             {/* Seção de rentabilidade - baseado na parte inferior da imagem 9 */}
