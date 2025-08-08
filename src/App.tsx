@@ -11,6 +11,7 @@ import ProposalsHistory from "./pages/ProposalsHistory";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "@/hooks/useAuth";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -38,32 +39,34 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<AuthPage />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <div className="min-h-screen flex flex-col md:flex-row w-full">
-                  <AppSidebar />
-                  <main className="flex-1">
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/metrics" element={<Metrics />} />
-                      <Route path="/historico" element={<ProposalsHistory />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </main>
-                </div>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <ErrorBoundary>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/auth" element={<AuthPage />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <div className="min-h-screen flex flex-col md:flex-row w-full">
+                    <AppSidebar />
+                    <main className="flex-1">
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/metrics" element={<Metrics />} />
+                        <Route path="/historico" element={<ProposalsHistory />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </main>
+                  </div>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </ErrorBoundary>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -13,6 +13,30 @@ export interface ProposalData {
   seller_id?: string;
   created_at?: string;
   updated_at?: string;
+  
+  // Novos campos expandidos
+  status?: 'draft' | 'sent' | 'approved' | 'rejected' | 'closed';
+  cep?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  neighborhood?: string;
+  complement?: string;
+  monthly_consumption?: number;
+  average_bill?: number;
+  module_brand?: string;
+  module_model?: string;
+  module_power?: number;
+  module_quantity?: number;
+  inverter_brand?: string;
+  inverter_model?: string;
+  payment_method?: string;
+  payment_conditions?: string;
+  valid_until?: string;
+  notes?: string;
+  required_area?: number;
+  phone?: string;
+  email?: string;
 }
 
 export const useProposals = () => {
@@ -29,7 +53,10 @@ export const useProposals = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProposals(data || []);
+      setProposals((data || []).map(item => ({
+        ...item,
+        status: item.status as ProposalData['status'] || 'draft'
+      })));
     } catch (error: any) {
       toast({
         title: "Erro ao carregar propostas",
@@ -75,6 +102,70 @@ export const useProposals = () => {
     }
   };
 
+  const updateProposal = async (id: string, proposalData: Partial<ProposalData>) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('proposals')
+        .update(proposalData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Update local state
+      setProposals(prev => prev.map(p => p.id === id ? { 
+        ...p, 
+        ...data,
+        status: data.status as ProposalData['status'] || p.status 
+      } : p));
+      
+      return data;
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar proposta",
+        description: error.message,
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const autoSaveProposal = async (id: string | undefined, proposalData: Partial<ProposalData>) => {
+    try {
+      if (!id) {
+        // Create new draft proposal
+        const { data, error } = await supabase
+          .from('proposals')
+          .insert({
+            user_id: (await supabase.auth.getUser()).data.user?.id,
+            status: 'draft',
+            client_name: proposalData.client_name || '',
+            system_power: proposalData.system_power || 0,
+            monthly_generation: proposalData.monthly_generation || 0,
+            monthly_savings: proposalData.monthly_savings || 0,
+            total_value: proposalData.total_value || 0,
+            ...proposalData
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      } else {
+        // Update existing proposal
+        return await updateProposal(id, proposalData);
+      }
+    } catch (error: any) {
+      console.error("Auto-save failed:", error);
+      // Don't show toast for auto-save failures to avoid annoying user
+      throw error;
+    }
+  };
+
   const deleteProposal = async (id: string) => {
     try {
       setLoading(true);
@@ -111,6 +202,8 @@ export const useProposals = () => {
     proposals,
     loading,
     saveProposal,
+    updateProposal,
+    autoSaveProposal,
     deleteProposal,
     fetchProposals
   };

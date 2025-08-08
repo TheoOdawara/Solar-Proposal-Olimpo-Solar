@@ -14,45 +14,200 @@ export type Database = {
   }
   public: {
     Tables: {
-      proposals: {
+      customers: {
         Row: {
-          client_name: string
+          address: string | null
+          cep: string | null
+          city: string | null
+          complement: string | null
           created_at: string
+          email: string | null
           id: string
-          monthly_generation: number
-          monthly_savings: number
-          seller_id: string | null
-          seller_name: string | null
-          system_power: number
-          total_value: number
+          name: string
+          neighborhood: string | null
+          phone: string | null
+          state: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
-          client_name: string
+          address?: string | null
+          cep?: string | null
+          city?: string | null
+          complement?: string | null
           created_at?: string
+          email?: string | null
           id?: string
-          monthly_generation: number
-          monthly_savings: number
-          seller_id?: string | null
-          seller_name?: string | null
-          system_power: number
-          total_value: number
+          name: string
+          neighborhood?: string | null
+          phone?: string | null
+          state?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
-          client_name?: string
+          address?: string | null
+          cep?: string | null
+          city?: string | null
+          complement?: string | null
           created_at?: string
+          email?: string | null
           id?: string
-          monthly_generation?: number
-          monthly_savings?: number
+          name?: string
+          neighborhood?: string | null
+          phone?: string | null
+          state?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      proposal_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string
+          id: string
+          proposal_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type: string
+          id?: string
+          proposal_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          proposal_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_attachments_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposals: {
+        Row: {
+          address: string | null
+          average_bill: number | null
+          cep: string | null
+          city: string | null
+          client_name: string
+          complement: string | null
+          created_at: string
+          email: string | null
+          id: string
+          inverter_brand: string | null
+          inverter_model: string | null
+          module_brand: string | null
+          module_model: string | null
+          module_power: number | null
+          module_quantity: number | null
+          monthly_consumption: number | null
+          monthly_generation: number
+          monthly_savings: number
+          neighborhood: string | null
+          notes: string | null
+          payment_conditions: string | null
+          payment_method: string | null
+          phone: string | null
+          required_area: number | null
+          seller_id: string | null
+          seller_name: string | null
+          state: string | null
+          status: string | null
+          system_power: number
+          total_value: number
+          updated_at: string
+          user_id: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          address?: string | null
+          average_bill?: number | null
+          cep?: string | null
+          city?: string | null
+          client_name: string
+          complement?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          inverter_brand?: string | null
+          inverter_model?: string | null
+          module_brand?: string | null
+          module_model?: string | null
+          module_power?: number | null
+          module_quantity?: number | null
+          monthly_consumption?: number | null
+          monthly_generation: number
+          monthly_savings: number
+          neighborhood?: string | null
+          notes?: string | null
+          payment_conditions?: string | null
+          payment_method?: string | null
+          phone?: string | null
+          required_area?: number | null
           seller_id?: string | null
           seller_name?: string | null
+          state?: string | null
+          status?: string | null
+          system_power: number
+          total_value: number
+          updated_at?: string
+          user_id?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          address?: string | null
+          average_bill?: number | null
+          cep?: string | null
+          city?: string | null
+          client_name?: string
+          complement?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          inverter_brand?: string | null
+          inverter_model?: string | null
+          module_brand?: string | null
+          module_model?: string | null
+          module_power?: number | null
+          module_quantity?: number | null
+          monthly_consumption?: number | null
+          monthly_generation?: number
+          monthly_savings?: number
+          neighborhood?: string | null
+          notes?: string | null
+          payment_conditions?: string | null
+          payment_method?: string | null
+          phone?: string | null
+          required_area?: number | null
+          seller_id?: string | null
+          seller_name?: string | null
+          state?: string | null
+          status?: string | null
           system_power?: number
           total_value?: number
           updated_at?: string
           user_id?: string | null
+          valid_until?: string | null
         }
         Relationships: []
       }
