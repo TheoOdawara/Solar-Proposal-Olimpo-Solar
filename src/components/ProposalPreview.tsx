@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf } from "lucide-react";
+import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf, FileText } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell, ReferenceLine } from 'recharts';
 import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
 import ProposalCoverPage from "./ProposalCoverPage";
@@ -136,10 +136,96 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
-        <section className="a4-page p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
-        backgroundImage: "url('/lovable-uploads/9ddc438a-746a-4847-96e7-d2a8ac899837.png')"
-      }}>
-          
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-4xl mx-auto h-full flex flex-col">
+            {/* Logo */}
+            <div className="flex justify-end mb-8">
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" loading="lazy" />
+            </div>
+
+            {/* Título */}
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-slate-800">Como Funciona</h2>
+            </div>
+
+            {/* Conteúdo baseado na primeira imagem do usuário */}
+            <div className="flex-1 flex flex-col items-center justify-center">
+              {/* Sol */}
+              <div className="mb-8">
+                <div className="w-32 h-32 bg-yellow-400 rounded-full flex items-center justify-center relative">
+                  {/* Raios do sol */}
+                  <div className="absolute inset-0">
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 w-1 h-6 bg-yellow-400 rotate-0"></div>
+                    <div className="absolute top-2 right-2 w-1 h-6 bg-yellow-400 rotate-45"></div>
+                    <div className="absolute right-0 top-1/2 transform translate-x-2 -translate-y-1/2 w-6 h-1 bg-yellow-400"></div>
+                    <div className="absolute bottom-2 right-2 w-1 h-6 bg-yellow-400 rotate-135"></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-1 h-6 bg-yellow-400 rotate-180"></div>
+                    <div className="absolute bottom-2 left-2 w-1 h-6 bg-yellow-400 rotate-225"></div>
+                    <div className="absolute left-0 top-1/2 transform -translate-x-2 -translate-y-1/2 w-6 h-1 bg-yellow-400"></div>
+                    <div className="absolute top-2 left-2 w-1 h-6 bg-yellow-400 rotate-315"></div>
+                  </div>
+                  <Zap className="h-12 w-12 text-yellow-600" />
+                </div>
+              </div>
+
+              {/* Número 1 */}
+              <div className="mb-12">
+                <div className="w-16 h-16 bg-slate-800 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                  1
+                </div>
+              </div>
+
+              {/* Casa com painéis solares */}
+              <div className="relative">
+                {/* Casa */}
+                <div className="w-80 h-48 bg-orange-400 relative rounded-lg">
+                  {/* Telhado */}
+                  <div className="absolute -top-8 left-0 right-0 h-16 bg-red-500 transform -skew-x-12 rounded-t-lg"></div>
+                  
+                  {/* Painéis solares no telhado */}
+                  <div className="absolute -top-4 left-8 flex space-x-2">
+                    <div className="w-16 h-12 bg-slate-800 border-2 border-yellow-400 rounded grid grid-cols-4 gap-0.5 p-1">
+                      {Array.from({length: 8}).map((_, i) => (
+                        <div key={i} className="bg-slate-600 rounded-sm"></div>
+                      ))}
+                    </div>
+                    <div className="w-16 h-12 bg-slate-800 border-2 border-yellow-400 rounded grid grid-cols-4 gap-0.5 p-1">
+                      {Array.from({length: 8}).map((_, i) => (
+                        <div key={i} className="bg-slate-600 rounded-sm"></div>
+                      ))}
+                    </div>
+                    <div className="w-16 h-12 bg-slate-800 border-2 border-yellow-400 rounded grid grid-cols-4 gap-0.5 p-1">
+                      {Array.from({length: 8}).map((_, i) => (
+                        <div key={i} className="bg-slate-600 rounded-sm"></div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Porta */}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-24 bg-red-600 rounded-t-lg"></div>
+                  
+                  {/* Janelas */}
+                  <div className="absolute bottom-16 left-8 w-12 h-12 bg-yellow-300 rounded"></div>
+                  <div className="absolute bottom-16 right-8 w-12 h-12 bg-yellow-300 rounded"></div>
+
+                  {/* Medidor */}
+                  <div className="absolute bottom-8 right-4 w-8 h-12 bg-white border-2 border-slate-400 rounded flex items-center justify-center">
+                    <div className="w-4 h-6 bg-slate-200 rounded-sm"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer de contato */}
+            <div className="mt-auto bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>(67) 99668-0242</span>
+                <span>olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
@@ -179,10 +265,91 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         </section>
 
         {/* PÁGINA 6: PROJETO 360° */}
-        <section className="a4-page p-8 bg-cover bg-center bg-no-repeat page-break flex items-center justify-center" style={{
-        backgroundImage: "url('/lovable-uploads/a49ae0ec-e7fe-417a-9147-55a0c7735241.png')"
-      }}>
-          
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-4xl mx-auto h-full flex flex-col">
+            {/* Logo */}
+            <div className="flex justify-end mb-8">
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" loading="lazy" />
+            </div>
+
+            {/* Título */}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-slate-800">Projeto</h2>
+              <p className="text-lg text-slate-600 mt-4">
+                Nosso compromisso é satisfazer as necessidades e expectativas até o
+                fim de cada projeto fotovoltaico. Por isso, temos um processo de 
+                gerenciamento que torna mais ágeis as seguintes etapas:
+              </p>
+            </div>
+
+            {/* Grade de ícones baseada na segunda imagem */}
+            <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-8 items-center">
+              {/* Estudo de Necessidade */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-slate-200 rounded-lg flex items-center justify-center mb-4">
+                  <BarChart3 className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Estudo de</h3>
+                <h3 className="text-lg font-bold text-slate-800">Necessidade</h3>
+              </div>
+
+              {/* Apresentação da Proposta */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-slate-200 rounded-lg flex items-center justify-center mb-4">
+                  <FileText className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Apresentação da</h3>
+                <h3 className="text-lg font-bold text-slate-800">Proposta</h3>
+              </div>
+
+              {/* Instalação */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-slate-200 rounded-lg flex items-center justify-center mb-4">
+                  <Wrench className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Instalação</h3>
+              </div>
+
+              {/* Botão START */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-yellow-400 rounded-lg flex items-center justify-center mb-4">
+                  <div className="flex items-center space-x-2 text-black font-bold">
+                    <span className="text-2xl">▶</span>
+                    <span className="text-lg">START</span>
+                  </div>
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Início do</h3>
+                <h3 className="text-lg font-bold text-slate-800">Projeto</h3>
+              </div>
+
+              {/* Apresentação do Canal do Cliente */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-slate-200 rounded-lg flex items-center justify-center mb-4">
+                  <Globe className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Apresentação do</h3>
+                <h3 className="text-lg font-bold text-slate-800">Canal do Cliente</h3>
+              </div>
+
+              {/* Homologação */}
+              <div className="flex flex-col items-center text-center">
+                <div className="w-24 h-24 bg-slate-200 rounded-lg flex items-center justify-center mb-4">
+                  <CheckCircle className="h-12 w-12 text-slate-700" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-800">Homologação</h3>
+              </div>
+            </div>
+
+            {/* Footer de contato */}
+            <div className="mt-auto bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>(67) 99668-0242</span>
+                <span>olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* PÁGINA 7: SEU PROJETO */}
