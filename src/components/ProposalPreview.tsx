@@ -829,12 +829,15 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
 
-
-            {/* Seção de rentabilidade - baseado na parte inferior da imagem 9 */}
-            
-
             {/* Footer contact */}
-            
+            <div className="mt-6 bg-slate-800 py-4 text-center rounded-lg">
+              <div className="flex justify-center space-x-6 text-white text-sm">
+                <span>67 99668-0242</span>
+                <span>Olimpo.energiasolar</span>
+                <span>adm.olimposolar@gmail.com</span>
+                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              </div>
+            </div>
           </div>
         </section>
 
