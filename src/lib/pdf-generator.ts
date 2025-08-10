@@ -18,6 +18,14 @@ interface FormData {
   inverterPower: number;
   paymentMethod: string;
   observations: string;
+  // Campos adicionais para as novas seções
+  structureType?: string;
+  monitoring?: string;
+  moduleWarranty?: string;
+  inverterWarranty?: string;
+  microInverterWarranty?: string;
+  structureWarranty?: string;
+  installationWarranty?: string;
 }
 
 interface Calculations {
@@ -33,6 +41,8 @@ const BRAND = {
   accent: { r: 255, g: 191, b: 6 }, // #ffbf06
   text: { r: 2, g: 33, b: 54 },
   white: { r: 255, g: 255, b: 255 },
+  lightGray: { r: 242, g: 242, b: 242 }, // #F2F2F2
+  black: { r: 0, g: 0, b: 0 },
 };
 
 // Helpers to load images
@@ -176,6 +186,131 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     return true;
   };
 
+  // Função para desenhar seção "Seu Projeto" com ícones
+  const drawProjectSection = () => {
+    checkPageBreak(120);
+    
+    // Título da seção
+    addText('SEU PROJETO', FONT_SIZES.TITLE, 'bold', 'center', 'SECTION', 'accent');
+    
+    // Grid de ícones 2x3
+    const iconSize = 25;
+    const cardSize = 35;
+    const cardSpacing = 8;
+    const startX = (pageWidth - (3 * cardSize + 2 * cardSpacing)) / 2;
+    const startY = currentY + 10;
+    
+    const projectData = [
+      { icon: '☰', label: 'Painéis', value: formData.moduleQuantity || '—' },
+      { icon: '⚡', label: 'Inversor', value: `${formData.inverterBrand || '—'}` },
+      { icon: '🔧', label: 'Estrutura', value: formData.structureType || '—' },
+      { icon: '📊', label: 'Monitoramento', value: formData.monitoring || '—' },
+      { icon: '💰', label: 'Economia', value: calculations.monthlySavings ? formatCurrency(calculations.monthlySavings) : '—' },
+      { icon: '⚡', label: 'Potência', value: formData.systemPower ? `${formData.systemPower} kWp` : '—' }
+    ];
+    
+    projectData.forEach((item, index) => {
+      const row = Math.floor(index / 3);
+      const col = index % 3;
+      const x = startX + col * (cardSize + cardSpacing);
+      const y = startY + row * (cardSize + cardSpacing);
+      
+      // Card com fundo cinza claro
+      pdf.setFillColor(BRAND.lightGray.r, BRAND.lightGray.g, BRAND.lightGray.b);
+      pdf.roundedRect(x, y, cardSize, cardSize, 2, 2, 'F');
+      
+      // Ícone centralizado
+      pdf.setFontSize(16);
+      setColor(BRAND.black);
+      pdf.text(item.icon, x + cardSize / 2, y + cardSize / 3, { align: 'center' });
+      
+      // Label
+      pdf.setFontSize(8);
+      setColor(BRAND.text);
+      pdf.text(item.label, x + cardSize / 2, y + cardSize * 0.6, { align: 'center' });
+      
+      // Valor
+      pdf.setFontSize(7);
+      const valueText = typeof item.value === 'string' ? item.value : String(item.value);
+      const splitValue = pdf.splitTextToSize(valueText, cardSize - 4);
+      pdf.text(splitValue, x + cardSize / 2, y + cardSize * 0.75, { align: 'center' });
+    });
+    
+    currentY = startY + 2 * (cardSize + cardSpacing) + 10;
+  };
+
+  // Função para desenhar seção de Garantias com faixa azul
+  const drawWarrantiesSection = () => {
+    checkPageBreak(100);
+    
+    // Faixa azul ocupando toda a largura
+    const bannerHeight = 80;
+    pdf.setFillColor(BRAND.primary.r, BRAND.primary.g, BRAND.primary.b);
+    pdf.rect(0, currentY, pageWidth, bannerHeight, 'F');
+    
+    // Título "GARANTIAS" em branco
+    setColor(BRAND.white);
+    pdf.setFontSize(FONT_SIZES.TITLE);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('GARANTIAS', pageWidth / 2, currentY + 15, { align: 'center' });
+    
+    // Lista de garantias
+    const warranties = [
+      { label: 'Módulos solares', value: formData.moduleWarranty || '25 anos de eficiência e 12 anos fabricação' },
+      { label: 'Inversores', value: formData.inverterWarranty || '—' },
+      { label: 'Micro Inversores', value: formData.microInverterWarranty || '—' },
+      { label: 'Estrutura', value: formData.structureWarranty || '—' },
+      { label: 'Instalação', value: formData.installationWarranty || '—' }
+    ];
+    
+    pdf.setFontSize(FONT_SIZES.BODY);
+    pdf.setFont('helvetica', 'normal');
+    let yPos = currentY + 25;
+    
+    warranties.forEach((warranty, index) => {
+      if (warranty.value !== '—') {
+        setColor(BRAND.white);
+        pdf.text(`${warranty.label}: ${warranty.value}`, margin, yPos);
+        yPos += 8;
+        
+        // Separador fino branco
+        if (index < warranties.length - 1) {
+          pdf.setDrawColor(BRAND.white.r, BRAND.white.g, BRAND.white.b);
+          pdf.line(margin, yPos - 2, pageWidth - margin, yPos - 2);
+        }
+      }
+    });
+    
+    // Rodapé dentro da faixa de garantias
+    const footerY = currentY + bannerHeight - 20;
+    setColor(BRAND.white);
+    pdf.setFontSize(FONT_SIZES.FOOTER);
+    
+    // Informações de contato com ícones amarelos
+    pdf.setFont('helvetica', 'bold');
+    setColor(BRAND.accent);
+    pdf.text('📞', margin, footerY);
+    setColor(BRAND.white);
+    pdf.text('(67) 99668-0242', margin + 8, footerY);
+    
+    setColor(BRAND.accent);
+    pdf.text('📧', margin + 60, footerY);
+    setColor(BRAND.white);
+    pdf.text('contato@olimposolar.com.br', margin + 68, footerY);
+    
+    setColor(BRAND.accent);
+    pdf.text('📍', margin, footerY + 8);
+    setColor(BRAND.white);
+    pdf.text('Campo Grande, MS', margin + 8, footerY + 8);
+    
+    setColor(BRAND.accent);
+    pdf.text('📱', margin + 60, footerY + 8);
+    setColor(BRAND.white);
+    pdf.text('@olimposolar', margin + 68, footerY + 8);
+    
+    currentY += bannerHeight + SPACING.SECTION;
+  };
+
   // Simple bar chart with placeholder when data is unavailable
   const drawBarChart = (
     data: { label: string; value: number; color?: { r: number; g: number; b: number } }[],
@@ -293,7 +428,18 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
 
   addFooter(logoImg || undefined);
 
-  // PAGE 3 - BENEFÍCIOS E OBSERVAÇÕES
+  // PAGE 3 - SEU PROJETO E GARANTIAS
+  pdf.addPage();
+  if (sectionBgImg) drawFullBackground(sectionBgImg);
+  currentY = margin + SPACING.PAGE_TITLE;
+  
+  // Seção "Seu Projeto"
+  drawProjectSection();
+  
+  // Seção "Garantias"
+  drawWarrantiesSection();
+
+  // PAGE 4 - BENEFÍCIOS E OBSERVAÇÕES
   pdf.addPage();
   if (sectionBgImg) drawFullBackground(sectionBgImg);
   currentY = margin + SPACING.PAGE_TITLE;
@@ -318,7 +464,7 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
 
   addFooter(logoImg || undefined);
 
-  // PAGE 4 - TERMOS E CONDIÇÕES
+  // PAGE 5 - TERMOS E CONDIÇÕES
   pdf.addPage();
   if (sectionBgImg) drawFullBackground(sectionBgImg);
   currentY = margin + SPACING.PAGE_TITLE;
