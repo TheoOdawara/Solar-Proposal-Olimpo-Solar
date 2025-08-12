@@ -552,8 +552,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           </section>
 
         {/* PÁGINA 9: RENTABILIDADE */}
-        <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto py-8">
+        <section className="a4-page page-break">
+          <div className="page-body max-w-4xl mx-auto">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -682,16 +682,16 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                     fontSize: 12,
                     fontWeight: 'bold'
                   }} />
-                    <YAxis domain={[0, 8000]} axisLine={{
-                    stroke: '#022136',
-                    strokeWidth: 1
-                  }} tickLine={{
-                    stroke: '#022136'
-                  }} tick={{
-                    fill: '#022136',
-                    fontSize: 12,
-                    fontWeight: 'bold'
-                  }} />
+                <YAxis domain={[0, 8000]} tickCount={8} axisLine={{
+                stroke: '#022136',
+                strokeWidth: 1
+              }} tickLine={{
+                stroke: '#022136'
+              }} tick={{
+                fill: '#022136',
+                fontSize: 12,
+                fontWeight: 'bold'
+              }} />
                     <Tooltip contentStyle={{
                     backgroundColor: '#ffffff',
                     border: '1px solid #022136',
@@ -703,47 +703,38 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                     <Bar dataKey="consumption" fill="#9ca3af" name="consumption" radius={[2, 2, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-
-              {/* Métricas extras */}
-              <div className="grid grid-cols-3 gap-6 text-center bg-gray-50 p-6 rounded-lg border">
-                <div>
-                  <div className="font-bold text-3xl" style={{
-                  color: '#ffbf06'
-                }}>{metricas.geracaoMedia.toLocaleString()}</div>
-                  <div className="text-sm font-semibold" style={{
-                  color: '#022136'
-                }}>Geração média (kWh)</div>
-                </div>
-                <div>
-                  <div className="font-bold text-3xl" style={{
-                  color: '#9ca3af'
-                }}>{metricas.consumoMedio.toLocaleString()}</div>
-                  <div className="text-sm font-semibold" style={{
-                  color: '#022136'
-                }}>Consumo médio (kWh)</div>
-                </div>
-                <div>
-                  <div className="font-bold text-3xl" style={{
-                  color: '#22c55e'
-                }}>{metricas.economia}%</div>
-                  <div className="text-sm font-semibold" style={{
-                  color: '#022136'
-                }}>Economia mensal estimada</div>
                 </div>
               </div>
-            </div>
 
-            {/* Footer contact */}
-            <div className="mt-6 bg-slate-800 py-4 text-center rounded-lg">
-              <div className="flex justify-center space-x-6 text-white text-sm">
-                <span>67 99668-0242</span>
-                <span>Olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+            {/* Métricas no final da página */}
+            <div className="mt-auto grid grid-cols-3 gap-6 text-center bg-gray-50 p-6 rounded-lg border">
+              <div>
+                <div className="font-bold text-3xl" style={{ color: '#ffbf06' }}>
+                  {metricas.geracaoMedia.toLocaleString()}
+                </div>
+                <div className="text-sm font-semibold" style={{ color: '#022136' }}>
+                  Geração média (kWh)
+                </div>
+              </div>
+              <div>
+                <div className="font-bold text-3xl" style={{ color: '#9ca3af' }}>
+                  {metricas.consumoMedio.toLocaleString()}
+                </div>
+                <div className="text-sm font-semibold" style={{ color: '#022136' }}>
+                  Consumo médio (kWh)
+                </div>
+              </div>
+              <div>
+                <div className="font-bold text-3xl" style={{ color: '#22c55e' }}>
+                  {metricas.economia}%
+                </div>
+                <div className="text-sm font-semibold" style={{ color: '#022136' }}>
+                  Economia mensal estimada
+                </div>
               </div>
             </div>
           </div>
+          <Footer />
         </section>
 
         {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}

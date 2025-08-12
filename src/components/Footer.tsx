@@ -1,66 +1,16 @@
 import React from 'react';
-import { Card } from "@/components/ui/card";
-import { MapPin, Phone, Mail, Instagram, Facebook } from "lucide-react";
-const Footer = () => {
-  return <footer className="mt-12 pb-6">
-      <Card className="bg-gradient-card shadow-card border-0">
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
-            {/* Endereço */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-primary">
-                <MapPin className="h-4 w-4" />
-                <span className="font-semibold">Endereço</span>
-              </div>
-              <div className="text-sm text-muted-foreground space-y-1">
-                <p>Rua Eduardo Santos Pereira, 1831 - Sala 4</p>
-                <p>Centro</p>
-                <p>Campo Grande - MS</p>
-                <p>CEP: 79010-030</p>
-              </div>
-            </div>
 
-            {/* Contato */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-secondary">
-                <Phone className="h-4 w-4" />
-                <span className="font-semibold">Contato</span>
-              </div>
-              <div className="text-sm text-muted-foreground space-y-1">
-                <p>(67) 99668-0242</p>
-                
-                <div className="flex items-center justify-center md:justify-start gap-1">
-                  <Mail className="h-3 w-3" />
-                  <span>adm.olimposolar@gmail.com</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Redes Sociais */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-center md:justify-start gap-2 text-primary">
-                <span className="font-semibold">Redes Sociais</span>
-              </div>
-              <div className="flex items-center justify-center md:justify-start gap-3">
-                <a href="https://www.instagram.com/olimpo.energiasolar/" target="_blank" rel="noopener noreferrer" className="p-2 bg-gradient-solar rounded-lg hover:shadow-button transition-smooth group">
-                  <Instagram className="h-4 w-4 text-white group-hover:scale-110 transition-transform" />
-                </a>
-                
-              </div>
-              <div className="text-xs text-muted-foreground">
-                <p>@olimpo.energiasolar</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Copyright */}
-          <div className="mt-6 pt-4 border-t border-border text-center">
-            <p className="text-xs text-muted-foreground">
-              © 2024 Olimpo Solar. Todos os direitos reservados. | Sistema interno para vendedores
-            </p>
-          </div>
-        </div>
-      </Card>
-    </footer>;
+const Footer = ({ className = "" }: { className?: string }) => {
+  return (
+    <footer className={`page-footer w-full rounded-lg bg-slate-800 text-white text-xs py-2 px-3 ${className}`}>
+      <div className="grid grid-cols-4 gap-3 items-center">
+        <span>(67) 99668-0242</span>
+        <span>@olimpo.energiasolar</span>
+        <span>adm.olimposolar@gmail.com</span>
+        <span>R. Eduardo Santos Pereira, 1831 – Centro, Campo Grande</span>
+      </div>
+    </footer>
+  );
 };
+
 export default Footer;
