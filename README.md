@@ -71,3 +71,12 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+---
+
+## Notas rápidas (PDF Gráficos)
+
+- Ajuste do eixo Y (Preview): src/components/ProposalPreview.tsx na seção "Capacidade de geração". Procure por niceMax e altere o fator (1.15) e/ou arredondamento (divisão por 100) conforme necessário.
+- Ajuste do eixo Y (PDF): src/lib/pdf-generator.ts dentro de drawBarChart. Edite padded/niceMax e o número de linhas de grade (steps = 8).
+- Altura de impressão dos gráficos: use o wrapper com style={{ height: '120mm' }} para garantir render uniforme no print/PDF.
+

@@ -5,6 +5,7 @@ import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, S
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell, ReferenceLine } from 'recharts';
 import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
 import ProposalCoverPage from "./ProposalCoverPage";
+import Footer from "./Footer";
 interface FormData {
   clientName: string;
   address: string;

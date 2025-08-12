@@ -319,41 +319,51 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     const chartTop = currentY;
     const chartHeight = 60;
     const chartWidth = pageWidth - margin * 2;
-    const barWidth = Math.max(20, (chartWidth - 40) / (data.length * 2));
     const baseY = chartTop + chartHeight;
 
-    const allZero = data.every((d) => !isPresent(d.value));
     if (opts?.title) addText(opts.title, FONT_SIZES.SUBTITLE, 'bold', 'left', 'SMALL', 'accent');
 
-    if (allZero) {
+    const values = data.map((d) => (typeof d.value === 'number' && !isNaN(d.value) ? d.value : 0));
+    const allZero = values.every((v) => v <= 0);
+    const maxValRaw = Math.max(...values, 0);
+    const padded = Math.ceil(maxValRaw * 1.15);
+    const niceMax = Math.max(100, Math.ceil(padded / 100) * 100);
+
+    if (allZero || niceMax <= 0) {
       // Placeholder box with message
       pdf.setDrawColor(BRAND.text.r, BRAND.text.g, BRAND.text.b);
       pdf.rect(margin, chartTop + 10, chartWidth, chartHeight, 'S');
       setColor(BRAND.text);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(FONT_SIZES.BODY);
-      pdf.text('Dados não disponíveis', margin + chartWidth / 2, chartTop + 10 + chartHeight / 2, {
-        align: 'center',
-      });
+      pdf.text('Dados não disponíveis', margin + chartWidth / 2, chartTop + 10 + chartHeight / 2, { align: 'center' });
       currentY = baseY + SPACING.MEDIUM;
       return;
     }
 
-    const maxVal = Math.max(...data.map((d) => d.value || 0)) || 1;
+    // Grid lines (8 steps)
+    pdf.setDrawColor(BRAND.lightGray.r, BRAND.lightGray.g, BRAND.lightGray.b);
+    const steps = 8;
+    for (let i = 0; i <= steps; i++) {
+      const y = chartTop + (chartHeight * i) / steps;
+      pdf.line(margin, y, margin + chartWidth, y);
+    }
 
-    // Axes
+    // Baseline axis
     pdf.setDrawColor(BRAND.text.r, BRAND.text.g, BRAND.text.b);
     pdf.line(margin, baseY, margin + chartWidth, baseY);
 
     // Bars
+    const barWidth = Math.max(20, (chartWidth - 40) / (data.length * 2));
     let x = margin + 20;
     data.forEach((d) => {
-      const h = (d.value / maxVal) * (chartHeight - 10);
+      const val = Math.max(0, typeof d.value === 'number' ? d.value : 0);
+      const h = (val / niceMax) * (chartHeight - 10);
       const y = baseY - h;
       const color = d.color || BRAND.accent;
       pdf.setFillColor(color.r, color.g, color.b);
       pdf.rect(x, y, barWidth, h, 'F');
-      // Label
+      // Label under bar
       pdf.setFontSize(FONT_SIZES.FOOTER);
       setColor(BRAND.text);
       pdf.text(d.label, x + barWidth / 2, baseY + 5, { align: 'center' });
