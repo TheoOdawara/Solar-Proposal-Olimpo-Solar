@@ -2,43 +2,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { errorLogger } from '@/utils/errorLogger';
+import type { ProposalData } from '@/types/proposal';
 
-export interface ProposalData {
-  id?: string;
-  client_name: string;
-  system_power: number;
-  monthly_generation: number;
-  monthly_savings: number;
-  total_value: number;
-  seller_name?: string;
-  seller_id?: string;
-  created_at?: string;
-  updated_at?: string;
-  
-  // Novos campos expandidos
-  status?: 'draft' | 'sent' | 'approved' | 'rejected' | 'closed';
-  cep?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  neighborhood?: string;
-  complement?: string;
-  monthly_consumption?: number;
-  average_bill?: number;
-  module_brand?: string;
-  module_model?: string;
-  module_power?: number;
-  module_quantity?: number;
-  inverter_brand?: string;
-  inverter_model?: string;
-  payment_method?: string;
-  payment_conditions?: string;
-  valid_until?: string;
-  notes?: string;
-  required_area?: number;
-  phone?: string;
-  email?: string;
-}
+// Re-export ProposalData para manter compatibilidade
+export type { ProposalData };
 
 export const useProposals = () => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);

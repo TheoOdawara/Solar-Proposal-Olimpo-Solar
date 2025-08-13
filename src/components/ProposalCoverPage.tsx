@@ -2,55 +2,16 @@ import React from 'react';
 import { MapPin, Zap, Calendar, Home } from 'lucide-react';
 import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
 
-interface FormData {
-  clientName: string;
-  address: string;
-  number: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  phone: string;
-  systemPower: number;
-}
-
-interface Calculations {
-  monthlyGeneration: number;
-  totalValue: number;
-}
-
-interface ProposalCoverPageProps {
-  formData: FormData;
-  calculations: Calculations;
-  companyData?: {
-    phone: string;
-    address: string;
-    cnpj: string;
-  };
-}
+// Importar tipos e utilitários centralizados
+import type { FormData, Calculations, ProposalCoverPageProps } from '@/types/proposal';
+import { formatCurrency, formatDate } from '@/utils/formatters';
+import { COMPANY_DATA } from '@/constants/solarData';
 
 const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
   formData,
   calculations,
-  companyData = {
-    phone: "(67) 99668-0242",
-    address: "R. Eduardo Santos Pereira, 1831 Centro, Campo Grande - MS",
-    cnpj: "00.000.000/0001-00"
-  }
+  companyData = COMPANY_DATA
 }) => {
-  const formatDate = () => {
-    return new Date().toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
 
   return (
     <section className="a4-page page-break print-optimized relative overflow-hidden">

@@ -19,51 +19,12 @@ import { SplineHero } from "@/components/SplineHero";
 import ProposalSummary from "@/components/ProposalSummary";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-interface FormData {
-  // Dados do cliente
-  clientName: string;
-  address: string;
-  number: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  cep: string;
-  phone: string;
 
-  // Dados do projeto
-  monthlyConsumption: number;
-  desiredKwh: number;
-  systemPower: number;
-  moduleQuantity: number;
-  modulePower: number;
-  moduleBrand: string;
-  inverterBrand: string;
-  inverterPower: number;
-  pricePerKwp: number;
-
-  // Dados da economia
-  averageBill: number;
-  connectionType: string;
-
-  // Complementos
-  paymentMethod: string;
-  observations: string;
-}
-interface Calculations {
-  monthlyGeneration: number;
-  monthlySavings: number;
-  requiredArea: number;
-  totalValue: number;
-}
-interface ProposalFormProps {
-  onProposalDataChange?: (data: {
-    clientName: string;
-    systemPower: number;
-    monthlyGeneration: number;
-    monthlySavings: number;
-    totalValue: number;
-  }) => void;
-}
+// Importar tipos e utilitários centralizados
+import type { FormData, Calculations, ProposalFormProps } from '@/types/proposal';
+import { useProposalCalculations } from '@/hooks/useProposalCalculations';
+import { formatCurrency, formatPhone, formatCep } from '@/utils/formatters';
+import { SOLAR_CONSTANTS } from '@/constants/solarData';
 const ProposalForm = ({
   onProposalDataChange
 }: ProposalFormProps) => {
@@ -95,143 +56,49 @@ const ProposalForm = ({
     moduleBrand: '',
     inverterBrand: '',
     inverterPower: 0,
-    pricePerKwp: 2450,
+    pricePerKwp: SOLAR_CONSTANTS.DEFAULT_PRICE_PER_KWP,
     averageBill: 0,
     connectionType: '',
     paymentMethod: '',
     observations: ''
   });
-  const [calculations, setCalculations] = useState<Calculations>({
-    monthlyGeneration: 0,
-    monthlySavings: 0,
-    requiredArea: 0,
-    totalValue: 0
-  });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
   const [hasNoAddress, setHasNoAddress] = useState(false);
 
-  // Cálculos automáticos baseados nos dados do projeto
-  useEffect(() => {
-    const {
-      desiredKwh,
-      modulePower,
-      monthlyConsumption,
-      pricePerKwp
-    } = formData;
-
-    // Calcular valor médio da conta de luz automaticamente
-    if (monthlyConsumption > 0) {
-      const calculatedAverageBill = monthlyConsumption * 1.27;
-      setFormData(prev => ({
-        ...prev,
-        averageBill: Math.round(calculatedAverageBill * 100) / 100
-      }));
-    }
-
-    if (desiredKwh > 0) {
-      // Calcular potência necessária: potência = kWh desejados / (5.5 × 30 × 0.80)
-      const calculatedSystemPower = desiredKwh / (5.5 * 30 * 0.80);
-
-      // Calcular quantidade de módulos baseada na potência desejada e potência do módulo
-      let calculatedModuleQuantity = 0;
-      if (modulePower > 0) {
-        // Converter potência do módulo de W para kW
-        const modulePowerKw = modulePower / 1000;
-        // Calcular quantidade de módulos necessários
-        calculatedModuleQuantity = Math.ceil(calculatedSystemPower / modulePowerKw);
-
-        // Atualizar quantidade de módulos automaticamente
-        setFormData(prev => ({
-          ...prev,
-          systemPower: Math.round(calculatedSystemPower * 10) / 10,
-          moduleQuantity: calculatedModuleQuantity
-        }));
-      } else {
-        // Atualizar apenas potência do sistema se não tiver potência do módulo
-        setFormData(prev => ({
-          ...prev,
-          systemPower: Math.round(calculatedSystemPower * 10) / 10
-        }));
+  // Usar hook centralizado para cálculos
+  const { calculations, calculateDerivedFields } = useProposalCalculations({
+    formData,
+    onCalculationsChange: (newCalculations) => {
+      // Callback para quando os cálculos mudarem
+      if (onProposalDataChange && newCalculations.totalValue > 0) {
+        onProposalDataChange({
+          clientName: formData.clientName,
+          systemPower: formData.systemPower,
+          monthlyGeneration: newCalculations.monthlyGeneration,
+          monthlySavings: newCalculations.monthlySavings,
+          totalValue: newCalculations.totalValue
+        });
       }
-
-      // 1. Geração mensal estimada = kWh desejados
-      const monthlyGeneration = desiredKwh;
-
-      // 2. Economia mensal estimada (R$)
-      // Formula: geracao_mensal × 1.27
-      // Valor médio do kWh = R$1,27
-      const monthlySavings = monthlyGeneration * 1.27;
-
-      // 3. Área mínima necessária (m²)
-      // Formula: qtd_modulos × 2.8
-      // Cada módulo ocupa 2,8 m²
-      const moduleQuantityForArea = calculatedModuleQuantity || formData.moduleQuantity;
-      const requiredArea = moduleQuantityForArea * 2.8;
-
-      // 4. Valor total do projeto usando o preço por kWp definido
-      const totalValue = calculatedSystemPower * pricePerKwp;
-      const newCalculations = {
-        monthlyGeneration: Math.round(monthlyGeneration),
-        monthlySavings: Math.round(monthlySavings),
-        requiredArea: Math.round(requiredArea * 10) / 10,
-        // Uma casa decimal
-        totalValue: Math.round(totalValue)
-      };
-      setCalculations(newCalculations);
-    } else {
-      // Reset dos cálculos quando não há potência definida
-      setCalculations({
-        monthlyGeneration: 0,
-        monthlySavings: 0,
-        requiredArea: 0,
-        totalValue: 0
-      });
     }
-  }, [formData.desiredKwh, formData.modulePower, formData.monthlyConsumption, formData.pricePerKwp]);
+  });
 
-  // Notifica o componente pai sobre mudanças nos dados da proposta
+  // Atualizar campos derivados automaticamente
   useEffect(() => {
-    if (onProposalDataChange && calculations.totalValue > 0) {
-      onProposalDataChange({
-        clientName: formData.clientName,
-        systemPower: formData.systemPower,
-        monthlyGeneration: calculations.monthlyGeneration,
-        monthlySavings: calculations.monthlySavings,
-        totalValue: calculations.totalValue
-      });
+    const derivedFields = calculateDerivedFields(formData);
+    if (Object.keys(derivedFields).length > 0) {
+      setFormData(prev => ({ ...prev, ...derivedFields }));
     }
-  }, [formData.clientName, formData.systemPower, calculations.monthlyGeneration, calculations.monthlySavings, calculations.totalValue]);
+  }, [formData.monthlyConsumption, formData.desiredKwh, formData.modulePower, calculateDerivedFields]);
+
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-  // Formatação de telefone aprimorada
-  const formatPhone = (value: string) => {
-    return value
-      .replace(/\D/g, "")
-      .replace(/^(\d{2})(\d)/g, "($1) $2")
-      .replace(/(\d{5})(\d{4})$/, "$1-$2");
-  };
-
   const handlePhoneChange = (value: string) => {
     const formatted = formatPhone(value);
     handleInputChange('phone', formatted);
-  };
-
-  // Formatação de CEP
-  const formatCep = (value: string) => {
-    return value
-      .replace(/\D/g, "")
-      .replace(/^(\d{5})(\d)/, "$1-$2")
-      .substring(0, 9);
   };
 
   // Busca endereço via ViaCEP
@@ -465,19 +332,24 @@ const generatePDFFromHTML = async () => {
     setFormData(prev => ({
       ...prev,
       clientName: proposal.client_name,
-      systemPower: proposal.system_power
+      systemPower: proposal.system_power,
+      // Carregar dados expandidos se disponíveis
+      desiredKwh: proposal.monthly_generation || prev.desiredKwh,
+      modulePower: proposal.module_power || prev.modulePower,
+      moduleQuantity: proposal.module_quantity || prev.moduleQuantity,
+      moduleBrand: proposal.module_brand || prev.moduleBrand,
+      inverterBrand: proposal.inverter_brand || prev.inverterBrand,
+      paymentMethod: proposal.payment_method || prev.paymentMethod,
+      averageBill: proposal.average_bill || prev.averageBill,
+      phone: proposal.phone || prev.phone,
+      address: proposal.address || prev.address,
+      city: proposal.city || prev.city,
+      state: proposal.state || prev.state,
+      cep: proposal.cep || prev.cep,
+      neighborhood: proposal.neighborhood || prev.neighborhood,
     }));
 
-    // Trigger calculations update
-    setCalculations({
-      monthlyGeneration: proposal.monthly_generation,
-      monthlySavings: proposal.monthly_savings,
-      requiredArea: Math.round(proposal.system_power * 12 * 2.8 * 10) / 10,
-      // Estimated
-      totalValue: proposal.total_value
-    });
-
-    // Update parent component
+    // Update parent component (os cálculos serão feitos automaticamente pelo hook)
     if (onProposalDataChange) {
       onProposalDataChange({
         clientName: proposal.client_name,

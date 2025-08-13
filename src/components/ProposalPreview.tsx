@@ -6,105 +6,30 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Cart
 import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
 import ProposalCoverPage from "./ProposalCoverPage";
 import Footer from "./Footer";
-interface FormData {
-  clientName: string;
-  address: string;
-  number: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  phone: string;
-  systemPower: number;
-  moduleQuantity: number;
-  modulePower: number;
-  moduleBrand: string;
-  inverterBrand: string;
-  inverterPower: number;
-  averageBill: number;
-  connectionType: string;
-  paymentMethod: string;
-  observations: string;
-}
-interface Calculations {
-  monthlyGeneration: number;
-  monthlySavings: number;
-  requiredArea: number;
-  totalValue: number;
-}
-interface ProposalPreviewProps {
-  formData: FormData;
-  calculations: Calculations;
-  onEdit: () => void;
-  onGeneratePDF: () => void;
-}
+
+// Importar tipos e utilitários centralizados
+import type { FormData, Calculations, ProposalPreviewProps } from '@/types/proposal';
+import { formatCurrency, formatDateShort } from '@/utils/formatters';
+import { calculateEconomyData, calculateRealMetrics, calculateSolarROI } from '@/utils/calculations';
+import { CONNECTION_TYPES, COMPANY_DATA } from '@/constants/solarData';
+
 const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   formData,
   calculations,
   onEdit,
   onGeneratePDF
 }) => {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-  const formatDate = () => {
-    return new Date().toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  };
   const calculateYearlySavings = () => calculations.monthlySavings * 12;
   const calculateCurrentBill = () => calculations.monthlySavings;
 
-  // Cálculos reais para as métricas do gráfico
-  const calculateRealMetrics = () => {
-    // Considerando irradiação de Campo Grande ≈ 5,0 kWh/m²/dia
-    const energiaMensal = formData.systemPower * 5.0 * 30; // produção em kWh/mês
-    const consumoMedio = calculations.monthlyGeneration; // usar o valor do cálculo existente
-    const economia = Math.min(Math.round((1 - consumoMedio / energiaMensal) * 100), 100); // cálculo correto da economia
+  // Usar utilitários centralizados para cálculos
+  const economyData = calculateEconomyData({
+    averageBill: formData.averageBill || 500,
+    connectionType: (formData.connectionType as keyof typeof CONNECTION_TYPES) || 'bifasico'
+  });
 
-    return {
-      geracaoMedia: Math.round(energiaMensal),
-      consumoMedio: Math.round(consumoMedio),
-      economia: Math.max(economia, 0) // garantir que não seja negativo
-    };
-  };
-
-  // Calcular ROI para energia solar
-  const calculateSolarROI = () => {
-    const annualSavings = calculations.monthlySavings * 12;
-    const roi = annualSavings / calculations.totalValue * 100;
-    return Math.round(roi * 10) / 10; // arredondar para 1 casa decimal
-  };
-
-  // Cálculos da economia baseados nos novos campos
-  const calculateEconomyData = () => {
-    // Usar valores padrão quando os dados não estão disponíveis
-    const averageBill = formData.averageBill || 500; // Valor padrão: R$ 500
-    const connectionType = formData.connectionType || 'bifasico'; // Tipo padrão: bifásico
-
-    // Definir valor da conta com energia solar baseado no tipo de ligação
-    const solarBill = connectionType === 'bifasico' ? 120 : 300;
-
-    // Cálculos
-    const currentBillPerYear = averageBill * 12;
-    const billWithSolarPerYear = solarBill * 12;
-    const savingsPerMonth = averageBill - solarBill;
-    const savingsPerYear = currentBillPerYear - billWithSolarPerYear;
-    return {
-      currentBillPerYear,
-      currentBillPerMonth: averageBill,
-      billWithSolarPerYear,
-      billWithSolarPerMonth: solarBill,
-      savingsPerYear,
-      savingsPerMonth
-    };
-  };
-  const metricas = calculateRealMetrics();
-  const economyData = calculateEconomyData();
+  const metricas = calculateRealMetrics(formData);
+  const solarROI = calculateSolarROI(calculations.monthlySavings, calculations.totalValue);
   return <div className="min-h-screen bg-background">
       {/* Navegação */}
       <div data-hide-in-pdf className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
@@ -874,7 +799,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   <p className="font-semibold text-slate-800">{formData.clientName}</p>
                   <p className="text-slate-700 text-sm">{formData.address}, {formData.number}</p>
                   <p className="text-slate-700 text-sm">{formData.neighborhood} - {formData.city}</p>
-                  <p className="text-slate-700 text-sm">Data: {formatDate()}</p>
+                  <p className="text-slate-700 text-sm">Data: {formatDateShort()}</p>
                 </div>
               </div>
 
