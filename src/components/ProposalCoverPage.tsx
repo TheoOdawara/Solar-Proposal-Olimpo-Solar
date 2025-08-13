@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, Zap, Calendar, Home } from 'lucide-react';
-import olimpoLogo from "/lovable-uploads/580a43c6-47c3-4958-8b50-e716ab87d352.png";
+import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
 
 interface FormData {
   clientName: string;
@@ -53,7 +53,7 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
   };
 
   return (
-    <section className="a4-page page-break print-optimized relative overflow-hidden bg-white">
+    <section className="a4-page page-break print-optimized relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#022136] via-[#022136] to-[#033249]"></div>
       
