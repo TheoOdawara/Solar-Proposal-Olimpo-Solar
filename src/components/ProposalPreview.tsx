@@ -121,7 +121,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       </div>
 
       {/* Conteúdo da Proposta */}
-      <div id="pdf-content" className="max-w-4xl mx-auto bg-white print-optimized">
+      <div id="pdf-content" className="w-full bg-white print-optimized">
         
         {/* PÁGINA 1: NOVA CAPA PERSONALIZADA */}
         <ProposalCoverPage formData={formData} calculations={calculations} />
