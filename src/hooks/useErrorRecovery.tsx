@@ -19,7 +19,7 @@ export const useErrorRecovery = () => {
   });
   const { toast } = useToast();
 
-  const reportError = useCallback((error: Error, context?: Record<string, any>) => {
+  const reportError = useCallback((error: Error, context?: Record<string, unknown>) => {
     const now = Date.now();
     const timeSinceLastError = now - errorState.lastErrorTime;
     

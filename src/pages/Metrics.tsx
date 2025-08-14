@@ -171,7 +171,7 @@ const Metrics = () => {
                   <YAxis yAxisId="left" />
                   <YAxis yAxisId="right" orientation="right" />
                   <Tooltip 
-                    formatter={(value: any, name: string) => [
+                    formatter={(value: number | string, name: string) => [
                       name === 'total_value' ? formatCurrency(Number(value)) : value,
                       name === 'total_value' ? 'Valor Total' : 'Propostas'
                     ]}

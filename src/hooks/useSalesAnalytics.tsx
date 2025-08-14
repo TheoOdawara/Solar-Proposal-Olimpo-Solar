@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
 import { useAuth } from './useAuth';
@@ -40,13 +40,7 @@ export const useSalesAnalytics = () => {
   });
   const [selectedSeller, setSelectedSeller] = useState<string>('all');
 
-  useEffect(() => {
-    if (user) {
-      loadSalesData();
-    }
-  }, [user, dateRange, selectedSeller]);
-
-  const loadSalesData = async () => {
+  const loadSalesData = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -95,7 +89,13 @@ export const useSalesAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, dateRange.from, dateRange.to, selectedSeller, toast]);
+
+  useEffect(() => {
+    if (user) {
+      loadSalesData();
+    }
+  }, [user, loadSalesData]);
 
   const calculateSellerMetrics = (data: SalesData[]) => {
     const sellerGroups = data.reduce((acc, proposal) => {
@@ -113,16 +113,16 @@ export const useSalesAnalytics = () => {
       acc[sellerId].total_value += proposal.total_value;
       acc[sellerId].total_power += proposal.system_power;
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, { seller_name: string; seller_id: string; proposals: SalesData[]; total_value: number; total_power: number }>);
 
-    const metrics = Object.values(sellerGroups).map((seller: any) => ({
+    const metrics: SellerMetrics[] = Object.values(sellerGroups).map((seller) => ({
       seller_name: seller.seller_name,
       seller_id: seller.seller_id,
       total_proposals: seller.proposals.length,
       total_value: seller.total_value,
       average_power: seller.total_power / seller.proposals.length || 0,
       average_value: seller.total_value / seller.proposals.length || 0
-    })) as SellerMetrics[];
+    }));
 
     // Sort by total value descending
     metrics.sort((a, b) => b.total_value - a.total_value);
@@ -159,7 +159,7 @@ export const useSalesAnalytics = () => {
         title: "Relatório exportado!",
         description: "O arquivo CSV foi baixado com sucesso.",
       });
-    } catch (error) {
+  } catch (error) {
       console.error('Error exporting data:', error);
       toast({
         title: "Erro na exportação",

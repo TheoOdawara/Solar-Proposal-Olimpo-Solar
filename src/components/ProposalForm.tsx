@@ -84,7 +84,11 @@ const ProposalForm = ({
 
   // Atualizar campos derivados automaticamente
   useEffect(() => {
-    const derivedFields = calculateDerivedFields(formData);
+    const derivedFields = calculateDerivedFields({
+      monthlyConsumption: formData.monthlyConsumption,
+      desiredKwh: formData.desiredKwh,
+      modulePower: formData.modulePower,
+    });
     if (Object.keys(derivedFields).length > 0) {
       setFormData(prev => ({ ...prev, ...derivedFields }));
     }

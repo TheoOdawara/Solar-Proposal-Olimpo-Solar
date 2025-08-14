@@ -3,13 +3,13 @@ import { useToast } from "@/hooks/use-toast";
 
 interface UseAutoSaveOptions<T> {
   data: T;
-  onSave: (data: T) => Promise<any>;
+  onSave: (data: T) => Promise<unknown>;
   delay?: number;
   enabled?: boolean;
   onChange?: (data: T) => void;
 }
 
-export const useAutoSave = <T extends Record<string, any>>({
+export const useAutoSave = <T extends Record<string, unknown>>({
   data,
   onSave,
   delay = 30000, // 30 seconds default
@@ -41,7 +41,7 @@ export const useAutoSave = <T extends Record<string, any>>({
         duration: 2000,
       });
       
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Auto-save failed:', error);
       // Don't show error toast for auto-save to avoid annoying user
     } finally {

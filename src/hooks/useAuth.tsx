@@ -121,14 +121,15 @@ export const useAuth = () => {
         title: "Conta criada com sucesso!",
         description: "Você foi logado automaticamente.",
       });
-    } catch (error: any) {
-      errorLogger.logAuthError(error, { context: 'signup', email });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      errorLogger.logAuthError(err, { context: 'signup', email });
       toast({
         title: "Erro no cadastro",
-        description: error.message || "Erro desconhecido no cadastro",
+        description: err.message || "Erro desconhecido no cadastro",
         variant: "destructive"
       });
-      throw error;
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -174,14 +175,15 @@ export const useAuth = () => {
       
       // Force page reload for clean state
       window.location.href = '/';
-    } catch (error: any) {
-      errorLogger.logAuthError(error, { context: 'signin', email });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      errorLogger.logAuthError(err, { context: 'signin', email });
       toast({
         title: "Erro no login",
-        description: error.message || "Erro desconhecido no login",
+        description: err.message || "Erro desconhecido no login",
         variant: "destructive"
       });
-      throw error;
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -217,11 +219,12 @@ export const useAuth = () => {
       
       // Force page reload for clean state
       window.location.href = '/auth';
-    } catch (error: any) {
-      errorLogger.logAuthError(error, { context: 'signout' });
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      errorLogger.logAuthError(err, { context: 'signout' });
       toast({
         title: "Erro no logout",
-        description: error.message || "Erro desconhecido no logout",
+        description: err.message || "Erro desconhecido no logout",
         variant: "destructive"
       });
     } finally {
@@ -272,25 +275,26 @@ export const useAuth = () => {
       
       console.log('🟢 [Google Auth] Redirecionamento iniciado com sucesso');
       
-    } catch (error: any) {
-      console.error('🔴 [Google Auth] Erro geral no login:', error);
-      console.error('🔴 [Google Auth] Tipo do erro:', typeof error);
-      console.error('🔴 [Google Auth] Propriedades do erro:', Object.keys(error));
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      console.error('🔴 [Google Auth] Erro geral no login:', err);
+      console.error('🔴 [Google Auth] Tipo do erro:', typeof err);
+      console.error('🔴 [Google Auth] Propriedades do erro:', Object.keys(err as object));
       
-      errorLogger.logAuthError(error, { 
+      errorLogger.logAuthError(err, { 
         context: 'google_signin_catch',
         currentUrl: window.location.href,
         userAgent: navigator.userAgent,
-        errorType: typeof error,
-        errorKeys: Object.keys(error)
+        errorType: typeof err,
+        errorKeys: Object.keys(err as object)
       });
       
       toast({
         title: "Erro no login com Google",
-        description: error.message || "Erro desconhecido no login",
+        description: err.message || "Erro desconhecido no login",
         variant: "destructive"
       });
-      throw error;
+      throw err;
     } finally {
       console.log('🔵 [Google Auth] Finalizando processo de login');
       setLoading(false);

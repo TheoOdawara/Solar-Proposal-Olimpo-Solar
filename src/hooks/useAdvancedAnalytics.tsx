@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
@@ -26,7 +26,7 @@ export interface NotificationData {
   type: 'old_proposal' | 'low_productivity';
   title: string;
   description: string;
-  data?: any;
+  data?: number | Array<{ id: string; name: string; decline: string }>;
 }
 
 export interface AdvancedFilters {
@@ -91,30 +91,7 @@ export const useAdvancedAnalytics = () => {
   };
 
   // Load all proposals
-  const loadProposals = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('proposals')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setProposals(data || []);
-      generateDailyStats(data || []);
-      generateNotifications(data || []);
-    } catch (error: any) {
-      console.error('Error loading proposals:', error);
-      toast({
-        title: "Erro ao carregar propostas",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  };
-
-  // Generate daily statistics for chart
-  const generateDailyStats = (data: ProposalAnalytics[]) => {
+  const generateDailyStats = useCallback((data: ProposalAnalytics[]) => {
     const last30Days = Array.from({ length: 30 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - i);
@@ -134,10 +111,9 @@ export const useAdvancedAnalytics = () => {
     });
 
     setDailyStats(stats);
-  };
+  }, []);
 
-  // Generate notifications
-  const generateNotifications = (data: ProposalAnalytics[]) => {
+  const generateNotifications = useCallback((data: ProposalAnalytics[]) => {
     const notifications: NotificationData[] = [];
     const now = new Date();
     const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
@@ -204,7 +180,31 @@ export const useAdvancedAnalytics = () => {
     }
 
     setNotifications(notifications);
-  };
+  }, []);
+
+  const loadProposals = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('proposals')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setProposals(data || []);
+      generateDailyStats(data || []);
+      generateNotifications(data || []);
+    } catch (error: unknown) {
+      console.error('Error loading proposals:', error);
+      toast({
+        title: "Erro ao carregar propostas",
+        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        variant: "destructive"
+      });
+    }
+  }, [generateDailyStats, generateNotifications, toast]);
+
+  // Generate daily statistics for chart
 
   // Apply filters to proposals
   const getFilteredProposals = () => {
@@ -263,7 +263,7 @@ export const useAdvancedAnalytics = () => {
     if (user) {
       loadProposals();
     }
-  }, [user]);
+  }, [user, loadProposals]);
 
   useEffect(() => {
     setLoading(false);

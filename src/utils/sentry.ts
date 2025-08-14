@@ -29,7 +29,7 @@ export const initSentry = () => {
   }
 };
 
-export const captureError = (error: Error, context?: Record<string, any>) => {
+export const captureError = (error: Error, context?: Record<string, unknown>) => {
   if (import.meta.env.PROD) {
     Sentry.withScope((scope) => {
       if (context) {

@@ -16,7 +16,7 @@ interface LogEntry {
   level: keyof LogLevel;
   message: string;
   timestamp: string;
-  data?: any;
+  data?: unknown;
   userId?: string;
   sessionId?: string;
 }
@@ -25,7 +25,7 @@ class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
   private sessionId = crypto.randomUUID();
 
-  private formatMessage(level: keyof LogLevel, message: string, data?: any): LogEntry {
+  private formatMessage(level: keyof LogLevel, message: string, data?: unknown): LogEntry {
     return {
       level,
       message,
@@ -41,7 +41,7 @@ class Logger {
     return undefined;
   }
 
-  private log(level: keyof LogLevel, message: string, data?: any) {
+  private log(level: keyof LogLevel, message: string, data?: unknown) {
     const logEntry = this.formatMessage(level, message, data);
     
     // Always log to console in development
@@ -76,19 +76,19 @@ class Logger {
     }
   }
 
-  error(message: string, data?: any) {
+  error(message: string, data?: unknown) {
     this.log('ERROR', message, data);
   }
 
-  warn(message: string, data?: any) {
+  warn(message: string, data?: unknown) {
     this.log('WARN', message, data);
   }
 
-  info(message: string, data?: any) {
+  info(message: string, data?: unknown) {
     this.log('INFO', message, data);
   }
 
-  debug(message: string, data?: any) {
+  debug(message: string, data?: unknown) {
     this.log('DEBUG', message, data);
   }
 
@@ -105,8 +105,12 @@ class Logger {
     this.info('Proposal generated', { proposalId, format, action: 'proposal_generated' });
   }
 
-  userAction(action: string, data?: any) {
-    this.info(`User action: ${action}`, { action, ...data });
+  userAction(action: string, data?: unknown) {
+    const payload =
+      data && typeof data === 'object' && !Array.isArray(data)
+        ? { action, ...(data as Record<string, unknown>) }
+        : { action, data };
+    this.info(`User action: ${action}`, payload);
   }
 
   performanceMetric(metric: string, value: number, unit: string = 'ms') {

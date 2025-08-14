@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { errorLogger } from '@/utils/errorLogger';
@@ -12,7 +13,7 @@ export const useProposals = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchProposals = async () => {
+  const fetchProposals = useCallback(async () => {
     try {
       setLoading(true);
       console.log('Fetching proposals...');
@@ -46,18 +47,18 @@ export const useProposals = () => {
         ...item,
         status: item.status as ProposalData['status'] || 'draft'
       })));
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching proposals:', error);
       errorLogger.logDatabaseError(error, { context: 'fetchProposals' });
       toast({
         title: "Erro ao carregar propostas",
-        description: error.message || "Erro desconhecido ao carregar propostas",
+        description: error instanceof Error ? error.message : "Erro desconhecido ao carregar propostas",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   const saveProposal = async (proposalData: Omit<ProposalData, 'id' | 'created_at' | 'updated_at'>) => {
     try {
@@ -81,10 +82,10 @@ export const useProposals = () => {
       // Refresh the list
       await fetchProposals();
       return data;
-    } catch (error: any) {
+  } catch (error: unknown) {
       toast({
         title: "Erro ao salvar proposta",
-        description: error.message,
+    description: error instanceof Error ? error.message : 'Erro desconhecido',
         variant: "destructive"
       });
       throw error;
@@ -113,10 +114,10 @@ export const useProposals = () => {
       } : p));
       
       return data;
-    } catch (error: any) {
+  } catch (error: unknown) {
       toast({
         title: "Erro ao atualizar proposta",
-        description: error.message,
+    description: error instanceof Error ? error.message : 'Erro desconhecido',
         variant: "destructive"
       });
       throw error;
@@ -150,7 +151,7 @@ export const useProposals = () => {
         // Update existing proposal
         return await updateProposal(id, proposalData);
       }
-    } catch (error: any) {
+  } catch (error: unknown) {
       console.error("Auto-save failed:", error);
       // Don't show toast for auto-save failures to avoid annoying user
       throw error;
@@ -174,10 +175,10 @@ export const useProposals = () => {
 
       // Refresh the list
       await fetchProposals();
-    } catch (error: any) {
+  } catch (error: unknown) {
       toast({
         title: "Erro ao excluir proposta",
-        description: error.message,
+    description: error instanceof Error ? error.message : 'Erro desconhecido',
         variant: "destructive"
       });
     } finally {
@@ -187,7 +188,7 @@ export const useProposals = () => {
 
   useEffect(() => {
     fetchProposals();
-  }, []);
+  }, [fetchProposals]);
 
   return {
     proposals,
@@ -196,6 +197,6 @@ export const useProposals = () => {
     updateProposal,
     autoSaveProposal,
     deleteProposal,
-    fetchProposals
+  fetchProposals
   };
 };

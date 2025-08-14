@@ -6,7 +6,8 @@ interface ValidationRule {
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp;
-  custom?: (value: any) => string | null;
+  custom?: (value: unknown) => string | null;
+  // Note: kept for backward compatibility; internal implementation avoids `any`.
 }
 
 interface ValidationRules {
@@ -21,7 +22,7 @@ export const useFormValidation = (rules: ValidationRules) => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const validateField = (field: string, value: any): string | null => {
+  const validateField = (field: string, value: unknown): string | null => {
     const rule = rules[field];
     if (!rule) return null;
 
@@ -32,7 +33,7 @@ export const useFormValidation = (rules: ValidationRules) => {
       }
 
       // Skip other validations if value is empty and not required
-      if (!value && !rule.required) return null;
+  if (!value && !rule.required) return null;
 
       // String validations
       if (typeof value === 'string') {
@@ -51,7 +52,8 @@ export const useFormValidation = (rules: ValidationRules) => {
 
       // Custom validation
       if (rule.custom) {
-        const customError = rule.custom(value);
+        // We pass through as-is for legacy signatures
+        const customError = rule.custom(value as never);
         if (customError) return customError;
       }
 
@@ -62,7 +64,7 @@ export const useFormValidation = (rules: ValidationRules) => {
     }
   };
 
-  const validateForm = (data: Record<string, any>): boolean => {
+  const validateForm = (data: Record<string, unknown>): boolean => {
     const newErrors: ValidationErrors = {};
     let isValid = true;
 
@@ -78,7 +80,7 @@ export const useFormValidation = (rules: ValidationRules) => {
     return isValid;
   };
 
-  const validateSingleField = (field: string, value: any): string | null => {
+  const validateSingleField = (field: string, value: unknown): string | null => {
     const error = validateField(field, value);
     setErrors(prev => ({
       ...prev,
@@ -199,8 +201,8 @@ export const validationRules = {
   },
   number: {
     required: true,
-    custom: (value: any) => {
-      if (value !== undefined && value !== null && isNaN(Number(value))) {
+    custom: (value: unknown) => {
+      if (value !== undefined && value !== null && isNaN(Number(value as number))) {
         return 'Deve ser um número válido';
       }
       return null;
@@ -208,8 +210,8 @@ export const validationRules = {
   },
   positiveNumber: {
     required: true,
-    custom: (value: any) => {
-      const num = Number(value);
+    custom: (value: unknown) => {
+      const num = Number(value as number);
       if (isNaN(num)) return 'Deve ser um número válido';
       if (num <= 0) return 'Deve ser um número maior que zero';
       return null;

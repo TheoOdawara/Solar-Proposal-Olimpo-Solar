@@ -3,7 +3,7 @@ import { captureError, captureMessage } from './sentry';
 interface ErrorLogData {
   message: string;
   stack?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   userId?: string;
   timestamp: string;
   url: string;
@@ -104,29 +104,29 @@ class ErrorLogger {
   }
 
   // Method to manually log errors with context
-  public logAuthError(error: any, context?: Record<string, any>) {
+  public logAuthError(error: unknown, context?: Record<string, unknown>) {
     this.logError({
-      message: `Auth Error: ${error.message || error}`,
-      stack: error.stack,
+    message: `Auth Error: ${error instanceof Error ? error.message : String(error)}`,
+    stack: error instanceof Error ? error.stack : undefined,
       context: { ...context, errorType: 'auth' },
     });
   }
 
-  public logDatabaseError(error: any, context?: Record<string, any>) {
+  public logDatabaseError(error: unknown, context?: Record<string, unknown>) {
     this.logError({
-      message: `Database Error: ${error.message || error}`,
-      stack: error.stack,
+    message: `Database Error: ${error instanceof Error ? error.message : String(error)}`,
+    stack: error instanceof Error ? error.stack : undefined,
       context: { ...context, errorType: 'database' },
     });
   }
 
-  public logValidationError(field: string, value: any, error: string) {
+  public logValidationError(field: string, value: unknown, error: string) {
     this.logError({
       message: `Validation Error: ${error}`,
       context: { 
         errorType: 'validation',
         field,
-        value: typeof value === 'object' ? JSON.stringify(value) : value,
+    value: typeof value === 'object' ? JSON.stringify(value) : String(value),
       },
     });
   }

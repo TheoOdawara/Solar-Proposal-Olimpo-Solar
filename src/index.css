@@ -177,14 +177,14 @@ All colors MUST be HSL.
 .a4-page {
   width: 100%;
   max-width: 794px; /* A4 width at 96 DPI */
-  height: 1123px; /* A4 height at 96 DPI */
+  min-height: 1000px; /* Altura mínima para garantir que o conteúdo caiba */
   margin: 0 auto;
   box-sizing: border-box;
   overflow: hidden;
   background: hsl(var(--background));
   display: flex;
   flex-direction: column;
-  padding: 16mm 14mm;
+  padding: 12mm 10mm; /* Padding reduzido para mais espaço */
 }
 .page-header { flex: 0 0 auto; }
 .page-body { flex: 1 1 auto; display: flex; flex-direction: column; }

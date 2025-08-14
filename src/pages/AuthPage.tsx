@@ -19,14 +19,14 @@ const AuthPage = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    try { await signIn(email, password); } catch {}
+    try { await signIn(email, password); } catch (err) { console.debug('Sign-in failed'); }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !confirmPassword) return;
     if (password !== confirmPassword) return;
-    try { await signUp(email, password); } catch {}
+    try { await signUp(email, password); } catch (err) { console.debug('Sign-up failed'); }
   };
 
   const handleGoogleSignIn = async () => {
