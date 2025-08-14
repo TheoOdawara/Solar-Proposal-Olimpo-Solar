@@ -66,7 +66,7 @@ const Metrics = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-screen-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
               Métricas Administrativas
@@ -94,7 +94,7 @@ const Metrics = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-screen-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Notifications */}
         {notifications.length > 0 && (
           <div className="mb-6 space-y-3">

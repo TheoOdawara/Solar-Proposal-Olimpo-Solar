@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
@@ -11,16 +11,7 @@ export const useRoles = () => {
   const [userRole, setUserRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (user) {
-      loadUserRole();
-    } else {
-      setUserRole(null);
-      setLoading(false);
-    }
-  }, [user]);
-
-  const loadUserRole = async () => {
+  const loadUserRole = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -41,7 +32,16 @@ export const useRoles = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadUserRole();
+    } else {
+      setUserRole(null);
+      setLoading(false);
+    }
+  }, [user, loadUserRole]);
 
   const assignRole = async (userId: string, role: AppRole) => {
     try {

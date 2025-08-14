@@ -1,13 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Calculator } from "lucide-react";
-
-interface Calculations {
-  monthlyGeneration: number;
-  monthlySavings: number;
-  requiredArea: number;
-  totalValue: number;
-}
+import type { Calculations } from '@/types/proposal';
 
 interface ProposalSummaryProps {
   calculations: Calculations;

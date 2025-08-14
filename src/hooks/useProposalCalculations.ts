@@ -43,10 +43,7 @@ export const useProposalCalculations = ({
       onCalculationsChange(newCalculations);
     }
   }, [
-    formData.desiredKwh,
-    formData.modulePower,
-    formData.pricePerKwp,
-    formData.monthlyConsumption,
+    formData,
     onCalculationsChange,
   ]);
 

@@ -33,7 +33,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   return <div className="min-h-screen bg-background">
       {/* Navegação */}
       <div data-hide-in-pdf className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
+        <div className="max-w-screen-5xl mx-auto flex justify-between items-center">
           <Button onClick={onEdit} variant="outline" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Editar Dados
@@ -57,16 +57,16 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {/* PÁGINA 2: QUEM SOMOS */}
         <section className="a4-page bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
-            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
+            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-screen-5xl" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
+          <div className="max-w-screen-4xl mx-auto h-full flex flex-col relative">
             {/* Imagem da página 3 */}
             <div className="flex items-center justify-center h-full">
-              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
+              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto max-w-screen-4xl" loading="lazy" />
             </div>
           </div>
         </section>
@@ -74,13 +74,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         {/* PÁGINA 4: BENEFÍCIOS */}
         <section className="a4-page bg-white p-8 page-break">
           <div className="flex items-center justify-center h-full">
-            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
+            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-screen-4xl" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="relative max-w-4xl mx-auto py-8">
+          <div className="relative max-w-screen-4xl mx-auto py-8">
             {/* Logo */}
             <div className="absolute top-4 right-4">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -109,17 +109,17 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 6: PROJETO 360° */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
+          <div className="max-w-screen-4xl mx-auto h-full flex flex-col relative">
             {/* Imagem da página 6 */}
             <div className="flex items-center justify-center h-full">
-              <img src="/lovable-uploads/ba096a62-b496-4bc5-928a-8a98fdb7ba88.png" alt="Projeto 360° - Olimpo Solar" className="w-full h-auto max-w-4xl" loading="lazy" />
+              <img src="/lovable-uploads/ba096a62-b496-4bc5-928a-8a98fdb7ba88.png" alt="Projeto 360° - Olimpo Solar" className="w-full h-auto max-w-screen-4xl" loading="lazy" />
             </div>
           </div>
         </section>
 
         {/* PÁGINA 7: SEU PROJETO */}
        <section className="a4-page bg-white p-8 page-break">
-  <div className="max-w-5xl mx-auto relative">
+  <div className="max-w-screen-5xl mx-auto relative">
 
     {/* Logo */}
     <div className="absolute top-6 right-6">
@@ -201,7 +201,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
          {economyData && <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-8">
+            <div className="relative h-full flex flex-col justify-between max-w-screen-4xl mx-auto px-8 py-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
@@ -277,7 +277,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
          <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-8">
+            <div className="relative h-full flex flex-col justify-between max-w-screen-4xl mx-auto px-8 py-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
@@ -478,7 +478,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 9: RENTABILIDADE */}
         <section className="a4-page page-break">
-          <div className="page-body max-w-4xl mx-auto">
+          <div className="page-body max-w-screen-4xl mx-auto">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -664,7 +664,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
         <section className="a4-page bg-gradient-to-b from-yellow-50 to-white p-8 page-break">
-          <div className="max-w-4xl mx-auto py-8">
+          <div className="max-w-screen-4xl mx-auto py-8">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -760,7 +760,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 10: TERMO DE COMPROMISSO - Baseado na imagem 10 */}
         <section className="a4-page bg-gradient-to-b from-yellow-100 to-yellow-50 p-8 page-break">
-          <div className="max-w-4xl mx-auto py-8">
+          <div className="max-w-screen-4xl mx-auto py-8">
             
             <h2 className="text-5xl font-bold text-slate-800 mb-12 leading-tight">
               Termo de<br />

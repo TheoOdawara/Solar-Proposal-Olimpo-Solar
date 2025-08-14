@@ -1,5 +1,5 @@
 import React from 'react';
-import ProposalCoverPage from './ProposalCoverPage';
+import ProposalCoverPage from '../../components/ProposalCoverPage';
 
 const ProposalCoverPageDemo = () => {
   // Dados de exemplo para demonstração - agora completos com a nova interface
@@ -12,7 +12,9 @@ const ProposalCoverPageDemo = () => {
     city: "Campo Grande",
     state: "MS",
     cep: "79002-073",
+    complement: "Apto 101",
     phone: "(67) 99999-9999",
+    email: "joao.silva@email.com",
 
     // Dados do projeto
     monthlyConsumption: 950,

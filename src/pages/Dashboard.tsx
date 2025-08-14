@@ -233,7 +233,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-accent/10">
       {/* Header com identidade Olimpo Solar */}
       <div className="bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground sticky top-0 z-40 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-screen-5xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-secondary rounded-xl shadow-lg">
@@ -273,7 +273,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="max-w-screen-5xl mx-auto p-6 space-y-6">
         {/* Notifications */}
         {notifications.length > 0 && (
           <div className="space-y-3">

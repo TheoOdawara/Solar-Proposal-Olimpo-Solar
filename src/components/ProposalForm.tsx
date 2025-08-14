@@ -47,7 +47,9 @@ const ProposalForm = ({
     city: '',
     state: '',
     cep: '',
+    complement: '',
     phone: '',
+    email: '',
     monthlyConsumption: 0,
     desiredKwh: 0,
     systemPower: 0,
@@ -236,6 +238,29 @@ const ProposalForm = ({
       return value !== '' && value !== 0;
     }) && formData.averageBill > 0 && formData.pricePerKwp > 0;
   };
+
+  // Validações específicas para cada seção
+  const isClientDataComplete = () => {
+    return formData.clientName.trim() !== '' && formData.phone.trim() !== '';
+  };
+
+  const isProjectDataComplete = () => {
+    return formData.desiredKwh > 0 && 
+           formData.modulePower > 0 && 
+           formData.moduleBrand.trim() !== '' &&
+           formData.inverterBrand.trim() !== '' &&
+           formData.inverterPower > 0 &&
+           formData.pricePerKwp > 0;
+  };
+
+  const isEconomyDataComplete = () => {
+    return formData.connectionType.trim() !== '' && 
+           formData.averageBill > 0;
+  };
+
+  const isExtrasComplete = () => {
+    return formData.paymentMethod.trim() !== '';
+  };
   const generateProposal = () => {
     if (!validateForm()) return;
     setShowPreview(true);
@@ -326,7 +351,40 @@ const generatePDFFromHTML = async () => {
         monthly_savings: calculations.monthlySavings,
         total_value: calculations.totalValue,
         seller_name: user?.email?.split('@')[0] || 'Vendedor',
-        seller_id: user?.id
+        seller_id: user?.id,
+        
+        // Dados básicos do cliente
+        cep: formData.cep,
+        address: `${formData.address}, ${formData.number}`.trim(),
+        city: formData.city,
+        state: formData.state,
+        neighborhood: formData.neighborhood,
+        complement: formData.complement,
+        phone: formData.phone,
+        email: formData.email,
+        
+        // Dados técnicos do sistema (apenas campos que existem)
+        monthly_consumption: formData.monthlyConsumption,
+        average_bill: formData.averageBill,
+        module_brand: formData.moduleBrand,
+        module_model: formData.moduleBrand, // Usando module_brand como fallback
+        module_power: formData.modulePower,
+        module_quantity: formData.moduleQuantity,
+        inverter_brand: formData.inverterBrand,
+        inverter_model: formData.inverterBrand, // Usando inverter_brand como fallback
+        required_area: calculations.requiredArea,
+        
+        // Dados comerciais
+        payment_method: formData.paymentMethod,
+        notes: formData.observations,
+        valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 dias a partir de hoje
+        
+        // Campos técnicos adicionais (apenas os que existem na migration)
+        connection_type: formData.connectionType,
+        desired_kwh: formData.desiredKwh,
+        price_per_kwp: formData.pricePerKwp,
+        
+        status: 'draft'
       });
     } catch (error) {
       // Error handling is done in the hook
@@ -337,20 +395,35 @@ const generatePDFFromHTML = async () => {
       ...prev,
       clientName: proposal.client_name,
       systemPower: proposal.system_power,
-      // Carregar dados expandidos se disponíveis
-      desiredKwh: proposal.monthly_generation || prev.desiredKwh,
+      
+      // Carregar dados expandidos se disponíveis (convertendo de snake_case)
+      desiredKwh: proposal.desired_kwh || proposal.monthly_generation || prev.desiredKwh,
       modulePower: proposal.module_power || prev.modulePower,
       moduleQuantity: proposal.module_quantity || prev.moduleQuantity,
       moduleBrand: proposal.module_brand || prev.moduleBrand,
       inverterBrand: proposal.inverter_brand || prev.inverterBrand,
       paymentMethod: proposal.payment_method || prev.paymentMethod,
+      
+      // Dados do cliente
       averageBill: proposal.average_bill || prev.averageBill,
+      monthlyConsumption: proposal.monthly_consumption || prev.monthlyConsumption,
       phone: proposal.phone || prev.phone,
+      email: proposal.email || prev.email,
+      
+      // Endereço
       address: proposal.address || prev.address,
       city: proposal.city || prev.city,
       state: proposal.state || prev.state,
       cep: proposal.cep || prev.cep,
       neighborhood: proposal.neighborhood || prev.neighborhood,
+      complement: proposal.complement || prev.complement,
+      
+      // Dados técnicos (convertendo de snake_case)
+      connectionType: proposal.connection_type || prev.connectionType,
+      pricePerKwp: proposal.price_per_kwp || prev.pricePerKwp,
+      
+      // Observações
+      observations: proposal.notes || prev.observations,
     }));
 
     // Update parent component (os cálculos serão feitos automaticamente pelo hook)
@@ -375,7 +448,7 @@ const generatePDFFromHTML = async () => {
     return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} />;
   }
   return <div className="min-h-screen p-4">
-      <div className="max-w-6xl mx-auto animate-fade-in">
+      <div className="max-w-screen-4xl mx-auto animate-fade-in">
         {/* Spline Hero Section */}
         <div className="mb-8">
           <SplineHero />
@@ -402,7 +475,7 @@ const generatePDFFromHTML = async () => {
                       <Home className="h-5 w-5 text-white" />
                     </div>
                     <span className="text-xl font-inter font-semibold">Dados do Cliente</span>
-                    {formData.clientName && (
+                    {isClientDataComplete() && (
                       <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
                     )}
                   </div>
@@ -433,6 +506,18 @@ const generatePDFFromHTML = async () => {
                           maxLength={15}
                         />
                       </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="email">E-mail</Label>
+                      <Input 
+                        id="email" 
+                        type="email"
+                        value={formData.email} 
+                        onChange={e => handleInputChange('email', e.target.value)} 
+                        placeholder="cliente@email.com" 
+                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      />
                     </div>
 
                     {/* Endereço opcional */}
@@ -529,6 +614,18 @@ const generatePDFFromHTML = async () => {
                             disabled={hasNoAddress}
                           />
                         </div>
+
+                        <div>
+                          <Label htmlFor="complement">Complemento</Label>
+                          <Input 
+                            id="complement" 
+                            value={formData.complement} 
+                            onChange={e => handleInputChange('complement', e.target.value)} 
+                            placeholder="Apto 101, Bloco A..." 
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                            disabled={hasNoAddress}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -543,7 +640,7 @@ const generatePDFFromHTML = async () => {
                       <Settings className="h-5 w-5 text-primary" />
                     </div>
                     <span className="text-xl font-inter font-semibold">Dados do Projeto Solar</span>
-                    {formData.desiredKwh > 0 && formData.moduleBrand && (
+                    {isProjectDataComplete() && (
                       <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
                     )}
                   </div>
@@ -601,42 +698,57 @@ const generatePDFFromHTML = async () => {
 
               {/* Economia section */}
               <AccordionItem value="economy" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
-                      <Calculator className="h-5 w-5 text-white" />
+                <AccordionTrigger className="px-6 py-4 hover:no-underline group">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg shadow-sm">
+                        <Calculator className="h-5 w-5 text-white" />
+                      </div>
+                      <span className="text-xl font-inter font-semibold text-foreground">Dados de Economia</span>
                     </div>
-                    <span className="text-xl font-inter font-semibold">Dados de Economia</span>
-                    {formData.connectionType && formData.averageBill > 0 && (
-                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
+                    {isEconomyDataComplete() && (
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
                     )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="averageBill">Valor médio da conta de luz (R$/mês) *</Label>
-                      <p className="text-xs text-muted-foreground mb-2">Calculado automaticamente com base no consumo</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="averageBill" className="text-sm font-medium text-foreground">
+                        Valor médio da conta de luz (R$/mês) *
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Calculado automaticamente com base no consumo
+                      </p>
                       <Input 
                         id="averageBill" 
                         type="number" 
                         step="0.01"
                         value={formData.averageBill || ''} 
                         readOnly
-                        className="bg-muted/50 cursor-not-allowed"
+                        className="bg-muted/30 cursor-not-allowed border-muted"
                         placeholder="Será calculado automaticamente" 
                       />
                     </div>
                     
-                    <div>
-                      <Label htmlFor="connectionType">Tipo de ligação elétrica *</Label>
+                    <div className="space-y-2">
+                      <Label htmlFor="connectionType" className="text-sm font-medium text-foreground">
+                        Tipo de ligação elétrica *
+                      </Label>
+                      <p className="text-xs text-muted-foreground invisible">
+                        &nbsp;
+                      </p>
                       <Select value={formData.connectionType} onValueChange={value => handleInputChange('connectionType', value)}>
-                        <SelectTrigger className="bg-white">
+                        <SelectTrigger className="bg-muted/30 border-muted hover:bg-muted/40 focus:bg-muted/30">
                           <SelectValue placeholder="Selecione o tipo de ligação" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white z-50">
-                          <SelectItem value="bifasico">Bifásico</SelectItem>
-                          <SelectItem value="trifasico">Trifásico</SelectItem>
+                        <SelectContent className="bg-popover border shadow-lg">
+                          <SelectItem value="bifasico" className="hover:bg-muted focus:bg-muted">
+                            Bifásico (220V)
+                          </SelectItem>
+                          <SelectItem value="trifasico" className="hover:bg-muted focus:bg-muted">
+                            Trifásico (380V)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -652,7 +764,7 @@ const generatePDFFromHTML = async () => {
                       <Zap className="h-5 w-5 text-accent-foreground" />
                     </div>
                     <span className="text-xl font-inter font-semibold">Complementos</span>
-                    {formData.paymentMethod && (
+                    {isExtrasComplete() && (
                       <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
                     )}
                   </div>
@@ -718,7 +830,7 @@ const generatePDFFromHTML = async () => {
 
         {/* Barra de ações fixa no mobile */}
         <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t border-border p-3">
-          <div className="max-w-4xl mx-auto flex gap-3">
+          <div className="max-w-screen-3xl mx-auto flex gap-3">
             <Button onClick={saveCurrentProposal} variant="secondary" className="flex-1">
               <Save className="mr-2 h-5 w-5" /> Salvar
             </Button>

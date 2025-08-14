@@ -12,7 +12,9 @@ export interface FormData {
   city: string;
   state: string;
   cep: string;
+  complement: string;
   phone: string;
+  email: string;
 
   // Dados do projeto
   monthlyConsumption: number;
@@ -53,7 +55,7 @@ export interface ProposalData {
   created_at?: string;
   updated_at?: string;
   
-  // Campos expandidos
+  // Campos expandidos (usando snake_case para compatibilidade com banco)
   status?: 'draft' | 'sent' | 'approved' | 'rejected' | 'closed';
   cep?: string;
   address?: string;
@@ -76,6 +78,11 @@ export interface ProposalData {
   required_area?: number;
   phone?: string;
   email?: string;
+  
+  // Campos técnicos adicionais (snake_case para o banco)
+  connection_type?: string;
+  desired_kwh?: number;
+  price_per_kwp?: number;
 }
 
 export interface CompanyData {

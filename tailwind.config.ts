@@ -15,10 +15,28 @@ export default {
 			center: true,
 			padding: '2rem',
 			screens: {
-				'2xl': '1400px'
+				'2xl': '1400px',
+				'3xl': '1600px',
+				'4xl': '1920px',
+				'5xl': '2560px'
 			}
 		},
 		extend: {
+			maxWidth: {
+				'screen-xs': '480px',
+				'screen-sm': '640px',
+				'screen-md': '768px',
+				'screen-lg': '1024px',
+				'screen-xl': '1280px',
+				'screen-2xl': '1536px',
+				'screen-3xl': '1600px',
+				'screen-4xl': '1920px',
+				'screen-5xl': '2560px',
+				'8xl': '88rem',
+				'9xl': '96rem',
+				'10xl': '104rem',
+				'ultra': '2560px'
+			},
 			fontFamily: {
 				'inter': ['Inter', 'sans-serif'],
 				'sans': ['Inter', 'sans-serif'],
