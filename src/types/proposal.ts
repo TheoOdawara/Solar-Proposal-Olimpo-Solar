@@ -71,8 +71,8 @@ export interface ProposalData {
   module_quantity?: number;
   inverter_brand?: string;
   inverter_model?: string;
-  inverter_power?: number; // Campo que estava faltando
-  connection_type?: string; // Campo que estava faltando para tipo de ligação
+  inverter_power?: number;
+  connection_type?: string;
   payment_method?: string;
   payment_conditions?: string;
   valid_until?: string;
@@ -80,6 +80,10 @@ export interface ProposalData {
   required_area?: number;
   phone?: string;
   email?: string;
+  
+  // Campos técnicos adicionais que existem no banco
+  desired_kwh?: number; // ESTE CAMPO EXISTE NO BANCO!
+  price_per_kwp?: number;
 }
 
 export interface CompanyData {

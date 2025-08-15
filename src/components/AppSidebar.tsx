@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { NavLink, useLocation } from "react-router-dom";
 import React, { useState, createContext, useContext, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Home, FileText, History, BarChart3, LogOut, TestTube } from "lucide-react";
+import { Menu, X, Home, FileText, History, BarChart3, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 
@@ -271,14 +271,9 @@ export function AppSidebar() {
     { label: "Histórico", href: "/historico", icon: <History className="h-5 w-5 flex-shrink-0" /> },
   ];
 
-  // Adicionar itens de desenvolvimento apenas quando necessário
-  const devItems = import.meta.env.DEV 
-    ? [{ label: "Testes", href: "/testes", icon: <TestTube className="h-5 w-5 flex-shrink-0" /> }]
-    : [];
-
   const allItems = hasAdminAccess 
-    ? [...items, ...devItems, { label: "Métricas", href: "/metrics", icon: <BarChart3 className="h-5 w-5 flex-shrink-0" /> }]
-    : [...items, ...devItems];
+    ? [...items, { label: "Métricas", href: "/metrics", icon: <BarChart3 className="h-5 w-5 flex-shrink-0" /> }]
+    : items;
 
   const isActive = (path: string) => currentPath === path;
 

@@ -348,7 +348,7 @@ const generatePDFFromHTML = async () => {
     if (!validateForm()) return;
     try {
       // Criar objeto base com campos que sabemos que existem
-      const baseProposalData = {
+      const baseProposalData: Omit<ProposalData, 'id' | 'created_at' | 'updated_at'> = {
         client_name: formData.clientName,
         system_power: formData.systemPower,
         monthly_generation: calculations.monthlyGeneration,
@@ -369,6 +369,7 @@ const generatePDFFromHTML = async () => {
         
         // Dados técnicos do sistema (apenas campos que existem)
         monthly_consumption: formData.monthlyConsumption,
+        desired_kwh: formData.desiredKwh,
         average_bill: formData.averageBill,
         module_brand: formData.moduleBrand,
         module_model: formData.moduleBrand, // Usando module_brand como fallback
@@ -376,6 +377,8 @@ const generatePDFFromHTML = async () => {
         module_quantity: formData.moduleQuantity,
         inverter_brand: formData.inverterBrand,
         inverter_model: formData.inverterBrand, // Usando inverter_brand como fallback
+        inverter_power: formData.inverterPower > 0 ? formData.inverterPower : null,
+        connection_type: formData.connectionType || null,
         required_area: calculations.requiredArea,
         
         // Dados comerciais
@@ -383,18 +386,10 @@ const generatePDFFromHTML = async () => {
         notes: formData.observations,
         valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 dias a partir de hoje
         
-        status: 'draft'
+        status: 'draft' as const
       };
 
-      // Adicionar campos opcionais condicionalmente
-      const proposalData: Omit<ProposalData, 'id' | 'created_at' | 'updated_at'> = { ...baseProposalData };
-      
-      // Salvar tipo de ligação em payment_conditions por compatibilidade
-      if (formData.connectionType) {
-        proposalData.payment_conditions = formData.connectionType;
-      }
-
-      await saveProposal(proposalData);
+      await saveProposal(baseProposalData);
     } catch (error) {
       // Error handling is done in the hook
     }
@@ -419,13 +414,12 @@ const generatePDFFromHTML = async () => {
       systemPower: proposal.system_power,
       
       // Carregar dados expandidos se disponíveis (convertendo de snake_case)
-      desiredKwh: proposal.monthly_generation || prev.desiredKwh,
+      desiredKwh: proposal.desired_kwh || proposal.monthly_generation || prev.desiredKwh,
       modulePower: proposal.module_power || prev.modulePower,
       moduleQuantity: proposal.module_quantity || prev.moduleQuantity,
       moduleBrand: proposal.module_brand || prev.moduleBrand,
       inverterBrand: proposal.inverter_brand || prev.inverterBrand,
-      // inverterPower: usar valor do form como fallback já que campo pode não existir
-      inverterPower: prev.inverterPower,
+      inverterPower: proposal.inverter_power || prev.inverterPower,
       paymentMethod: proposal.payment_method || prev.paymentMethod,
       
       // Dados do cliente
@@ -443,8 +437,8 @@ const generatePDFFromHTML = async () => {
       neighborhood: proposal.neighborhood || prev.neighborhood,
       complement: proposal.complement || prev.complement,
       
-      // Tipo de ligação - usar payment_conditions como fallback temporário
-      connectionType: proposal.payment_conditions || prev.connectionType,
+      // Tipo de ligação - usar connection_type primeiro, payment_conditions como fallback
+      connectionType: proposal.connection_type || proposal.payment_conditions || prev.connectionType,
       
       // Observações
       observations: proposal.notes || prev.observations,
