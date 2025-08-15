@@ -14,9 +14,6 @@ import ProposalsHistory from "./pages/ProposalsHistory";
 import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
-// Importar página de testes apenas em desenvolvimento
-const TestPage = import.meta.env.DEV ? React.lazy(() => import("./dev/TestPage")) : null;
-
 // Configuração simplificada do QueryClient
 const queryClient = new QueryClient();
 
@@ -73,17 +70,6 @@ const App = () => (
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/metrics" element={<Metrics />} />
                         <Route path="/historico" element={<ProposalsHistory />} />
-                        {/* Rota de testes apenas em desenvolvimento */}
-                        {import.meta.env.DEV && TestPage && (
-                          <Route 
-                            path="/testes" 
-                            element={
-                              <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-                                <TestPage />
-                              </React.Suspense>
-                            } 
-                          />
-                        )}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>

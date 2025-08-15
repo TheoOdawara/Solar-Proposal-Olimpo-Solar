@@ -3,7 +3,7 @@
  * Gerencia estado e lógica de cálculos de forma reativa
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { calculateSolarMetrics, calculateAverageBill, calculateRequiredPower, calculateModuleQuantity } from '@/utils/calculations';
 import { SOLAR_CONSTANTS } from '@/constants/solarData';
 import type { FormData, Calculations } from '@/types/proposal';
@@ -24,6 +24,10 @@ export const useProposalCalculations = ({
     totalValue: 0,
   });
 
+  // Usar ref para evitar dependência que causa loop infinito
+  const onCalculationsChangeRef = useRef(onCalculationsChange);
+  onCalculationsChangeRef.current = onCalculationsChange;
+
   // Recalcula sempre que os dados do formulário mudarem
   useEffect(() => {
     const { desiredKwh, modulePower, pricePerKwp, monthlyConsumption } = formData;
@@ -39,12 +43,15 @@ export const useProposalCalculations = ({
     setCalculations(newCalculations);
     
     // Notificar componente pai sobre mudanças
-    if (onCalculationsChange) {
-      onCalculationsChange(newCalculations);
+    if (onCalculationsChangeRef.current) {
+      onCalculationsChangeRef.current(newCalculations);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    formData,
-    onCalculationsChange,
+    formData.desiredKwh,
+    formData.modulePower, 
+    formData.pricePerKwp,
+    formData.monthlyConsumption,
   ]);
 
   // Função para calcular campos derivados automaticamente

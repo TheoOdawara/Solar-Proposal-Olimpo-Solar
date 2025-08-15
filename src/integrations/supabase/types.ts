@@ -111,11 +111,14 @@ export type Database = {
           city: string | null
           client_name: string
           complement: string | null
+          connection_type: string | null
           created_at: string
+          desired_kwh: number | null
           email: string | null
           id: string
           inverter_brand: string | null
           inverter_model: string | null
+          inverter_power: number | null
           module_brand: string | null
           module_model: string | null
           module_power: number | null
@@ -128,6 +131,7 @@ export type Database = {
           payment_conditions: string | null
           payment_method: string | null
           phone: string | null
+          price_per_kwp: number | null
           required_area: number | null
           seller_id: string | null
           seller_name: string | null
@@ -146,11 +150,14 @@ export type Database = {
           city?: string | null
           client_name: string
           complement?: string | null
+          connection_type?: string | null
           created_at?: string
+          desired_kwh?: number | null
           email?: string | null
           id?: string
           inverter_brand?: string | null
           inverter_model?: string | null
+          inverter_power?: number | null
           module_brand?: string | null
           module_model?: string | null
           module_power?: number | null
@@ -163,6 +170,7 @@ export type Database = {
           payment_conditions?: string | null
           payment_method?: string | null
           phone?: string | null
+          price_per_kwp?: number | null
           required_area?: number | null
           seller_id?: string | null
           seller_name?: string | null
@@ -181,11 +189,14 @@ export type Database = {
           city?: string | null
           client_name?: string
           complement?: string | null
+          connection_type?: string | null
           created_at?: string
+          desired_kwh?: number | null
           email?: string | null
           id?: string
           inverter_brand?: string | null
           inverter_model?: string | null
+          inverter_power?: number | null
           module_brand?: string | null
           module_model?: string | null
           module_power?: number | null
@@ -198,6 +209,7 @@ export type Database = {
           payment_conditions?: string | null
           payment_method?: string | null
           phone?: string | null
+          price_per_kwp?: number | null
           required_area?: number | null
           seller_id?: string | null
           seller_name?: string | null

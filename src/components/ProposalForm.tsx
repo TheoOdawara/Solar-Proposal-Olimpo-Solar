@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -68,20 +68,22 @@ const ProposalForm = ({
   const [hasNoAddress, setHasNoAddress] = useState(false);
 
   // Usar hook centralizado para cálculos
+  const handleCalculationsChange = useCallback((newCalculations) => {
+    // Callback para quando os cálculos mudarem
+    if (onProposalDataChange && newCalculations.totalValue > 0) {
+      onProposalDataChange({
+        clientName: formData.clientName,
+        systemPower: formData.systemPower,
+        monthlyGeneration: newCalculations.monthlyGeneration,
+        monthlySavings: newCalculations.monthlySavings,
+        totalValue: newCalculations.totalValue
+      });
+    }
+  }, [onProposalDataChange, formData.clientName, formData.systemPower]);
+
   const { calculations, calculateDerivedFields } = useProposalCalculations({
     formData,
-    onCalculationsChange: (newCalculations) => {
-      // Callback para quando os cálculos mudarem
-      if (onProposalDataChange && newCalculations.totalValue > 0) {
-        onProposalDataChange({
-          clientName: formData.clientName,
-          systemPower: formData.systemPower,
-          monthlyGeneration: newCalculations.monthlyGeneration,
-          monthlySavings: newCalculations.monthlySavings,
-          totalValue: newCalculations.totalValue
-        });
-      }
-    }
+    onCalculationsChange: handleCalculationsChange
   });
 
   // Atualizar campos derivados automaticamente
@@ -94,7 +96,8 @@ const ProposalForm = ({
     if (Object.keys(derivedFields).length > 0) {
       setFormData(prev => ({ ...prev, ...derivedFields }));
     }
-  }, [formData.monthlyConsumption, formData.desiredKwh, formData.modulePower, calculateDerivedFields]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.monthlyConsumption, formData.desiredKwh, formData.modulePower]);
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({
@@ -344,7 +347,8 @@ const generatePDFFromHTML = async () => {
   const saveCurrentProposal = async () => {
     if (!validateForm()) return;
     try {
-      await saveProposal({
+      // Criar objeto base com campos que sabemos que existem
+      const baseProposalData = {
         client_name: formData.clientName,
         system_power: formData.systemPower,
         monthly_generation: calculations.monthlyGeneration,
@@ -379,29 +383,49 @@ const generatePDFFromHTML = async () => {
         notes: formData.observations,
         valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 dias a partir de hoje
         
-        // Campos técnicos adicionais (apenas os que existem na migration)
-        connection_type: formData.connectionType,
-        desired_kwh: formData.desiredKwh,
-        price_per_kwp: formData.pricePerKwp,
-        
         status: 'draft'
-      });
+      };
+
+      // Adicionar campos opcionais condicionalmente
+      const proposalData: Omit<ProposalData, 'id' | 'created_at' | 'updated_at'> = { ...baseProposalData };
+      
+      // Salvar tipo de ligação em payment_conditions por compatibilidade
+      if (formData.connectionType) {
+        proposalData.payment_conditions = formData.connectionType;
+      }
+
+      await saveProposal(proposalData);
     } catch (error) {
       // Error handling is done in the hook
     }
   };
   const loadProposal = (proposal: ProposalData) => {
+    // Extrair número do endereço se disponível
+    const extractNumberFromAddress = (address: string) => {
+      if (!address) return '';
+      const match = address.match(/,\s*(\d+)$/);
+      return match ? match[1] : '';
+    };
+
+    // Extrair endereço sem número
+    const extractAddressWithoutNumber = (address: string) => {
+      if (!address) return '';
+      return address.replace(/,\s*\d+$/, '').trim();
+    };
+
     setFormData(prev => ({
       ...prev,
       clientName: proposal.client_name,
       systemPower: proposal.system_power,
       
       // Carregar dados expandidos se disponíveis (convertendo de snake_case)
-      desiredKwh: proposal.desired_kwh || proposal.monthly_generation || prev.desiredKwh,
+      desiredKwh: proposal.monthly_generation || prev.desiredKwh,
       modulePower: proposal.module_power || prev.modulePower,
       moduleQuantity: proposal.module_quantity || prev.moduleQuantity,
       moduleBrand: proposal.module_brand || prev.moduleBrand,
       inverterBrand: proposal.inverter_brand || prev.inverterBrand,
+      // inverterPower: usar valor do form como fallback já que campo pode não existir
+      inverterPower: prev.inverterPower,
       paymentMethod: proposal.payment_method || prev.paymentMethod,
       
       // Dados do cliente
@@ -410,17 +434,17 @@ const generatePDFFromHTML = async () => {
       phone: proposal.phone || prev.phone,
       email: proposal.email || prev.email,
       
-      // Endereço
-      address: proposal.address || prev.address,
+      // Endereço - extrair número do endereço se disponível
+      address: extractAddressWithoutNumber(proposal.address || ''),
+      number: extractNumberFromAddress(proposal.address || ''),
       city: proposal.city || prev.city,
       state: proposal.state || prev.state,
       cep: proposal.cep || prev.cep,
       neighborhood: proposal.neighborhood || prev.neighborhood,
       complement: proposal.complement || prev.complement,
       
-      // Dados técnicos (convertendo de snake_case)
-      connectionType: proposal.connection_type || prev.connectionType,
-      pricePerKwp: proposal.price_per_kwp || prev.pricePerKwp,
+      // Tipo de ligação - usar payment_conditions como fallback temporário
+      connectionType: proposal.payment_conditions || prev.connectionType,
       
       // Observações
       observations: proposal.notes || prev.observations,
@@ -448,13 +472,11 @@ const generatePDFFromHTML = async () => {
     return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} />;
   }
   return <div className="min-h-screen p-4">
-      <div className="max-w-screen-4xl mx-auto animate-fade-in">
-        {/* Spline Hero Section */}
-        <div className="mb-8">
-          <SplineHero />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="max-w-screen-4xl mx-auto animate-fade-in">
+          {/* Spline Hero Section */}
+          <div className="mb-8">
+            <SplineHero />
+          </div>        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Form - 3 columns */}
           <div className="lg:col-span-3 space-y-6">
             {/* História de propostas */}
