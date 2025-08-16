@@ -714,16 +714,14 @@ const generatePDFFromHTML = async () => {
 
               {/* Economia section */}
               <AccordionItem value="economy" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline group">
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg shadow-sm">
-                        <Calculator className="h-5 w-5 text-white" />
-                      </div>
-                      <span className="text-xl font-inter font-semibold text-foreground">Dados de Economia</span>
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg shadow-sm">
+                      <Calculator className="h-5 w-5 text-white" />
                     </div>
+                    <span className="text-xl font-inter font-semibold text-foreground">Dados de Economia</span>
                     {isEconomyDataComplete() && (
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
                     )}
                   </div>
                 </AccordionTrigger>

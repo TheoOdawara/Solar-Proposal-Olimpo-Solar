@@ -30,15 +30,17 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
   const metricas = calculateRealMetrics(formData);
   const solarROI = calculateSolarROI(calculations.monthlySavings, calculations.totalValue);
-  return <div className="min-h-screen bg-background">
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
       {/* Navegação */}
-      <div data-hide-in-pdf className="sticky top-0 bg-background/95 backdrop-blur-sm border-b border-border z-10 p-4">
-        <div className="max-w-screen-5xl mx-auto flex justify-between items-center">
-          <Button onClick={onEdit} variant="outline" className="gap-2">
+      <div data-hide-in-pdf className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-white/20 shadow-lg z-10 p-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <Button onClick={onEdit} variant="outline" className="gap-2 border-[#022136]/20 text-[#022136] hover:bg-[#022136] hover:text-white transition-all duration-300">
             <ArrowLeft className="h-4 w-4" />
             Editar Dados
           </Button>
-          <Button onClick={onGeneratePDF} className="gap-2 bg-gradient-solar text-white">
+          <Button onClick={onGeneratePDF} className="gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
             <FileDown className="h-4 w-4" />
             Gerar PDF
           </Button>
@@ -46,41 +48,38 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       </div>
 
       {/* Conteúdo da Proposta */}
-      <div id="pdf-content" className="w-full bg-white print-optimized">
+      <div id="pdf-content" className="w-full bg-gradient-to-b from-white to-slate-50 print-optimized shadow-inner">
         
         {/* PÁGINA 1: NOVA CAPA PERSONALIZADA */}
         <ProposalCoverPage formData={formData} calculations={calculations} />
         
-        {/* PÁGINA 2: CAPA ANTERIOR - Baseado na primeira imagem */}
-        
-
         {/* PÁGINA 2: QUEM SOMOS */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="flex items-center justify-center h-full">
-            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto max-w-screen-5xl" loading="lazy" />
+          <div className="max-w-6xl mx-auto h-full flex items-center justify-center">
+            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto object-contain" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-screen-4xl mx-auto h-full flex flex-col relative">
+          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
             {/* Imagem da página 3 */}
             <div className="flex items-center justify-center h-full">
-              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto max-w-screen-4xl" loading="lazy" />
+              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto object-contain" loading="lazy" />
             </div>
           </div>
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="flex items-center justify-center h-full">
-            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto max-w-screen-4xl" loading="lazy" />
+          <div className="max-w-4xl mx-auto h-full flex items-center justify-center">
+            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto object-contain" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
         <section className="a4-page bg-white p-8 page-break">
-          <div className="relative max-w-screen-4xl mx-auto py-8">
+          <div className="relative max-w-4xl mx-auto py-8">
             {/* Logo */}
             <div className="absolute top-4 right-4">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
@@ -95,113 +94,42 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" loading="lazy" />
             </div>
 
-            {/* Footer contact */}
-            <div className="mt-8 bg-slate-800 py-4 text-center rounded-lg">
-              <div className="flex justify-center space-x-6 text-white text-sm">
-                <span>(67) 99668-0242</span>
-                <span>olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+            {/* Separador de Card - Footer padrão da marca */}
+            <div className="mt-8 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center space-x-6 text-white text-sm">
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
+                    <span>(67) 99668-0242</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
+                    <span>olimpo.energiasolar</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
+                    <span>adm.olimposolar@gmail.com</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
+                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
+                  </span>
+                </div>
+                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
+                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                    QR Code
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* PÁGINA 6: PROJETO 360° */}
-        <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-screen-4xl mx-auto h-full flex flex-col relative">
-            {/* Imagem da página 6 */}
-            <div className="flex items-center justify-center h-full">
-              <img src="/lovable-uploads/ba096a62-b496-4bc5-928a-8a98fdb7ba88.png" alt="Projeto 360° - Olimpo Solar" className="w-full h-auto max-w-screen-4xl" loading="lazy" />
-            </div>
-          </div>
-        </section>
-
-        {/* PÁGINA 7: SEU PROJETO */}
-       <section className="a4-page bg-white p-8 page-break">
-  <div className="max-w-screen-5xl mx-auto relative">
-
-    {/* Logo */}
-    <div className="absolute top-6 right-6">
-      
-    </div>
-
-    <h2 className="text-4xl font-extrabold text-center text-slate-800 mb-12">Seu Projeto:</h2>
-
-    {/* Imagem principal */}
-    <div className="bg-slate-50 border border-slate-200 rounded-2xl shadow-sm p-6 mb-12">
-      <div className="w-full h-64 flex items-center justify-center">
-        <img src="/lovable-uploads/898d9890-e943-4493-9ab7-cad6efc48286.png" alt="Equipamentos do Sistema Solar" className="max-h-full object-contain" loading="lazy" />
-      </div>
-    </div>
-
-    {/* Ícones dos Equipamentos */}
-    <div className="grid grid-cols-3 gap-6 mb-12">
-      {[{
-              icon: <Zap />,
-              label: `${formData.moduleQuantity} Painéis`
-            }, {
-              icon: <Battery />,
-              label: `Inversor ${formData.inverterBrand}`
-            }, {
-              icon: <Wrench />,
-              label: 'Estrutura'
-            }, {
-              icon: <Lightbulb />,
-              label: 'Monitoramento'
-            }, {
-              icon: <DollarSign />,
-              label: 'Economia'
-            }, {
-              icon: <BarChart3 />,
-              label: `Potência ${formData.systemPower}kWp`
-            }].map((item, idx) => <div key={idx} className="flex flex-col items-center bg-white rounded-xl border border-slate-200 shadow-md p-4 text-center">
-          <div className="w-14 h-14 flex items-center justify-center rounded-full bg-yellow-100 mb-3">
-            {React.cloneElement(item.icon, {
-                  className: "h-6 w-6 text-yellow-600"
-                })}
-          </div>
-          <p className="text-sm font-medium text-slate-700">{item.label}</p>
-        </div>)}
-    </div>
-
-    {/* Garantias */}
-    <div className="bg-yellow-50 border border-yellow-100 rounded-2xl p-8 mb-8">
-      <h3 className="text-2xl font-bold text-yellow-800 text-center mb-6">Garantias do Sistema</h3>
-      <div className="space-y-4 text-sm text-slate-700">
-        <div className="flex justify-between border-b pb-2">
-          <span className="font-semibold">Módulos solares</span>
-          <span>25 anos de eficiência / 12 anos fabricação</span>
-        </div>
-        <div className="flex justify-between border-b pb-2">
-          <span className="font-semibold">Inversores</span>
-          <span>10 anos</span>
-        </div>
-        <div className="flex justify-between border-b pb-2">
-          <span className="font-semibold">Micro Inversores</span>
-          <span>15 anos</span>
-        </div>
-        <div className="flex justify-between border-b pb-2">
-          <span className="font-semibold">Estrutura</span>
-          <span>10 anos</span>
-        </div>
-        <div className="flex justify-between italic">
-          <span>Instalação</span>
-          <span>12 meses</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Rodapé de Contato */}
-    
-  </div>
-      </section>
-
          {/* PÁGINA 8: SUA ECONOMIA - Nova seção */}
          {economyData && <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-screen-4xl mx-auto px-8 py-8">
+            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
@@ -277,7 +205,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
          <section className="a4-page page-break" style={{
         backgroundColor: '#022136'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-screen-4xl mx-auto px-8 py-8">
+            <div className="relative h-full flex flex-col justify-between max-w-4xl mx-auto px-8 py-8">
               {/* Logo */}
               <div className="absolute top-8 right-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto brightness-0 invert" />
@@ -462,15 +390,32 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             })()}
               </div>
 
-              {/* Footer contact */}
-              <div className="mt-16 py-4 text-center rounded-lg" style={{
-            backgroundColor: '#ffbf06'
-          }}>
-                <div className="flex justify-center space-x-6 text-black text-sm font-semibold">
-                  <span>(67) 99668-0242</span>
-                  <span>olimpo.energiasolar</span>
-                  <span>adm.olimposolar@gmail.com</span>
-                  <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+              {/* Separador de Card - Footer padrão da marca */}
+              <div className="mt-16 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
+                <div className="flex justify-between items-center w-full">
+                  <div className="flex items-center space-x-6 text-white text-sm">
+                    <span className="flex items-center whitespace-nowrap">
+                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
+                      <span>(67) 99668-0242</span>
+                    </span>
+                    <span className="flex items-center whitespace-nowrap">
+                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
+                      <span>olimpo.energiasolar</span>
+                    </span>
+                    <span className="flex items-center whitespace-nowrap">
+                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
+                      <span>adm.olimposolar@gmail.com</span>
+                    </span>
+                    <span className="flex items-center whitespace-nowrap">
+                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
+                      <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
+                    </span>
+                  </div>
+                  <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
+                    <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                      QR Code
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -478,17 +423,11 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 9: RENTABILIDADE */}
         <section className="a4-page page-break">
-          <div className="page-body max-w-screen-4xl mx-auto">
+          <div className="page-body max-w-4xl mx-auto">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
-
-            {/* Aerial View Placeholder */}
-            
-
-            {/* Horizontal Bar Chart - Rentabilidade */}
-            
 
             {/* Vertical Bar Chart - Capacidade de Geração */}
             <div className="bg-white p-8 rounded-lg border border-gray-200 shadow-lg">
@@ -632,100 +571,128 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
             {/* Métricas no final da página */}
-            <div className="mt-auto grid grid-cols-3 gap-6 text-center bg-gray-50 p-6 rounded-lg border">
+            <div className="mt-auto grid grid-cols-3 gap-6 text-center bg-white/90 backdrop-blur-sm p-6 rounded-xl border border-[#022136]/10 shadow-xl">
               <div>
-                <div className="font-bold text-3xl" style={{ color: '#ffbf06' }}>
+                <div className="font-bold text-3xl bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 bg-clip-text text-transparent">
                   {metricas.geracaoMedia.toLocaleString()}
                 </div>
-                <div className="text-sm font-semibold" style={{ color: '#022136' }}>
+                <div className="text-sm font-semibold text-[#022136]">
                   Geração média (kWh)
                 </div>
               </div>
               <div>
-                <div className="font-bold text-3xl" style={{ color: '#9ca3af' }}>
+                <div className="font-bold text-3xl text-slate-600">
                   {metricas.consumoMedio.toLocaleString()}
                 </div>
-                <div className="text-sm font-semibold" style={{ color: '#022136' }}>
+                <div className="text-sm font-semibold text-[#022136]">
                   Consumo médio (kWh)
                 </div>
               </div>
               <div>
-                <div className="font-bold text-3xl" style={{ color: '#22c55e' }}>
+                <div className="font-bold text-3xl text-green-600">
                   {metricas.economia}%
                 </div>
-                <div className="text-sm font-semibold" style={{ color: '#022136' }}>
+                <div className="text-sm font-semibold text-[#022136]">
                   Economia mensal estimada
                 </div>
               </div>
             </div>
           </div>
-          <Footer />
+          
+          {/* Separador de Card - Footer padrão da marca */}
+          <div className="mt-4 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center space-x-6 text-white text-sm">
+                <span className="flex items-center whitespace-nowrap">
+                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
+                  <span>(67) 99668-0242</span>
+                </span>
+                <span className="flex items-center whitespace-nowrap">
+                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
+                  <span>olimpo.energiasolar</span>
+                </span>
+                <span className="flex items-center whitespace-nowrap">
+                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
+                  <span>adm.olimposolar@gmail.com</span>
+                </span>
+                <span className="flex items-center whitespace-nowrap">
+                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
+                  <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
+                </span>
+              </div>
+              <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
+                <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                  QR Code
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
-        <section className="a4-page bg-gradient-to-b from-yellow-50 to-white p-8 page-break">
-          <div className="max-w-screen-4xl mx-auto py-8">
+        <section className="a4-page bg-gradient-to-br from-[#ffbf06]/10 via-white to-slate-50 p-8 page-break">
+          <div className="max-w-4xl mx-auto py-8">
             {/* Logo */}
             <div className="absolute top-8 right-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
-            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-8 text-center">
               Seu investimento:
             </h2>
 
             {/* Investment Value - Valor em destaque amarelo */}
-            <div className="bg-yellow-400 py-6 px-12 rounded-lg mb-8 text-center">
-              <div className="text-4xl font-bold text-slate-800">
+            <div className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/90 py-6 px-12 rounded-xl mb-8 text-center shadow-xl border border-[#ffbf06]/30">
+              <div className="text-4xl font-bold text-[#022136]">
                 {formatCurrency(calculations.totalValue)}
               </div>
             </div>
 
             {/* Financing Table - Exatamente como na imagem */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden mb-8 border border-[#022136]/10">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-400 text-white">
+                  <tr className="bg-gradient-to-r from-[#022136] to-slate-700 text-white">
                     <th className="py-4 px-6 text-left font-bold">Descrição</th>
                     <th className="py-4 px-6 text-center font-bold">Qtd Meses</th>
                     <th className="py-4 px-6 text-center font-bold">Parcela</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-yellow-400 border-b border-yellow-600">
-                    <td className="py-3 px-6 font-bold text-black">Cartão de crédito</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">18 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 18)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 border-b border-[#ffbf06]/30">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Cartão de crédito</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">18 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 18)}</td>
                   </tr>
-                  <tr className="bg-yellow-400 border-b border-yellow-600">
-                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">24 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 24)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 border-b border-[#ffbf06]/30">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">24 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 24)}</td>
                   </tr>
-                  <tr className="bg-yellow-400 border-b border-yellow-600">
-                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">36 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 36)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 border-b border-[#ffbf06]/30">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">36 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 36)}</td>
                   </tr>
-                  <tr className="bg-yellow-400 border-b border-yellow-600">
-                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">48 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 48)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 border-b border-[#ffbf06]/30">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">48 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 48)}</td>
                   </tr>
-                  <tr className="bg-yellow-400 border-b border-yellow-600">
-                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">64 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 64)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 border-b border-[#ffbf06]/30">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">64 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 64)}</td>
                   </tr>
-                  <tr className="bg-yellow-400 border-b border-yellow-600">
-                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">72 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 72)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 border-b border-[#ffbf06]/30">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">72 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 72)}</td>
                   </tr>
-                  <tr className="bg-yellow-400">
-                    <td className="py-3 px-6 font-bold text-black">Sol agora</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">84 meses</td>
-                    <td className="py-3 px-6 text-center font-bold text-black">{formatCurrency(calculations.totalValue / 84)}</td>
+                  <tr className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80">
+                    <td className="py-3 px-6 font-bold text-[#022136]">Sol agora</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">84 meses</td>
+                    <td className="py-3 px-6 text-center font-bold text-[#022136]">{formatCurrency(calculations.totalValue / 84)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -733,10 +700,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
             {/* Texto explicativo */}
             <div className="text-center text-sm text-slate-600 mb-8">
-              <p>Simulação sujeita a análise de crédito de acordo com a instituição financeira selecionada.</p>
+              <p className="font-medium">Simulação sujeita a análise de crédito de acordo com a instituição financeira selecionada.</p>
             </div>
 
-            <div className="bg-gray-100 p-6 rounded-lg mb-8 text-sm text-slate-700 leading-relaxed">
+            <div className="bg-white/90 backdrop-blur-sm border border-[#022136]/10 p-6 rounded-xl mb-8 text-sm text-slate-700 leading-relaxed shadow-lg">
               <p>
                 Para dimensionar e precificar adequadamente o seu projeto, nossa visita técnica é essencial. A inclinação e a 
                 face do telhado podem impactar a geração de energia do sistema fotovoltaico. Durante a visita, também 
@@ -746,23 +713,42 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
 
-            {/* Footer contact */}
-            <div className="mt-6 bg-slate-800 py-4 text-center rounded-lg">
-              <div className="flex justify-center space-x-6 text-white text-sm">
-                <span>67 99668-0242</span>
-                <span>Olimpo.energiasolar</span>
-                <span>adm.olimposolar@gmail.com</span>
-                <span>R. Eduardo Santos Pereira, 1831 Centro, Campo Grande</span>
+            {/* Separador de Card - Footer padrão da marca */}
+            <div className="mt-6 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center space-x-6 text-white text-sm">
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
+                    <span>(67) 99668-0242</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
+                    <span>olimpo.energiasolar</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
+                    <span>adm.olimposolar@gmail.com</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
+                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
+                  </span>
+                </div>
+                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
+                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                    QR Code
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* PÁGINA 10: TERMO DE COMPROMISSO - Baseado na imagem 10 */}
-        <section className="a4-page bg-gradient-to-b from-yellow-100 to-yellow-50 p-8 page-break">
-          <div className="max-w-screen-4xl mx-auto py-8">
+        <section className="a4-page bg-gradient-to-br from-[#ffbf06]/20 via-white to-slate-50 p-8 page-break">
+          <div className="max-w-4xl mx-auto py-8">
             
-            <h2 className="text-5xl font-bold text-slate-800 mb-12 leading-tight">
+            <h2 className="text-5xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-12 leading-tight">
               Termo de<br />
               compromisso:
             </h2>
@@ -821,26 +807,31 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" loading="lazy" />
             </div>
 
-            {/* Footer da empresa */}
-            <div className="bg-slate-800 rounded-lg p-6 text-center">
-              <div className="text-white">
-                <div className="flex justify-center items-center space-x-8 text-sm">
-                  <span className="flex items-center">
-                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
-                    (67) 99668-0242
+            {/* Separador de Card - Footer padrão da marca */}
+            <div className="bg-[#2c3e50] rounded-xl py-4 px-6 w-full">
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center space-x-6 text-white text-sm">
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
+                    <span>(67) 99668-0242</span>
                   </span>
-                  <span className="flex items-center">
-                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
-                    olimpo.energiasolar
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
+                    <span>olimpo.energiasolar</span>
                   </span>
-                  <span className="flex items-center">
-                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
-                    adm.olimposolar@gmail.com
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
+                    <span>adm.olimposolar@gmail.com</span>
                   </span>
-                  <span className="flex items-center">
-                    <span className="w-4 h-4 bg-yellow-400 rounded-full mr-2"></span>
-                    R. Eduardo Santos Pereira, 1831 Centro, Campo Grande
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
+                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
                   </span>
+                </div>
+                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
+                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                    QR Code
+                  </div>
                 </div>
               </div>
             </div>
@@ -850,18 +841,19 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
       </div>
 
       {/* Botões Fixos no Mobile */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-sm border-t border-border md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-white/20 md:hidden shadow-lg">
         <div className="flex gap-2">
-          <Button onClick={onEdit} variant="outline" className="flex-1 gap-2">
+          <Button onClick={onEdit} variant="outline" className="flex-1 gap-2 border-[#022136]/20 text-[#022136] hover:bg-[#022136] hover:text-white transition-all duration-300">
             <ArrowLeft className="h-4 w-4" />
             Editar
           </Button>
-          <Button onClick={onGeneratePDF} className="flex-1 gap-2 bg-gradient-solar text-white">
+          <Button onClick={onGeneratePDF} className="flex-1 gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
             <FileDown className="h-4 w-4" />
             Gerar PDF
           </Button>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 export default ProposalPreview;
