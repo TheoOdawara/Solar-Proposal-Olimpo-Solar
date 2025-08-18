@@ -54,165 +54,166 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <ProposalCoverPage formData={formData} calculations={calculations} />
         
         {/* PÁGINA 2: QUEM SOMOS */}
-        <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-6xl mx-auto h-full flex items-center justify-center">
-            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto object-contain" loading="lazy" />
+        <section className="a4-page page-break overflow-hidden h-full flex flex-col" style={{ padding: 0, margin: '20px auto' }}>
+          <div className="flex-1 w-full">
+            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-full object-fill block" loading="lazy" />
+          </div>
+          {/* Barra da Empresa - Nova imagem no final da página */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
-        <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
-            {/* Imagem da página 3 */}
-            <div className="flex items-center justify-center h-full">
-              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto object-contain" loading="lazy" />
-            </div>
+        <section className="a4-page page-break overflow-hidden h-full flex flex-col" style={{ padding: 0, margin: '20px auto' }}>
+          <div className="flex-1 w-full">
+            <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-full object-fill block" loading="lazy" />
+          </div>
+          {/* Barra da Empresa - Nova imagem no final da página */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
-        <section className="a4-page bg-white p-8 page-break">
-          <div className="max-w-4xl mx-auto h-full flex items-center justify-center">
-            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto object-contain" loading="lazy" />
+        <section className="a4-page page-break overflow-hidden h-full flex flex-col" style={{ padding: 0, margin: '20px auto' }}>
+          <div className="flex-1 w-full">
+            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-full object-fill block" loading="lazy" />
+          </div>
+          {/* Barra da Empresa - Nova imagem no final da página */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
-        <section className="a4-page bg-white p-8 page-break">
-          <div className="relative max-w-4xl mx-auto py-8">
-            {/* Logo */}
-            <div className="absolute top-4 right-4">
+        <section className="a4-page page-break overflow-hidden h-full flex flex-col" style={{ padding: 0, margin: '20px auto' }}>
+          <div className="flex-1 w-full flex flex-col">
+            {/* Logo no canto superior direito - igual à Página 2 */}
+            <div className="absolute top-6 right-6 z-10">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
-            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
-              Nossos Projetos:
-            </h2>
-
-            {/* Projects Grid */}
-            <div className="mb-8">
-              <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" loading="lazy" />
+            {/* Título - com mais espaçamento para ficar harmonioso */}
+            <div className="pt-12 pb-6 px-8">
+              <h2 className="text-4xl font-bold text-slate-800 text-center">
+                Nossos Projetos:
+              </h2>
             </div>
 
-            {/* Separador de Card - Footer padrão da marca */}
-            <div className="mt-8 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center space-x-6 text-white text-sm">
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
-                    <span>(67) 99668-0242</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
-                    <span>olimpo.energiasolar</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
-                    <span>adm.olimposolar@gmail.com</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
-                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
-                  </span>
-                </div>
-                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
-                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                    QR Code
-                  </div>
-                </div>
-              </div>
+            {/* Projects Grid - Expandido até as margens laterais */}
+            <div className="flex-1 pb-6">
+              <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-full object-cover" loading="lazy" />
             </div>
+          </div>
+          {/* Barra da Empresa - Nova imagem no final da página */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
           </div>
         </section>
 
-         {/* PÁGINA 8: SUA ECONOMIA */}
-         {economyData && <section className="a4-page page-break" style={{
-        backgroundColor: '#022136'
+         {/* PÁGINA 6: SUA ECONOMIA */}
+         {economyData && <section className="a4-page page-break flex flex-col" style={{
+        backgroundColor: '#022136',
+        padding: 0,
+        margin: '20px auto'
       }}>
-            <div className="relative h-full flex flex-col justify-center max-w-full mx-auto px-6 py-6">
-              {/* Logo */}
-              <div className="absolute top-4 right-4">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-12 w-auto brightness-0 invert" />
+            <div className="relative flex-1 w-full flex flex-col px-6 py-6">
+              {/* Logo - maior e mais no topo */}
+              <div className="w-full flex justify-end pt-2 pb-8">
+                <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
               </div>
 
-               {/* Título */}
-               <h2 className="text-3xl font-bold text-center mb-8 mt-4" style={{
-            color: '#ffffff'
-          }}>
-                 SUA <span style={{
-              color: '#ffbf06'
-            }}>ECONOMIA</span>
-               </h2>
+              {/* Conteúdo centralizado */}
+              <div className="flex-1 flex flex-col justify-center items-center">
+                {/* Título */}
+                <h2 className="text-4xl font-bold text-center mb-12" style={{
+              color: '#ffffff'
+            }}>
+                   SUA <span style={{
+                color: '#ffbf06'
+              }}>ECONOMIA</span>
+                </h2>
 
-              {/* Three columns layout */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center text-white">
-                {/* Sem energia solar */}
-                <div className="space-y-6">
-                  <h3 className="text-xl font-bold mb-8">Sem energia solar</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-3xl font-bold">{formatCurrency(economyData.currentBillPerYear)}</div>
-                      <div className="text-lg">/ ano</div>
+              {/* Layout reorganizado: 2 em cima, 1 embaixo centralizado */}
+              <div className="flex flex-col items-center space-y-8 text-center text-white">
+                {/* Primeira linha: Sem energia solar e Com energia solar */}
+                <div className="flex justify-center gap-20">
+                  {/* Sem energia solar */}
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold mb-8 text-white">Sem energia solar</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-3xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.currentBillPerYear)}</div>
+                        <div className="text-lg text-white">/ ano</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.currentBillPerMonth)}</div>
+                        <div className="text-base text-white">/ mês</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-2xl font-bold">{formatCurrency(economyData.currentBillPerMonth)}</div>
-                      <div className="text-base">/ mês</div>
+                  </div>
+
+                  {/* Com energia solar */}
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold mb-8 text-white">Com energia solar</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-3xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.billWithSolarPerYear)}</div>
+                        <div className="text-lg text-white">/ ano</div>
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.billWithSolarPerMonth)}</div>
+                        <div className="text-base text-white">/ mês</div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Com energia solar */}
+                {/* Segunda linha: Sua economia será de (centralizado e mais para cima) */}
                 <div className="space-y-6">
-                  <h3 className="text-xl font-bold mb-8">Com energia solar</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-3xl font-bold">{formatCurrency(economyData.billWithSolarPerYear)}</div>
-                      <div className="text-lg">/ ano</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold">{formatCurrency(economyData.billWithSolarPerMonth)}</div>
-                      <div className="text-base">/ mês</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sua economia será de */}
-                <div className="space-y-6">
-                  <h3 className="text-xl font-bold mb-8">Sua economia será de:</h3>
+                  <h3 className="text-xl font-bold mb-8 text-white">Sua economia será de:</h3>
                   <div className="space-y-4">
                     <div>
                       <div className="text-3xl font-bold" style={{
                     color: '#ffbf06'
                   }}>{formatCurrency(economyData.savingsPerYear)}</div>
-                      <div className="text-lg">/ ano</div>
+                      <div className="text-lg text-white">/ ano</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold" style={{
                     color: '#ffbf06'
                   }}>{formatCurrency(economyData.savingsPerMonth)}</div>
-                      <div className="text-base">/ mês</div>
+                      <div className="text-base text-white">/ mês</div>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+            </div>
 
-              {/* Footer contact */}
-              
+            {/* Barra da Empresa - Nova imagem no final da página */}
+            <div className="w-full flex-shrink-0">
+              <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
             </div>
           </section>}
 
-         {/* GRÁFICOS INFORMATIVOS: SEU RETORNO E SUA RENTABILIDADE */}
-         <section className="a4-page page-break" style={{
-        backgroundColor: '#022136'
+         {/* PÁGINA 7: GRÁFICOS INFORMATIVOS: SEU RETORNO E SUA RENTABILIDADE */}
+         <section className="a4-page page-break flex flex-col" style={{
+        backgroundColor: '#022136',
+        padding: 0,
+        margin: '20px auto'
       }}>
-            <div className="relative h-full flex flex-col justify-between max-w-full mx-auto px-6 py-6">
-              {/* Logo */}
-              <div className="absolute top-4 right-4">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-12 w-auto brightness-0 invert" />
+            <div className="relative flex-1 flex flex-col px-6 py-6">
+              {/* Logo - mesma configuração da Página 6 */}
+              <div className="w-full flex justify-end pt-2 pb-4">
+                <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
               </div>
 
+              {/* Conteúdo dos gráficos */}
+              <div className="flex-1 flex flex-col">
                {/* GRÁFICO 1: SEU RETORNO */}
-               <div className="mb-8">
+               <div className="mb-6">
                 {(() => {
               // Calcular dados do retorno
               const annualSavings = economyData.savingsPerYear;
@@ -253,8 +254,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                          Retorno de investimento em {paybackYears} anos
                        </h3>
                       
-                      <div className="bg-white rounded-lg p-6">
-                        <div className="h-80">
+                      <div className="bg-white rounded-lg p-6 mx-auto max-w-6xl">
+                        <div className="h-96">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={returnData.filter((_, index) => index % 2 === 0 || index <= 10)} margin={{
                         top: 20,
@@ -301,33 +302,30 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               {/* GRÁFICO 2: SUA RENTABILIDADE */}
-              <div className="mb-8">
+              <div className="mb-6">
                 {(() => {
               // Validação e cálculos baseados em dados reais
               const investmentBase = calculations.totalValue || 50000;
-              const annualSavings = calculations.monthlySavings * 12;
+              const annualSavings = calculations.monthlySavings * 12 || 10000;
               const fiveYearsSavings = annualSavings * 5;
 
               // Cálculo da rentabilidade real da energia solar
               const solarRentabilityPercentage = investmentBase > 0 ? Math.round(fiveYearsSavings / investmentBase * 100) : 180;
 
-              // Ajuste proporcional das outras opções baseado no investimento real
-              const savingsPercentage = Math.round(investmentBase * 0.27 / 1000) * 1000;
-              const cdbPercentage = Math.round(investmentBase * 0.45 / 1000) * 1000;
               const rentabilityData = [{
                 investment: 'Poupança',
                 percentage: 27,
-                value: investmentBase * 1.27,
+                value: Math.round(investmentBase * 1.27),
                 color: '#9ca3af'
               }, {
                 investment: 'CDB',
                 percentage: 45,
-                value: investmentBase * 1.45,
+                value: Math.round(investmentBase * 1.45),
                 color: '#f97316'
               }, {
                 investment: 'Energia Solar',
                 percentage: solarRentabilityPercentage,
-                value: investmentBase + fiveYearsSavings,
+                value: Math.round(investmentBase + fiveYearsSavings),
                 color: '#ffbf06'
               }];
               return <>
@@ -339,17 +337,17 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                   }}>RENTABILIDADE</span>
                       </h2>
                       
-                      <div className="bg-white rounded-lg p-6">
-                        <div className="h-80">
+                      <div className="bg-white rounded-lg p-6 mx-auto max-w-6xl">
+                        <div className="h-96">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart layout="horizontal" data={rentabilityData} margin={{
                         top: 20,
-                        right: 30,
-                        left: 120,
+                        right: 60,
+                        left: 100,
                         bottom: 20
                       }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                              <XAxis type="number" domain={[0, 100000]} axisLine={{
+                              <XAxis type="number" domain={[0, 'dataMax + 10000']} axisLine={{
                           stroke: '#374151',
                           strokeWidth: 1
                         }} tickLine={{
@@ -365,9 +363,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                           stroke: '#374151'
                         }} tick={{
                           fill: '#374151',
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: 'bold'
-                        }} width={120} />
+                        }} width={100} />
                               <Tooltip contentStyle={{
                           backgroundColor: '#ffffff',
                           border: '1px solid #374151',
@@ -389,35 +387,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                     </>;
             })()}
               </div>
-
-              {/* Separador de Card - Footer padrão da marca */}
-              <div className="mt-16 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex items-center space-x-6 text-white text-sm">
-                    <span className="flex items-center whitespace-nowrap">
-                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
-                      <span>(67) 99668-0242</span>
-                    </span>
-                    <span className="flex items-center whitespace-nowrap">
-                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
-                      <span>olimpo.energiasolar</span>
-                    </span>
-                    <span className="flex items-center whitespace-nowrap">
-                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
-                      <span>adm.olimposolar@gmail.com</span>
-                    </span>
-                    <span className="flex items-center whitespace-nowrap">
-                      <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
-                      <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
-                    </span>
-                  </div>
-                  <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
-                    <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                      QR Code
-                    </div>
-                  </div>
-                </div>
               </div>
+            </div>
+
+            {/* Barra da Empresa - Nova imagem no final da página */}
+            <div className="w-full flex-shrink-0">
+              <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
             </div>
           </section>
 
