@@ -54,81 +54,71 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <ProposalCoverPage formData={formData} calculations={calculations} />
         
         {/* PÁGINA 2: QUEM SOMOS */}
-        <section className="a4-page bg-white page-break">
-          <div className="page-content">
-            <img 
-              src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" 
-              alt="Quem Somos - Olimpo Solar" 
-              className="w-full max-w-full h-auto object-contain"
-              loading="lazy" 
-            />
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-6xl mx-auto h-full flex items-center justify-center">
+            <img src="/lovable-uploads/cf2959e7-1b60-4018-ade3-b147470bd528.png" alt="Quem Somos - Olimpo Solar" className="w-full h-auto object-contain" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 3: COMO FUNCIONA */}
-        <section className="a4-page bg-white page-break">
-          <div className="page-content">
-            <img 
-              src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" 
-              alt="Como Funciona a Energia Solar" 
-              className="w-full max-w-full h-auto object-contain"
-              loading="lazy" 
-            />
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-4xl mx-auto h-full flex flex-col relative">
+            {/* Imagem da página 3 */}
+            <div className="flex items-center justify-center h-full">
+              <img src="/lovable-uploads/5933017d-541e-420f-81e2-4b202e099c8a.png" alt="Como Funciona a Energia Solar" className="w-full h-auto object-contain" loading="lazy" />
+            </div>
           </div>
         </section>
 
         {/* PÁGINA 4: BENEFÍCIOS */}
-        <section className="a4-page bg-white page-break">
-          <div className="page-content">
-            <img 
-              src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" 
-              alt="Benefícios da Energia Solar" 
-              className="w-full max-w-full h-auto object-contain"
-              loading="lazy" 
-            />
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="max-w-4xl mx-auto h-full flex items-center justify-center">
+            <img src="/lovable-uploads/ceca57ec-051c-443f-b209-5313002bb56c.png" alt="Benefícios da Energia Solar" className="w-full h-auto object-contain" loading="lazy" />
           </div>
         </section>
 
         {/* PÁGINA 5: NOSSOS PROJETOS */}
-        <section className="a4-page bg-white page-break">
-          <div className="page-content relative">
-            {/* Logo posicionado no topo direito */}
-            <div className="absolute top-0 right-0">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-12 w-auto" />
+        <section className="a4-page bg-white p-8 page-break">
+          <div className="relative max-w-4xl mx-auto py-8">
+            {/* Logo */}
+            <div className="absolute top-4 right-4">
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
             </div>
 
-            {/* Título */}
-            <div className="mb-6 mt-8">
-              <h2 className="text-3xl font-bold text-slate-800 text-center">
-                Nossos Projetos:
-              </h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-8 text-center">
+              Nossos Projetos:
+            </h2>
+
+            {/* Projects Grid */}
+            <div className="mb-8">
+              <img src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" alt="Grid de projetos da Olimpo Solar" className="w-full h-auto rounded-lg shadow-lg" loading="lazy" />
             </div>
 
-            {/* Projects Grid - Imagem principal */}
-            <div className="flex-1 flex items-center justify-center mb-4">
-              <img 
-                src="/lovable-uploads/5839951b-6ca3-4221-b6f5-945748cf80a3.png" 
-                alt="Grid de projetos da Olimpo Solar" 
-                className="w-full max-w-full h-auto object-contain rounded-lg shadow-lg projects-grid-image"
-                loading="lazy" 
-              />
-            </div>
-
-            {/* Footer da empresa - compacto */}
-            <div className="mt-auto bg-[#2c3e50] py-3 px-4 rounded-xl w-full">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-4 text-white text-xs">
-                  <span className="flex items-center">
-                    <span className="w-4 h-4 bg-[#ffbf06] rounded-full flex items-center justify-center mr-1 text-xs">📞</span>
+            {/* Separador de Card - Footer padrão da marca */}
+            <div className="mt-8 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center space-x-6 text-white text-sm">
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
                     <span>(67) 99668-0242</span>
                   </span>
-                  <span className="flex items-center">
-                    <span className="w-4 h-4 bg-[#ffbf06] rounded-full flex items-center justify-center mr-1 text-xs">@</span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
                     <span>olimpo.energiasolar</span>
                   </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
+                    <span>adm.olimposolar@gmail.com</span>
+                  </span>
+                  <span className="flex items-center whitespace-nowrap">
+                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
+                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
+                  </span>
                 </div>
-                <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                  <span className="text-xs text-gray-500">QR</span>
+                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
+                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                    QR Code
+                  </div>
                 </div>
               </div>
             </div>
