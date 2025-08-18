@@ -198,22 +198,23 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
           </section>}
 
-         {/* PÁGINA 7: GRÁFICOS INFORMATIVOS: SEU RETORNO E SUA RENTABILIDADE */}
+         {/* PÁGINA 7: SEU RETORNO */}
          <section className="a4-page page-break flex flex-col" style={{
-        backgroundColor: '#022136',
-        padding: 0,
-        margin: '20px auto'
-      }}>
-            <div className="relative flex-1 flex flex-col px-6 py-6">
-              {/* Logo - mesma configuração da Página 6 */}
-              <div className="w-full flex justify-end pt-2 pb-4">
+          background: '#022136', // Cor correta do fundo
+          minHeight: '297mm',
+          width: '210mm',
+          padding: 0
+        }}>
+            <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
+              {/* Logo igual à página 6 */}
+              <div className="w-full flex justify-end pt-2 pb-8">
                 <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
               </div>
 
-              {/* Conteúdo dos gráficos */}
-              <div className="flex-1 flex flex-col">
-               {/* GRÁFICO 1: SEU RETORNO */}
-               <div className="mb-6">
+              {/* Conteúdo movido para cima */}
+              <div className="flex-1 flex flex-col justify-center" style={{ marginTop: '-40px' }}>
+               {/* GRÁFICO 1: SEU RETORNO - OTIMIZADO PARA A4 */}
+               <div className="mb-4">
                 {(() => {
               // Calcular dados do retorno
               const annualSavings = economyData.savingsPerYear;
@@ -241,27 +242,27 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 }
               }
               return <>
-                      <h2 className="text-4xl font-bold text-center mb-4" style={{
+                      <h2 className="text-3xl font-bold text-center mb-3" style={{
                   color: '#ffffff'
                 }}>
                         SEU <span style={{
                     color: '#ffbf06'
                   }}>RETORNO</span>
                       </h2>
-                       <h3 className="text-xl text-center mb-4" style={{
+                       <h3 className="text-lg text-center mb-4" style={{
                   color: '#ffffff'
                 }}>
                          Retorno de investimento em {paybackYears} anos
                        </h3>
                       
-                      <div className="bg-white rounded-lg p-6 mx-auto max-w-6xl">
-                        <div className="h-96">
+                      <div className="bg-white rounded-lg p-4 mx-auto max-w-5xl">
+                        <div className="h-72">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={returnData.filter((_, index) => index % 2 === 0 || index <= 10)} margin={{
-                        top: 20,
-                        right: 30,
-                        left: 20,
-                        bottom: 20
+                        top: 15,
+                        right: 20,
+                        left: 15,
+                        bottom: 15
                       }}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                               <XAxis dataKey="year" axisLine={{
@@ -271,8 +272,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                           stroke: '#374151'
                         }} tick={{
                           fill: '#374151',
-                          fontSize: 12
-                        }} angle={-45} textAnchor="end" height={60} />
+                          fontSize: 9
+                        }} angle={-45} textAnchor="end" height={40} />
                               <YAxis axisLine={{
                           stroke: '#374151',
                           strokeWidth: 1
@@ -280,7 +281,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                           stroke: '#374151'
                         }} tick={{
                           fill: '#374151',
-                          fontSize: 12
+                          fontSize: 9
                         }} tickFormatter={value => `R$ ${(value / 1000).toFixed(0)}k`} />
                               <Tooltip contentStyle={{
                           backgroundColor: '#ffffff',
@@ -296,112 +297,260 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                             </BarChart>
                           </ResponsiveContainer>
                         </div>
+
+                        {/* Valores e informações compactas */}
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="grid grid-cols-4 gap-2 mb-3">
+                            <div className="text-center">
+                              <div className="w-3 h-3 bg-red-500 rounded mx-auto mb-1"></div>
+                              <p className="text-xs font-bold text-gray-800">Investimento</p>
+                              <p className="text-sm font-bold text-red-600">{formatCurrency(investmentValue)}</p>
+                              <p className="text-xs text-gray-500">Ano 0</p>
+                            </div>
+                            <div className="text-center">
+                              <div className="w-3 h-3 bg-green-500 rounded mx-auto mb-1"></div>
+                              <p className="text-xs font-bold text-gray-800">Payback</p>
+                              <p className="text-sm font-bold text-blue-600">{paybackYears} anos</p>
+                              <p className="text-xs text-gray-500">Retorno total</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xs font-bold text-gray-800">Economia/Ano</p>
+                              <p className="text-sm font-bold text-green-600">{formatCurrency(annualSavings)}</p>
+                              <p className="text-xs text-gray-500">Anualmente</p>
+                            </div>
+                            <div className="text-center">
+                              <p className="text-xs font-bold text-gray-800">Retorno 25 anos</p>
+                              <p className="text-sm font-bold text-green-600">{formatCurrency(returnData[25]?.accumulated || 0)}</p>
+                              <p className="text-xs font-semibold text-blue-600">{Math.round((returnData[25]?.accumulated || 0) / investmentValue * 100)}% retorno</p>
+                            </div>
+                          </div>
+                          
+                          {/* Resumo compacto */}
+                          <div className="bg-gradient-to-r from-green-50 to-blue-50 p-2 rounded-lg border-l-4 border-green-400">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-xs font-semibold text-gray-700">
+                                  💡 Investimento se paga em {paybackYears} anos
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  Após esse período, toda economia é lucro puro
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xs text-gray-500">Economia Total (25 anos)</p>
+                                <p className="text-base font-bold text-green-600">
+                                  {formatCurrency((returnData[25]?.accumulated || 0) + investmentValue)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </>;
             })()}
               </div>
+            </div>
+          </div>
 
-              {/* GRÁFICO 2: SUA RENTABILIDADE */}
-              <div className="mb-6">
-                {(() => {
-              // Validação e cálculos baseados em dados reais
-              const investmentBase = calculations.totalValue || 50000;
-              const annualSavings = calculations.monthlySavings * 12 || 10000;
-              const fiveYearsSavings = annualSavings * 5;
+          {/* Barra da Empresa no rodapé */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
+          </div>
+        </section>
 
-              // Cálculo da rentabilidade real da energia solar
-              const solarRentabilityPercentage = investmentBase > 0 ? Math.round(fiveYearsSavings / investmentBase * 100) : 180;
+        {/* PÁGINA 8: SUA RENTABILIDADE */}
+        <section className="a4-page page-break flex flex-col" style={{
+          background: '#022136', // Cor correta do fundo
+          minHeight: '297mm',
+          width: '210mm',
+          padding: 0
+        }}>
+          <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
+            {/* Logo igual à página 6 */}
+            <div className="w-full flex justify-end pt-2 pb-8">
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
+            </div>
 
-              const rentabilityData = [{
-                investment: 'Poupança',
-                percentage: 27,
-                value: Math.round(investmentBase * 1.27),
-                color: '#9ca3af'
-              }, {
-                investment: 'CDB',
-                percentage: 45,
-                value: Math.round(investmentBase * 1.45),
-                color: '#f97316'
-              }, {
-                investment: 'Energia Solar',
-                percentage: solarRentabilityPercentage,
-                value: Math.round(investmentBase + fiveYearsSavings),
-                color: '#ffbf06'
-              }];
-              return <>
-                      <h2 className="text-4xl font-bold text-center mb-8" style={{
+            {/* Conteúdo centralizado */}
+            <div className="flex-1 flex flex-col justify-center">
+              {/* GRÁFICO 2: SUA RENTABILIDADE - OTIMIZADO PARA A4 */}
+              <div className="mb-4">
+                <h2 className="text-3xl font-bold text-center mb-3" style={{
                   color: '#ffffff'
                 }}>
-                        SUA <span style={{
+                  SUA <span style={{
                     color: '#ffbf06'
                   }}>RENTABILIDADE</span>
-                      </h2>
-                      
-                      <div className="bg-white rounded-lg p-6 mx-auto max-w-6xl">
-                        <div className="h-96">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <BarChart layout="horizontal" data={rentabilityData} margin={{
-                        top: 20,
-                        right: 60,
-                        left: 100,
-                        bottom: 20
-                      }}>
-                              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                              <XAxis type="number" domain={[0, 'dataMax + 10000']} axisLine={{
-                          stroke: '#374151',
-                          strokeWidth: 1
-                        }} tickLine={{
-                          stroke: '#374151'
-                        }} tick={{
-                          fill: '#374151',
-                          fontSize: 12
-                        }} tickFormatter={value => `R$ ${(value / 1000).toFixed(0)}k`} />
-                              <YAxis type="category" dataKey="investment" axisLine={{
-                          stroke: '#374151',
-                          strokeWidth: 1
-                        }} tickLine={{
-                          stroke: '#374151'
-                        }} tick={{
-                          fill: '#374151',
-                          fontSize: 12,
-                          fontWeight: 'bold'
-                        }} width={100} />
-                              <Tooltip contentStyle={{
-                          backgroundColor: '#ffffff',
-                          border: '1px solid #374151',
-                          borderRadius: '8px',
-                          color: '#374151'
-                        }} formatter={(value, name, props) => [`${formatCurrency(Number(value))} (${props.payload.percentage}%)`, 'Retorno em 5 anos']} />
-                              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                                {rentabilityData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                              </Bar>
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
+                </h2>
+                <h3 className="text-lg text-center mb-4" style={{
+                  color: '#ffffff'
+                }}>
+                  Comparação de investimentos em 5 anos
+                </h3>
+                
+                <div className="bg-white rounded-lg p-4 mx-auto max-w-5xl">
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart 
+                        data={(() => {
+                          // Valores base seguros
+                          const investmentBase = calculations.totalValue && calculations.totalValue > 0 ? calculations.totalValue : 50000;
+                          const monthlyEconomy = calculations.monthlySavings && calculations.monthlySavings > 0 ? calculations.monthlySavings : Math.round(investmentBase * 0.015);
+                          const annualSavings = monthlyEconomy * 12;
+                          const fiveYearsSavings = annualSavings * 5;
+                          
+                          const poupancaValue = Math.round(investmentBase * 1.27);
+                          const cdbValue = Math.round(investmentBase * 1.45);
+                          const solarValue = Math.round(Math.max(investmentBase + fiveYearsSavings, investmentBase * 2));
+                          
+                          return [
+                            { 
+                              name: 'Poupança', 
+                              value: poupancaValue,
+                              percentage: '27%',
+                              displayValue: `R$ ${(poupancaValue / 1000).toFixed(0)}k`
+                            },
+                            { 
+                              name: 'CDB', 
+                              value: cdbValue,
+                              percentage: '45%',
+                              displayValue: `R$ ${(cdbValue / 1000).toFixed(0)}k`
+                            },
+                            { 
+                              name: 'Energia Solar', 
+                              value: solarValue,
+                              percentage: Math.round((solarValue / investmentBase - 1) * 100) + '%',
+                              displayValue: `R$ ${(solarValue / 1000).toFixed(0)}k`
+                            }
+                          ];
+                        })()}
+                        margin={{ top: 15, right: 20, left: 15, bottom: 15 }}
+                        barGap={30}
+                      >
+                        <defs>
+                          <linearGradient id="poupancaGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#94a3b8" stopOpacity={1} />
+                            <stop offset="100%" stopColor="#475569" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="cdbGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#fb7185" stopOpacity={1} />
+                            <stop offset="100%" stopColor="#e11d48" stopOpacity={1} />
+                          </linearGradient>
+                          <linearGradient id="solarGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#fbbf24" stopOpacity={1} />
+                            <stop offset="100%" stopColor="#d97706" stopOpacity={1} />
+                          </linearGradient>
+                        </defs>
                         
-                        {/* Texto explicativo */}
-                        <div className="mt-4 text-center text-sm text-gray-600">
-                          <p>Comparação baseada em investimento de {formatCurrency(investmentBase)} em 5 anos</p>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                        
+                        <XAxis 
+                          dataKey="name" 
+                          axisLine={{ stroke: '#374151', strokeWidth: 1 }}
+                          tickLine={{ stroke: '#374151' }}
+                          tick={{ fill: '#374151', fontSize: 9 }}
+                        />
+                        
+                        <YAxis 
+                          axisLine={{ stroke: '#374151', strokeWidth: 1 }}
+                          tickLine={{ stroke: '#374151' }}
+                          tick={{ fill: '#374151', fontSize: 9 }}
+                          tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                        />
+                        
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#ffffff', 
+                            border: '1px solid #374151', 
+                            borderRadius: '8px',
+                            color: '#374151'
+                          }}
+                          formatter={(value, name, props) => [
+                            formatCurrency(Number(value)), 
+                            `Retorno: ${props.payload.percentage}`
+                          ]}
+                        />
+                        
+                        <Bar 
+                          dataKey="value" 
+                          radius={[2, 2, 0, 0]}
+                        >
+                          {(() => {
+                            const colors = ['url(#poupancaGradient)', 'url(#cdbGradient)', 'url(#solarGradient)'];
+                            return colors.map((color, index) => (
+                              <Cell key={`cell-${index}`} fill={color} />
+                            ));
+                          })()}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  {/* Valores e porcentagens compactas */}
+                  <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-200">
+                    {(() => {
+                      const investmentBase = calculations.totalValue && calculations.totalValue > 0 ? calculations.totalValue : 50000;
+                      const monthlyEconomy = calculations.monthlySavings && calculations.monthlySavings > 0 ? calculations.monthlySavings : Math.round(investmentBase * 0.015);
+                      const annualSavings = monthlyEconomy * 12;
+                      const fiveYearsSavings = annualSavings * 5;
+                      
+                      const poupancaValue = Math.round(investmentBase * 1.27);
+                      const cdbValue = Math.round(investmentBase * 1.45);
+                      const solarValue = Math.round(Math.max(investmentBase + fiveYearsSavings, investmentBase * 2));
+                      
+                      const data = [
+                        { 
+                          name: 'Poupança', 
+                          value: poupancaValue, 
+                          percentage: '27%', 
+                          color: 'from-slate-400 to-slate-600' 
+                        },
+                        { 
+                          name: 'CDB', 
+                          value: cdbValue, 
+                          percentage: '45%', 
+                          color: 'from-rose-400 to-rose-600' 
+                        },
+                        { 
+                          name: 'Energia Solar', 
+                          value: solarValue, 
+                          percentage: Math.round((solarValue / investmentBase - 1) * 100) + '%', 
+                          color: 'from-yellow-400 to-yellow-600' 
+                        }
+                      ];
+                      
+                      return data.map((item, index) => (
+                        <div key={index} className="text-center">
+                          <div className={`w-3 h-3 bg-gradient-to-b ${item.color} rounded mx-auto mb-1`}></div>
+                          <p className="text-xs font-bold text-gray-800">{item.name}</p>
+                          <p className="text-sm font-bold text-green-600">{formatCurrency(item.value)}</p>
+                          <p className="text-xs font-semibold text-blue-600">{item.percentage} retorno</p>
                         </div>
-                      </div>
-                    </>;
-            })()}
-              </div>
+                      ));
+                    })()}
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Barra da Empresa - Nova imagem no final da página */}
-            <div className="w-full flex-shrink-0">
-              <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
-            </div>
-          </section>
+          {/* Barra da Empresa no rodapé */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
+          </div>
+        </section>
 
         {/* PÁGINA 9: RENTABILIDADE */}
-        <section className="a4-page page-break">
-          <div className="page-body max-w-4xl mx-auto">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
+        <section className="a4-page page-break flex flex-col" style={{
+          backgroundColor: '#022136',
+          minHeight: '297mm',
+          width: '210mm',
+          padding: 0
+        }}>
+          <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
+            {/* Logo igual às outras páginas */}
+            <div className="w-full flex justify-end pt-2 pb-8">
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
             </div>
 
             {/* Vertical Bar Chart - Capacidade de Geração */}
@@ -574,33 +723,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
           </div>
           
-          {/* Separador de Card - Footer padrão da marca */}
-          <div className="mt-4 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex items-center space-x-6 text-white text-sm">
-                <span className="flex items-center whitespace-nowrap">
-                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
-                  <span>(67) 99668-0242</span>
-                </span>
-                <span className="flex items-center whitespace-nowrap">
-                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
-                  <span>olimpo.energiasolar</span>
-                </span>
-                <span className="flex items-center whitespace-nowrap">
-                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
-                  <span>adm.olimposolar@gmail.com</span>
-                </span>
-                <span className="flex items-center whitespace-nowrap">
-                  <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
-                  <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
-                </span>
-              </div>
-              <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
-                <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                  QR Code
-                </div>
-              </div>
-            </div>
+
+          {/* Barra da Empresa no rodapé */}
+          <div className="w-full flex-shrink-0">
+            <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
           </div>
         </section>
 
