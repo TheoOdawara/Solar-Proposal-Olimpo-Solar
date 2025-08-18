@@ -23,7 +23,7 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
       <div className="absolute top-1/2 right-8 w-12 h-12 bg-white rounded-full opacity-5"></div>
 
       {/* Content container */}
-      <div className="relative z-0 h-full flex flex-col px-8 py-6">
+      <div className="relative z-0 h-full flex flex-col px-6 py-6">
         
         {/* Header with logo */}
         <div className="flex justify-center mb-6">
@@ -35,14 +35,14 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
         </div>
 
         {/* Main content */}
-        <div className="flex-1 flex flex-col justify-center max-w-full mx-auto w-full">
+        <div className="flex-1 flex flex-col justify-between max-w-full mx-auto w-full">
           
           {/* Title section */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight leading-tight">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-4xl font-bold text-white mb-3 tracking-tight leading-tight">
               Proposta Comercial
             </h1>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#ffbf06] mb-4 tracking-tight leading-tight">
+            <h2 className="text-4xl md:text-4xl font-bold text-[#ffbf06] mb-4 tracking-tight leading-tight">
               Personalizada
             </h2>
             <p className="text-xl text-white/80 font-light">
@@ -52,64 +52,63 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
 
           {/* Client data block */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/20">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
               
-              {/* Client info */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-[#ffbf06] rounded-full flex items-center justify-center">
-                    <Home className="h-5 w-5 text-[#022136]" />
-                  </div>
-                  <div>
-                    <p className="text-white/60 text-xs uppercase tracking-wide">Cliente</p>
-                    <p className="text-white text-lg font-semibold">{formData.clientName}</p>
-                  </div>
+              {/* Cliente */}
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-[#ffbf06] rounded-full flex items-center justify-center flex-shrink-0">
+                  <Home className="h-6 w-6 text-[#022136]" />
                 </div>
-
-                {(formData.city || formData.state) && (
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-[#ffbf06] rounded-full flex items-center justify-center">
-                      <MapPin className="h-5 w-5 text-[#022136]" />
-                    </div>
-                    <div>
-                      <p className="text-white/60 text-xs uppercase tracking-wide">Local</p>
-                      <p className="text-white text-base">
-                        {[formData.city, formData.state].filter(Boolean).join(', ') || 'Local não informado'}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* System info */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-[#ffbf06] rounded-full flex items-center justify-center">
-                    <Zap className="h-5 w-5 text-[#022136]" />
-                  </div>
-                  <div>
-                    <p className="text-white/60 text-xs uppercase tracking-wide">Potência</p>
-                    <p className="text-white text-lg font-semibold">{formData.systemPower} kWp</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-[#ffbf06] rounded-full flex items-center justify-center">
-                    <Zap className="h-5 w-5 text-[#022136]" />
-                  </div>
-                  <div>
-                    <p className="text-white/60 text-xs uppercase tracking-wide">Geração Estimada</p>
-                    <p className="text-white text-lg font-semibold">{calculations.monthlyGeneration} kWh/mês</p>
-                  </div>
+                <div className="flex-1">
+                  <p className="text-white/70 text-sm uppercase tracking-wider font-medium mb-1">Cliente</p>
+                  <p className="text-white text-lg font-bold leading-tight">{formData.clientName}</p>
                 </div>
               </div>
+
+              {/* Potência */}
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-[#ffbf06] rounded-full flex items-center justify-center flex-shrink-0">
+                  <Zap className="h-6 w-6 text-[#022136]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-white/70 text-sm uppercase tracking-wider font-medium mb-1">Potência</p>
+                  <p className="text-white text-lg font-bold leading-tight">{formData.systemPower} kWp</p>
+                </div>
+              </div>
+
+              {/* Local */}
+              {(formData.city || formData.state) && (
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-[#ffbf06] rounded-full flex items-center justify-center flex-shrink-0">
+                    <MapPin className="h-6 w-6 text-[#022136]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white/70 text-sm uppercase tracking-wider font-medium mb-1">Local</p>
+                    <p className="text-white text-lg font-bold leading-tight">
+                      {[formData.city, formData.state].filter(Boolean).join(', ') || 'Local não informado'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Geração Estimada */}
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-[#ffbf06] rounded-full flex items-center justify-center flex-shrink-0">
+                  <Zap className="h-6 w-6 text-[#022136]" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-white/70 text-sm uppercase tracking-wider font-medium mb-1">Geração Estimada</p>
+                  <p className="text-white text-lg font-bold leading-tight">{calculations.monthlyGeneration} kWh/mês</p>
+                </div>
+              </div>
+
             </div>
           </div>
 
           {/* Hero image with overlay text */}
           <div className="relative rounded-xl overflow-hidden mb-6">
             <div 
-              className="h-48 bg-cover bg-center bg-no-repeat relative"
+              className="h-44 bg-cover bg-center bg-no-repeat relative"
               style={{
                 backgroundImage: "url('https://images.unsplash.com/photo-1559302504-64aae6ca6b6d?q=80&w=2670&auto=format&fit=crop')"
               }}
@@ -120,10 +119,10 @@ const ProposalCoverPage: React.FC<ProposalCoverPageProps> = ({
               {/* Overlay text */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center px-4">
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight">
+                  <h3 className="text-2xl md:text-2xl font-bold text-white mb-2 leading-tight">
                     Transforme sol em economia
                   </h3>
-                  <p className="text-lg md:text-xl text-[#ffbf06] font-semibold">
+                  <p className="text-lg md:text-lg text-[#ffbf06] font-semibold">
                     com a líder em energia solar do Centro-Oeste
                   </p>
                 </div>
