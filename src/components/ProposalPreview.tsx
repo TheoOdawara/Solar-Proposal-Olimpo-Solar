@@ -670,7 +670,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                     fontSize: 12,
                     fontWeight: 'bold'
                   }} />
-                <YAxis domain={[0, 8000]} tickCount={8} axisLine={{
+                <YAxis domain={[0, (dataMax) => Math.ceil(dataMax * 1.1)]} tickCount={8} axisLine={{
                 stroke: '#022136',
                 strokeWidth: 1
               }} tickLine={{
