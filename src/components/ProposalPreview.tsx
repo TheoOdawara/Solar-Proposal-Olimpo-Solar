@@ -114,83 +114,74 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
          {/* PÁGINA 6: SUA ECONOMIA */}
          {economyData && <section className="a4-page page-break flex flex-col" style={{
+
         backgroundColor: '#022136',
         padding: 0,
         margin: '20px auto'
       }}>
-            <div className="relative flex-1 w-full flex flex-col px-6 py-6">
-              {/* Logo - maior e mais no topo */}
-              <div className="w-full flex justify-end pt-2 pb-8">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
-              </div>
+        <div className="relative flex-1 w-full flex flex-col px-6 py-10">
 
-              {/* Conteúdo centralizado */}
-              <div className="flex-1 flex flex-col justify-center items-center">
-                {/* Título */}
-                <h2 className="text-4xl font-bold text-center mb-12" style={{
-              color: '#ffffff'
-            }}>
-                   SUA <span style={{
-                color: '#ffbf06'
-              }}>ECONOMIA</span>
-                </h2>
+          {/* Logo no canto superior direito */}
+          <div className="w-full flex justify-end pt-10 pb-8">
+            <img src={olimpoLogo} alt="Olimpo Solar" className="h-[120px] w-auto" />
+          </div>
 
-              {/* Layout reorganizado: 2 em cima, 1 embaixo centralizado */}
-              <div className="flex flex-col items-center space-y-8 text-center text-white">
-                {/* Primeira linha: Sem energia solar e Com energia solar */}
-                <div className="flex justify-center gap-20">
-                  {/* Sem energia solar */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-bold mb-8 text-white">Sem energia solar</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="text-3xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.currentBillPerYear)}</div>
-                        <div className="text-lg text-white">/ ano</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.currentBillPerMonth)}</div>
-                        <div className="text-base text-white">/ mês</div>
-                      </div>
-                    </div>
+          {/* Conteúdo centralizado e espaçado */}
+          <div className="flex-1 flex flex-col justify-start items-center">
+            {/* Título */}
+            <h2 className="text-4xl font-bold text-center mb-10 tracking-tight" style={{ color: '#fff' }}>
+              SUA <span style={{ color: '#ffbf06' }}>ECONOMIA</span>
+            </h2>
+
+            {/* Blocos lado a lado */}
+            <div className="flex flex-col md:flex-row justify-center items-stretch gap-10 w-full max-w-3xl mb-10">
+              {/* Sem energia solar */}
+              <div className="flex-1 bg-[#01182b]/80 rounded-xl p-6 flex flex-col items-center shadow-lg">
+                <h3 className="text-xl font-bold mb-6 text-white">Sem energia solar</h3>
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-3xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.currentBillPerYear)}</div>
+                    <div className="text-lg text-white">/ ano</div>
                   </div>
-
-                  {/* Com energia solar */}
-                  <div className="space-y-6">
-                    <h3 className="text-xl font-bold mb-8 text-white">Com energia solar</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="text-3xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.billWithSolarPerYear)}</div>
-                        <div className="text-lg text-white">/ ano</div>
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.billWithSolarPerMonth)}</div>
-                        <div className="text-base text-white">/ mês</div>
-                      </div>
-                    </div>
+                  <div>
+                    <div className="text-2xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.currentBillPerMonth)}</div>
+                    <div className="text-base text-white">/ mês</div>
                   </div>
                 </div>
+              </div>
 
-                {/* Segunda linha: Sua economia será de (centralizado e mais para cima) */}
-                <div className="space-y-6">
-                  <h3 className="text-xl font-bold mb-8 text-white">Sua economia será de:</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="text-3xl font-bold" style={{
-                    color: '#ffbf06'
-                  }}>{formatCurrency(economyData.savingsPerYear)}</div>
-                      <div className="text-lg text-white">/ ano</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold" style={{
-                    color: '#ffbf06'
-                  }}>{formatCurrency(economyData.savingsPerMonth)}</div>
-                      <div className="text-base text-white">/ mês</div>
-                    </div>
+              {/* Com energia solar */}
+              <div className="flex-1 bg-[#01182b]/80 rounded-xl p-6 flex flex-col items-center shadow-lg">
+                <h3 className="text-xl font-bold mb-6 text-white">Com energia solar</h3>
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-3xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.billWithSolarPerYear)}</div>
+                    <div className="text-lg text-white">/ ano</div>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold" style={{ color: '#ffbf06' }}>{formatCurrency(economyData.billWithSolarPerMonth)}</div>
+                    <div className="text-base text-white">/ mês</div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Economia destacada */}
+            <div className="w-full max-w-2xl bg-gradient-to-r from-[#ffbf06]/90 to-[#ffbf06]/70 rounded-xl p-8 flex flex-col items-center shadow-xl border border-[#ffbf06]/30 mb-8">
+              <h3 className="text-xl font-bold mb-4 text-[#022136]">Sua economia será de:</h3>
+              <div className="flex flex-col md:flex-row gap-8 w-full justify-center items-center">
+                <div className="flex flex-col items-center">
+                  <div className="text-3xl font-bold text-[#022136]">{formatCurrency(economyData.savingsPerYear)}</div>
+                  <div className="text-lg text-[#022136]">/ ano</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl font-bold text-[#022136]">{formatCurrency(economyData.savingsPerMonth)}</div>
+                  <div className="text-base text-[#022136]">/ mês</div>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
 
             {/* Barra da Empresa - Nova imagem no final da página */}
             <div className="w-full flex-shrink-0">
@@ -205,10 +196,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           width: '210mm',
           padding: 0
         }}>
-            <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
+            <div className="flex-1 flex flex-col" style={{ padding: '8mm 15mm 15mm 15mm' }}>
               {/* Logo igual à página 6 */}
               <div className="w-full flex justify-end pt-2 pb-8">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
+                <img src={olimpoLogo} alt="Olimpo Solar" className="h-[120px] w-auto" />
               </div>
 
               {/* Conteúdo movido para cima */}
@@ -732,10 +723,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
 
         {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
         <section className="a4-page bg-gradient-to-br from-[#ffbf06]/10 via-white to-slate-50 p-8 page-break">
-          <div className="max-w-4xl mx-auto py-8">
-            {/* Logo */}
-            <div className="absolute top-8 right-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
+          <div className="max-w-4xl mx-auto py-8 relative flex flex-col min-h-[297mm]">
+            {/* Logo padronizado igual ao print fornecido (logo azul com fundo branco) */}
+            <div className="w-full flex justify-end pt-2 pb-8">
+              <img src="/lovable-uploads/LogoBranca.png" alt="Olimpo Solar" className="h-20 w-auto" />
             </div>
 
             <h2 className="text-4xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-8 text-center">
@@ -813,34 +804,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </p>
             </div>
 
-
-            {/* Separador de Card - Footer padrão da marca */}
-            <div className="mt-6 bg-[#2c3e50] py-4 px-6 rounded-xl w-full">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center space-x-6 text-white text-sm">
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
-                    <span>(67) 99668-0242</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
-                    <span>olimpo.energiasolar</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
-                    <span>adm.olimposolar@gmail.com</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
-                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
-                  </span>
-                </div>
-                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
-                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                    QR Code
-                  </div>
-                </div>
-              </div>
+            {/* Barra da Empresa padronizada no rodapé */}
+            <div className="w-full flex-shrink-0">
+              <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
             </div>
           </div>
         </section>
