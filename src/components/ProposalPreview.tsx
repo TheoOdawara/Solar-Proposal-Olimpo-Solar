@@ -122,8 +122,8 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <div className="relative flex-1 w-full flex flex-col px-6 py-10">
 
           {/* Logo no canto superior direito */}
-          <div className="w-full flex justify-end pt-10 pb-8">
-            <img src={olimpoLogo} alt="Olimpo Solar" className="h-[120px] w-auto" />
+          <div className="w-full flex justify-end pt-2 pb-8">
+            <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
           </div>
 
           {/* Conteúdo centralizado e espaçado */}
@@ -199,7 +199,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             <div className="flex-1 flex flex-col" style={{ padding: '8mm 15mm 15mm 15mm' }}>
               {/* Logo igual à página 6 */}
               <div className="w-full flex justify-end pt-2 pb-8">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-[120px] w-auto" />
+                <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
               </div>
 
               {/* Conteúdo movido para cima */}
@@ -359,7 +359,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
             {/* Logo igual à página 6 */}
             <div className="w-full flex justify-end pt-2 pb-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
+              <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
             </div>
 
             {/* Conteúdo centralizado */}
@@ -538,7 +538,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           width: '210mm',
           padding: 0
         }}>
-          <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
+          <div className="flex-1 flex flex-col" style={{ padding: '8mm 15mm 15mm 15mm' }}>
             {/* Logo igual às outras páginas */}
             <div className="w-full flex justify-end pt-2 pb-8">
               <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
@@ -721,18 +721,35 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
           </div>
         </section>
 
-        {/* PÁGINA 9: SEU INVESTIMENTO - Baseado na imagem 9 */}
-        <section className="a4-page bg-gradient-to-br from-[#ffbf06]/10 via-white to-slate-50 p-8 page-break">
-          <div className="max-w-4xl mx-auto py-8 relative flex flex-col min-h-[297mm]">
-            {/* Logo padronizado igual ao print fornecido (logo azul com fundo branco) */}
+        {/* PÁGINA 9: SEU INVESTIMENTO */}
+        <section className="a4-page bg-gradient-to-br from-[#ffbf06]/10 via-white to-slate-50 p-8 page-break relative overflow-hidden">
+          {/* Barra colada na margem dourada (fora do max-w-4xl) */}
+          <div className="absolute inset-x-0 bottom-0">
+            <img
+              src="/lovable-uploads/BarraEmpresa.png"
+              alt="Barra Empresa"
+              className="w-full h-[72px] object-cover block"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="max-w-4xl mx-auto py-8 relative flex flex-col min-h-[297mm] pb-[88px]">
+            {/* Logo padronizada no topo direito */}
             <div className="w-full flex justify-end pt-2 pb-8">
-              <img src="/lovable-uploads/LogoBranca.png" alt="Olimpo Solar" className="h-20 w-auto" />
+              <div className="w-[400px] h-[160px] flex items-center justify-end">
+                <img
+                  src="/lovable-uploads/LogoBranca.png"
+                  alt="Olimpo Solar"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
             </div>
 
             <h2 className="text-4xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-8 text-center">
               Seu investimento:
             </h2>
 
+            {/* ... resto do conteúdo igual ... */}
             {/* Investment Value - Valor em destaque amarelo */}
             <div className="bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/90 py-6 px-12 rounded-xl mb-8 text-center shadow-xl border border-[#ffbf06]/30">
               <div className="text-4xl font-bold text-[#022136]">
@@ -803,19 +820,34 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 segurança e a correta homologação do sistema com a Concessionária de Energia.
               </p>
             </div>
-
-            {/* Barra da Empresa padronizada no rodapé */}
-            <div className="w-full flex-shrink-0">
-              <img src="/lovable-uploads/BarraEmpresa.png" alt="Barra Empresa" className="w-full h-auto object-contain block" loading="lazy" />
-            </div>
           </div>
         </section>
 
-        {/* PÁGINA 10: TERMO DE COMPROMISSO - Baseado na imagem 10 */}
-        <section className="a4-page bg-gradient-to-br from-[#ffbf06]/20 via-white to-slate-50 p-8 page-break">
-          <div className="max-w-4xl mx-auto py-8">
-            
-            <h2 className="text-5xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-12 leading-tight">
+        {/* PÁGINA 10: TERMO DE COMPROMISSO */}
+        <section className="a4-page bg-gradient-to-br from-[#ffbf06]/20 via-white to-slate-50 p-8 page-break relative overflow-hidden">
+          {/* Barra fixa no rodapé encostada na moldura dourada */}
+          <div className="absolute inset-x-0 bottom-0">
+            <img
+              src="/lovable-uploads/BarraEmpresa.png"
+              alt="Barra Empresa"
+              className="w-full h-[72px] object-cover block"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="max-w-4xl mx-auto py-8 flex flex-col items-center relative min-h-[297mm] pb-[88px]">
+            {/* LogoBranca.png centralizada */}
+            <div className="w-full flex justify-center mb-8">
+              <div className="w-[400px] h-[160px] flex items-center justify-center">
+                <img
+                  src="/lovable-uploads/LogoBranca.png"
+                  alt="Olimpo Solar"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </div>
+
+            <h2 className="text-5xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-12 leading-tight text-center">
               Termo de<br />
               compromisso:
             </h2>
@@ -841,12 +873,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
             </div>
 
-            {/* Signature Section - Exatamente como na imagem */}
+            {/* Signature Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
               <div className="text-center">
-                <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]">
-                  {/* Espaço para assinatura */}
-                </div>
+                <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]"></div>
                 <p className="font-bold italic text-xl text-slate-800">Contratante</p>
                 <div className="mt-4">
                   <p className="font-semibold text-slate-800">{formData.clientName}</p>
@@ -857,48 +887,12 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               <div className="text-center">
-                <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]">
-                  {/* Espaço para assinatura */}
-                </div>
+                <div className="border-b-4 border-slate-800 pb-4 mb-6 min-h-[80px]"></div>
                 <p className="font-bold italic text-xl text-slate-800">Contratado</p>
                 <div className="mt-4">
                   <p className="font-semibold text-slate-800">Olimpo Solar</p>
                   <p className="text-slate-700 text-sm">CNPJ: 55.139.821/0001-03</p>
                   <p className="text-slate-700 text-sm">Campo Grande - MS</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Logo e informações da empresa */}
-            <div className="flex justify-center mb-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" loading="lazy" />
-            </div>
-
-            {/* Separador de Card - Footer padrão da marca */}
-            <div className="bg-[#2c3e50] rounded-xl py-4 px-6 w-full">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center space-x-6 text-white text-sm">
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📞</span>
-                    <span>(67) 99668-0242</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">@</span>
-                    <span>olimpo.energiasolar</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">✉</span>
-                    <span>adm.olimposolar@gmail.com</span>
-                  </span>
-                  <span className="flex items-center whitespace-nowrap">
-                    <span className="w-5 h-5 bg-[#ffbf06] rounded-full flex items-center justify-center mr-2 text-xs">📍</span>
-                    <span>R. Eduardo Santos Pereira, 1831 - Centro, Campo Grande</span>
-                  </span>
-                </div>
-                <div className="w-20 h-16 bg-white rounded-lg flex items-center justify-center p-1 ml-6 flex-shrink-0">
-                  <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
-                    QR Code
-                  </div>
                 </div>
               </div>
             </div>

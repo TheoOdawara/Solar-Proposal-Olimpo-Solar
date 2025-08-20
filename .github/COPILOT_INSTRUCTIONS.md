@@ -1,3 +1,24 @@
+## Padrão de logo no ProposalPreview
+
+
+### Padrão para LogoBranca.png 
+Sempre que for usada a imagem `LogoBranca.png` no componente `ProposalPreview` (exemplo: página "SEU INVESTIMENTO"), utilize o seguinte padrão de posicionamento e tamanho:
+
+```jsx
+<div className="w-full flex justify-end pt-2 pb-8">
+  <div className="w-[400px] h-[160px] flex items-center justify-end">
+    <img
+      src="/lovable-uploads/LogoBranca.png"
+      alt="Olimpo Solar"
+      className="max-w-full max-h-full object-contain"
+    />
+  </div>
+</div>
+```
+
+Esse padrão garante destaque visual, alinhamento à direita e proporção adequada para a logo branca. Use este padrão sempre que a logo branca for solicitada explicitamente.
+
+Para as demais páginas, utilize o padrão anterior com `olimpoLogo` azul, salvo exceções explicitamente solicitadas.
 # Instruções para Assistente (GitHub Copilot)
 
 Este documento orienta como o assistente deve operar neste repositório para agilizar entregas com segurança e padrão.
