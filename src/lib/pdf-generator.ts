@@ -3,7 +3,7 @@ import logoUrl from '@/assets/olimpo-solar-logo.png';
 import bgCover from '@/assets/bg-cover.jpg';
 import bgSection from '@/assets/bg-section.jpg';
 
-interface FormData {
+export interface FormData {
   clientName: string;
   address: string;
   number: string;
@@ -28,7 +28,7 @@ interface FormData {
   installationWarranty?: string;
 }
 
-interface Calculations {
+export interface Calculations {
   monthlyGeneration: number;
   monthlySavings: number;
   requiredArea: number;
@@ -46,7 +46,7 @@ const BRAND = {
 };
 
 // Helpers to load images
-const loadImage = (src: string): Promise<HTMLImageElement> =>
+export const loadImage = (src: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -55,7 +55,17 @@ const loadImage = (src: string): Promise<HTMLImageElement> =>
     img.src = src;
   });
 
-export const generateProposalPDF = async (formData: FormData, calculations: Calculations) => {
+export interface ProposalPDFImages {
+  logoImg: HTMLImageElement | null;
+  coverBgImg: HTMLImageElement | null;
+  sectionBgImg: HTMLImageElement | null;
+}
+
+export const generateProposalPDF = async (
+  formData: FormData,
+  calculations: Calculations,
+  images: ProposalPDFImages
+) => {
   const pdf = new jsPDF();
   const pageWidth = pdf.internal.pageSize.width;
   const pageHeight = pdf.internal.pageSize.height;
@@ -123,15 +133,19 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   };
 
   const checkPageBreak = (requiredHeight: number) => {
+    // Só quebra se realmente não couber o conteúdo
     if (currentY + requiredHeight > usableHeight) {
-      // draw footer for the page before adding new one
-      addFooter(logoImg || undefined);
-      pdf.addPage();
-      if (sectionBgImg) drawFullBackground(sectionBgImg);
-      currentY = margin;
+      // Se já está no topo da página, não quebra de novo
+      if (currentY > margin) {
+        addFooter(logoImg || undefined);
+        pdf.addPage();
+        if (sectionBgImg) drawFullBackground(sectionBgImg);
+        currentY = margin;
+      }
     }
   };
 
+  // Centralizar cálculo de lineHeight e spacing
   const addText = (
     text: string,
     fontSize: number = FONT_SIZES.BODY,
@@ -141,8 +155,10 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     color: keyof typeof BRAND = 'text'
   ) => {
     if (!isPresent(text)) return;
+    // Cálculo centralizado
     const lineHeight = fontSize * 1.15;
-    checkPageBreak(lineHeight + SPACING[spacing]);
+    const spacingValue = SPACING[spacing];
+    checkPageBreak(lineHeight + spacingValue);
 
     pdf.setFontSize(fontSize);
     pdf.setFont('helvetica', fontStyle);
@@ -152,7 +168,7 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     else if (align === 'right') pdf.text(text, pageWidth - margin, currentY, { align });
     else pdf.text(text, margin, currentY);
 
-    currentY += lineHeight + SPACING[spacing];
+    currentY += lineHeight + spacingValue;
   };
 
   const addMultilineText = (
@@ -162,17 +178,20 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   ) => {
     if (!isPresent(text)) return;
     const lines = pdf.splitTextToSize(text, pageWidth - margin * 2);
+    // Cálculo centralizado
     const lineHeight = fontSize * 1.15;
+    const spacingValue = SPACING[spacing];
     pdf.setFontSize(fontSize);
     pdf.setFont('helvetica', 'normal');
     setColor(BRAND.text);
 
-    lines.forEach((line, idx) => {
-      checkPageBreak(lineHeight + (idx === lines.length - 1 ? SPACING[spacing] : 0));
-      pdf.text(line, margin, currentY);
+    for (let idx = 0; idx < lines.length; idx++) {
+      const isLast = idx === lines.length - 1;
+      checkPageBreak(lineHeight + (isLast ? spacingValue : 0));
+      pdf.text(lines[idx], margin, currentY);
       currentY += lineHeight;
-    });
-    currentY += SPACING[spacing];
+    }
+    currentY += spacingValue;
   };
 
   const addSection = (title: string) => {
@@ -341,9 +360,9 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
       return;
     }
 
-    // Grid lines (8 steps)
+    // Grid lines (4 steps para otimizar)
     pdf.setDrawColor(BRAND.lightGray.r, BRAND.lightGray.g, BRAND.lightGray.b);
-    const steps = 8;
+    const steps = 4;
     for (let i = 0; i <= steps; i++) {
       const y = chartTop + (chartHeight * i) / steps;
       pdf.line(margin, y, margin + chartWidth, y);
@@ -353,10 +372,11 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     pdf.setDrawColor(BRAND.text.r, BRAND.text.g, BRAND.text.b);
     pdf.line(margin, baseY, margin + chartWidth, baseY);
 
-    // Bars
+    // Bars (loop otimizado)
     const barWidth = Math.max(20, (chartWidth - 40) / (data.length * 2));
     let x = margin + 20;
-    data.forEach((d) => {
+    for (let i = 0; i < data.length; i++) {
+      const d = data[i];
       const val = Math.max(0, typeof d.value === 'number' ? d.value : 0);
       const h = (val / niceMax) * (chartHeight - 10);
       const y = baseY - h;
@@ -368,17 +388,13 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
       setColor(BRAND.text);
       pdf.text(d.label, x + barWidth / 2, baseY + 5, { align: 'center' });
       x += barWidth * 2;
-    });
+    }
 
     currentY = baseY + SPACING.SECTION;
   };
 
-  // Preload images
-  const [logoImg, coverBgImg, sectionBgImg] = await Promise.all([
-    loadImage(logoUrl).catch(() => null),
-    loadImage(bgCover).catch(() => null),
-    loadImage(bgSection).catch(() => null),
-  ]);
+  // Imagens pré-carregadas
+  const { logoImg, coverBgImg, sectionBgImg } = images;
 
   // PAGE 1 - COVER
   if (coverBgImg) drawFullBackground(coverBgImg);
@@ -397,13 +413,16 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   // Especificações
   addSection('ESPECIFICAÇÕES DO SISTEMA');
   const specItems: string[] = [];
-  if (isPresent(formData.systemPower)) specItems.push(`Potência do Sistema: ${formData.systemPower} kWp`);
-  if (isPresent(formData.moduleQuantity)) specItems.push(`Quantidade de Módulos: ${formData.moduleQuantity} unidades`);
-  if (isPresent(formData.modulePower)) specItems.push(`Potência dos Módulos: ${formData.modulePower} W`);
-  if (isPresent(formData.moduleBrand)) specItems.push(`Marca dos Módulos: ${formData.moduleBrand}`);
-  if (isPresent(formData.inverterBrand)) specItems.push(`Marca do Inversor: ${formData.inverterBrand}`);
-  if (isPresent(formData.inverterPower)) specItems.push(`Potência do Inversor: ${formData.inverterPower} W`);
-  specItems.forEach((spec) => addText(spec));
+  const { systemPower, moduleQuantity, modulePower, moduleBrand, inverterBrand, inverterPower } = formData;
+  if (isPresent(systemPower)) specItems.push(`Potência do Sistema: ${systemPower} kWp`);
+  if (isPresent(moduleQuantity)) specItems.push(`Quantidade de Módulos: ${moduleQuantity} unidades`);
+  if (isPresent(modulePower)) specItems.push(`Potência dos Módulos: ${modulePower} W`);
+  if (isPresent(moduleBrand)) specItems.push(`Marca dos Módulos: ${moduleBrand}`);
+  if (isPresent(inverterBrand)) specItems.push(`Marca do Inversor: ${inverterBrand}`);
+  if (isPresent(inverterPower)) specItems.push(`Potência do Inversor: ${inverterPower} W`);
+  for (let i = 0; i < specItems.length; i++) {
+    addText(specItems[i]);
+  }
 
   addFooter(logoImg || undefined);
 
@@ -414,27 +433,34 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   addText('ANÁLISE FINANCEIRA', FONT_SIZES.TITLE, 'bold', 'center', 'SECTION', 'accent');
 
   addSection('GERAÇÃO E ECONOMIA');
+  const { monthlyGeneration, monthlySavings } = calculations;
   const financialItems: string[] = [];
-  if (isPresent(calculations.monthlyGeneration)) financialItems.push(`Geração Mensal Estimada: ${calculations.monthlyGeneration.toFixed(0)} kWh`);
-  if (isPresent(calculations.monthlySavings)) financialItems.push(`Economia Mensal: ${formatCurrency(calculations.monthlySavings)}`);
-  if (isPresent(calculations.monthlySavings)) financialItems.push(`Economia Anual: ${formatCurrency((calculations.monthlySavings || 0) * 12)}`);
-  financialItems.forEach((item) => addText(item));
+  if (isPresent(monthlyGeneration)) financialItems.push(`Geração Mensal Estimada: ${monthlyGeneration.toFixed(0)} kWh`);
+  if (isPresent(monthlySavings)) financialItems.push(`Economia Mensal: ${formatCurrency(monthlySavings)}`);
+  if (isPresent(monthlySavings)) financialItems.push(`Economia Anual: ${formatCurrency((monthlySavings || 0) * 12)}`);
+  for (let i = 0; i < financialItems.length; i++) {
+    addText(financialItems[i]);
+  }
 
   // Gráfico simples
   drawBarChart(
     [
-      { label: 'Geração', value: calculations.monthlyGeneration || 0, color: BRAND.accent },
-      { label: 'Economia', value: calculations.monthlySavings || 0, color: BRAND.accent },
+      { label: 'Geração', value: monthlyGeneration || 0, color: BRAND.accent },
+      { label: 'Economia', value: monthlySavings || 0, color: BRAND.accent },
     ],
     { title: 'Resumo Gráfico' }
   );
 
   addSection('INVESTIMENTO');
+  const { totalValue, requiredArea } = calculations;
+  const { paymentMethod } = formData;
   const investItems: string[] = [];
-  if (isPresent(calculations.totalValue)) investItems.push(`Valor Total do Sistema: ${formatCurrency(calculations.totalValue)}`);
-  if (isPresent(formData.paymentMethod)) investItems.push(`Forma de Pagamento: ${formData.paymentMethod}`);
-  if (isPresent(calculations.requiredArea)) investItems.push(`Área Necessária: ${calculations.requiredArea.toFixed(0)} m²`);
-  investItems.forEach((item) => addText(item));
+  if (isPresent(totalValue)) investItems.push(`Valor Total do Sistema: ${formatCurrency(totalValue)}`);
+  if (isPresent(paymentMethod)) investItems.push(`Forma de Pagamento: ${paymentMethod}`);
+  if (isPresent(requiredArea)) investItems.push(`Área Necessária: ${requiredArea.toFixed(0)} m²`);
+  for (let i = 0; i < investItems.length; i++) {
+    addText(investItems[i]);
+  }
 
   addFooter(logoImg || undefined);
 
@@ -455,7 +481,7 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   currentY = margin + SPACING.PAGE_TITLE;
   addText('BENEFÍCIOS DO SISTEMA SOLAR', FONT_SIZES.TITLE, 'bold', 'center', 'SECTION', 'accent');
 
-  const benefits = [
+  const benefitsArr = [
     '• Redução significativa na conta de energia elétrica',
     '• Retorno do investimento em médio prazo',
     '• Valorização do imóvel',
@@ -465,11 +491,14 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     '• Garantia de 25 anos nos módulos fotovoltaicos',
     '• Baixa manutenção',
   ];
-  benefits.forEach((b) => addText(b));
+  if (benefitsArr.some(isPresent)) {
+    const benefits = benefitsArr.filter(isPresent).join('\n');
+    addMultilineText(benefits);
+  }
 
   if (isPresent(formData.observations)) {
     addSection('OBSERVAÇÕES');
-    addMultilineText(formData.observations);
+    if (isPresent(formData.observations)) addMultilineText(formData.observations);
   }
 
   addFooter(logoImg || undefined);
@@ -480,7 +509,7 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
   currentY = margin + SPACING.PAGE_TITLE;
   addText('TERMOS E CONDIÇÕES', FONT_SIZES.TITLE, 'bold', 'center', 'SECTION', 'accent');
 
-  const terms = [
+  const termsArr = [
     '• Proposta válida por 30 dias',
     '• Valores sujeitos a alteração sem aviso prévio',
     '• Instalação conforme normas técnicas vigentes',
@@ -488,7 +517,10 @@ export const generateProposalPDF = async (formData: FormData, calculations: Calc
     '• Suporte técnico especializado',
     '• Acompanhamento do processo de homologação junto à concessionária',
   ];
-  terms.forEach((t) => addText(t));
+  if (termsArr.some(isPresent)) {
+    const terms = termsArr.filter(isPresent).join('\n');
+    addMultilineText(terms);
+  }
 
   addFooter(logoImg || undefined);
 

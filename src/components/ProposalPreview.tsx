@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf, FileText } from "lucide-react";
@@ -19,6 +19,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   onEdit,
   onGeneratePDF
 }) => {
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const calculateYearlySavings = () => calculations.monthlySavings * 12;
   const calculateCurrentBill = () => calculations.monthlySavings;
 
@@ -31,6 +32,16 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
   const metricas = calculateRealMetrics(formData);
   const solarROI = calculateSolarROI(calculations.monthlySavings, calculations.totalValue);
   
+  // Handler para geração do PDF com feedback visual
+  const handleGeneratePDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      await onGeneratePDF();
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
       {/* Navegação */}
@@ -40,12 +51,22 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             <ArrowLeft className="h-4 w-4" />
             Editar Dados
           </Button>
-          <Button onClick={onGeneratePDF} className="gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
+          <Button onClick={handleGeneratePDF} disabled={isGeneratingPDF} className="gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
             <FileDown className="h-4 w-4" />
-            Gerar PDF
+            {isGeneratingPDF ? 'Gerando PDF...' : 'Gerar PDF'}
           </Button>
         </div>
       </div>
+
+      {/* Mensagem de carregamento PDF */}
+      {isGeneratingPDF && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-lg shadow-lg px-8 py-6 flex items-center gap-3 text-lg font-semibold text-[#022136]">
+            <FileDown className="animate-bounce" />
+            Gerando PDF, aguarde...
+          </div>
+        </div>
+      )}
 
       {/* Conteúdo da Proposta */}
       <div id="pdf-content" className="w-full bg-gradient-to-b from-white to-slate-50 print-optimized shadow-inner">
@@ -90,9 +111,6 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <section className="a4-page page-break overflow-hidden h-full flex flex-col" style={{ padding: 0, margin: '20px auto' }}>
           <div className="flex-1 w-full flex flex-col">
             {/* Logo no canto superior direito - igual à Página 2 */}
-            <div className="absolute top-6 right-6 z-10">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
-            </div>
 
             {/* Título - com mais espaçamento para ficar harmonioso */}
             <div className="pt-12 pb-6 px-8">
@@ -122,7 +140,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <div className="relative flex-1 w-full flex flex-col px-6 py-10">
 
           {/* Logo no canto superior direito */}
-          <div className="w-full flex justify-end pt-2 pb-8">
+          <div className="w-[400px] ml-auto mr-10 flex items-center justify-end pt-2 pb-8">
             <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
           </div>
 
@@ -203,7 +221,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
 
               {/* Conteúdo movido para cima */}
-              <div className="flex-1 flex flex-col justify-center" style={{ marginTop: '-40px' }}>
+              <div className="flex-1 flex flex-col justify-center" style={{ marginTop: '-90px' }}>
                {/* GRÁFICO 1: SEU RETORNO - OTIMIZADO PARA A4 */}
                <div className="mb-4">
                 {(() => {
@@ -363,7 +381,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             </div>
 
             {/* Conteúdo centralizado */}
-            <div className="flex-1 flex flex-col justify-center">
+            <div className="flex-1 flex flex-col pt-8">
               {/* GRÁFICO 2: SUA RENTABILIDADE - OTIMIZADO PARA A4 */}
               <div className="mb-4">
                 <h2 className="text-3xl font-bold text-center mb-3" style={{
@@ -380,7 +398,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 </h3>
                 
                 <div className="bg-white rounded-lg p-4 mx-auto max-w-5xl">
-                  <div className="h-72">
+                  <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart 
                         data={(() => {
@@ -733,9 +751,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             />
           </div>
 
-          <div className="max-w-4xl mx-auto py-8 relative flex flex-col min-h-[297mm] pb-[88px]">
+          <div className="max-w-4xl mx-auto py-0 relative flex flex-col min-h-[297mm] pb-[88px]">
             {/* Logo padronizada no topo direito */}
-            <div className="w-full flex justify-end pt-2 pb-8">
+            <div className="w-full flex justify-end pt-0 pb-8">
               <div className="w-[400px] h-[160px] flex items-center justify-end">
                 <img
                   src="/lovable-uploads/LogoBranca.png"
@@ -908,9 +926,9 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             <ArrowLeft className="h-4 w-4" />
             Editar
           </Button>
-          <Button onClick={onGeneratePDF} className="flex-1 gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
+          <Button onClick={handleGeneratePDF} disabled={isGeneratingPDF} className="flex-1 gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
             <FileDown className="h-4 w-4" />
-            Gerar PDF
+            {isGeneratingPDF ? 'Gerando PDF...' : 'Gerar PDF'}
           </Button>
         </div>
       </div>

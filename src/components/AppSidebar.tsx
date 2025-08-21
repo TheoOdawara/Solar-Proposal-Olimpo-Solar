@@ -92,7 +92,7 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-background border-r w-[300px] flex-shrink-0",
+        "min-h-screen h-full px-4 py-4 hidden md:flex md:flex-col bg-white border-r w-[300px] flex-shrink-0",
         className
       )}
       animate={{
@@ -117,7 +117,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-background border-b w-full"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-white border-b w-full min-h-screen"
         )}
         {...props}
       >
@@ -149,7 +149,7 @@ export const MobileSidebar = ({
               >
                 <X />
               </div>
-              {children}
+              <img src="/lovable-uploads/LogoBranca.png" alt="Olimpo Solar" className="h-8 w-auto" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -227,7 +227,7 @@ export const Logo = () => {
     return (
       <div className="flex items-center space-x-3 py-2">
         <img 
-          src="/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png" 
+          src="/lovable-uploads/LogoBranca.png" 
           alt="Olimpo Solar" 
           className="h-8 w-auto"
         />
@@ -245,7 +245,7 @@ export const Logo = () => {
   return (
     <div className="flex items-center justify-center py-2">
       <img 
-        src="/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png" 
+        src="/lovable-uploads/LogoBranca.png" 
         alt="Olimpo Solar" 
         className="h-8 w-auto"
       />
