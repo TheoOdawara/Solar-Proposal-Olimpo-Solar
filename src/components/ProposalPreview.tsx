@@ -706,7 +706,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             {/* Métricas no final da página */}
             <div className="mt-auto grid grid-cols-3 gap-6 text-center bg-white/90 backdrop-blur-sm p-6 rounded-xl border border-[#022136]/10 shadow-xl">
               <div>
-                <div className="font-bold text-3xl bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 bg-clip-text text-transparent">
+                <div className="font-bold text-3xl text-[#ffbf06]">
                   {metricas.geracaoMedia.toLocaleString()}
                 </div>
                 <div className="text-sm font-semibold text-[#022136]">
@@ -865,7 +865,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
               </div>
             </div>
 
-            <h2 className="text-5xl font-bold bg-gradient-to-r from-[#022136] to-slate-700 bg-clip-text text-transparent mb-12 leading-tight text-center">
+            <h2 className="text-5xl font-bold text-[#022136] mb-12 leading-tight text-center">
               Termo de<br />
               compromisso:
             </h2>
