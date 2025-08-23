@@ -68,6 +68,7 @@ Observação: se ocorrer conflito de dependências ao instalar com npm, preferir
 4. Não faça chamadas externas com segredos. Use variáveis `.env` do Vite (`import.meta.env`) quando necessário.
 5. Não introduza dependências pesadas sem motivo; prefira utilitários já existentes.
 6. Mensagens curtas, objetivas e em português. Nome do assistente quando solicitado: "GitHub Copilot".
+7. Tudo precisa estar adaptado para ser responsivo e funcionar tanto em mobile quanto em desktop.
 
 ## Integrações e dados
 - Supabase: conferir chaves/URLs via variáveis de ambiente; não commitar segredos.
@@ -97,6 +98,9 @@ Observação: se ocorrer conflito de dependências ao instalar com npm, preferir
   - Reescrever estrutura inteira sem razão
   - Alterar versões de libs críticas sem validação
   - Introduzir code style novo que conflite com o existente
+  - Fazer mudanças grandes sem validação humana
+  - Quebrar a responsividade existente
+  - Não achar que comentário é código, tudo que está comentado é apenas organização
 
 ## Dicas práticas
 - Para rodar lint rápido sem instalar deps: `bunx eslint@9 .` ou `npx eslint@9 .`
