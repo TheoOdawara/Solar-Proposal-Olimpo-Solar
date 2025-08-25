@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
+import { downloadCsvAsXlsx } from '@/utils/downloadCsvAsXlsx';
 
 export interface ProposalAnalytics {
   id: string;
@@ -244,14 +245,7 @@ export const useAdvancedAnalytics = () => {
       ])
     ].map(row => row.join(',')).join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `propostas_olimpo_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  downloadCsvAsXlsx(csvContent, `propostas_olimpo_${new Date().toISOString().split('T')[0]}`);
 
     toast({
       title: "Exportação realizada!",

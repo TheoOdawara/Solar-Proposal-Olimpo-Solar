@@ -1,3 +1,4 @@
+import React from "react";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { Navigate } from "react-router-dom";
 import { useAdvancedAnalytics } from "@/hooks/useAdvancedAnalytics";
@@ -8,7 +9,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Download, RefreshCw } from "lucide-react";
 
+import { useState } from 'react';
+
 const Metrics = () => {
+  const [exporting, setExporting] = useState(false);
   const { hasAdminAccess, loading: authLoading } = useAdminAccess();
   const {
     proposals,
@@ -63,32 +67,54 @@ const Metrics = () => {
     }).format(value);
   };
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">
-        <div className="max-w-screen-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-accent/10">
+      {/* Header visual igual ao Dashboard */}
+      <div className="bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground sticky top-0 z-40 shadow-lg">
+        <div className="max-w-screen-5xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Métricas Administrativas
-            </h1>
-            <div className="flex items-center space-x-2">
-              <Button 
-                onClick={refreshData} 
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-secondary rounded-xl shadow-lg">
+                <RefreshCw className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold flex items-center gap-3">
+                  Métricas Administrativas
+                  <Badge className="bg-secondary text-primary hover:bg-secondary/90">
+                    Olimpo Solar
+                  </Badge>
+                </h1>
+                <p className="text-primary-foreground/80 mt-1">
+                  Sistema de métricas e análises comerciais
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={refreshData}
                 disabled={loading}
-                variant="outline"
+                variant="secondary"
                 size="sm"
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
               >
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                 Atualizar
               </Button>
-              <Button 
-                onClick={() => exportToExcel()}
-                variant="outline"
-                size="sm"
+              <Button
+                onClick={() => {
+                  setExporting(true);
+                  setTimeout(() => setExporting(false), 3000);
+                  exportToExcel();
+                }}
+                className="bg-secondary text-primary hover:bg-secondary/90 font-semibold"
               >
-                <Download className="h-4 w-4" />
+                <Download className="h-4 w-4 mr-2" />
                 Exportar Excel
               </Button>
+              {exporting && (
+                <span className="ml-2 text-sm text-white font-semibold animate-pulse">Gerando XLS...</span>
+              )}
             </div>
           </div>
         </div>

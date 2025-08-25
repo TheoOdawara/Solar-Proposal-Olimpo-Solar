@@ -1,3 +1,4 @@
+import React from "react";
 import { useProposals } from "@/hooks/useProposals";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useState } from "react";
-import { Search, FileText, Download } from "lucide-react";
+import { Search, FileText } from "lucide-react";
 
 const ProposalsHistory = () => {
   const { proposals, loading } = useProposals();
@@ -67,13 +68,30 @@ const ProposalsHistory = () => {
     );
   }
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b">
-        <div className="max-w-screen-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Histórico de Propostas
-          </h1>
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-accent/10">
+      {/* Header visual igual ao Dashboard/Métricas */}
+      <div className="bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground sticky top-0 z-40 shadow-lg">
+        <div className="max-w-screen-5xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-secondary rounded-xl shadow-lg">
+                <FileText className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold flex items-center gap-3">
+                  Histórico de Propostas
+                  <Badge className="bg-secondary text-primary hover:bg-secondary/90">
+                    Olimpo Solar
+                  </Badge>
+                </h1>
+                <p className="text-primary-foreground/80 mt-1">
+                  Todas as propostas geradas pelo sistema
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

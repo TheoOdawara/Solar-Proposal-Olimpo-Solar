@@ -463,7 +463,49 @@ const generatePDFFromHTML = async () => {
 
   // Se está no modo preview, mostra o componente de visualização
   if (showPreview) {
-    return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} />;
+    // Função para salvar proposta
+    const handleSaveProposal = async () => {
+      try {
+        const baseProposalData = {
+          client_name: formData.clientName,
+          system_power: formData.systemPower,
+          monthly_generation: calculations.monthlyGeneration,
+          monthly_savings: calculations.monthlySavings,
+          total_value: calculations.totalValue,
+          // Dados básicos do cliente
+          cep: formData.cep,
+          address: `${formData.address}, ${formData.number}`.trim(),
+          city: formData.city,
+          state: formData.state,
+          neighborhood: formData.neighborhood,
+          complement: formData.complement,
+          phone: formData.phone,
+          email: formData.email,
+          // Dados técnicos do sistema (apenas campos que existem)
+          monthly_consumption: formData.monthlyConsumption,
+          desired_kwh: formData.desiredKwh,
+          average_bill: formData.averageBill,
+          module_brand: formData.moduleBrand,
+          module_model: formData.moduleBrand, // fallback
+          module_power: formData.modulePower,
+          module_quantity: formData.moduleQuantity,
+          inverter_brand: formData.inverterBrand,
+          inverter_model: formData.inverterBrand, // fallback
+          inverter_power: formData.inverterPower > 0 ? formData.inverterPower : null,
+          connection_type: formData.connectionType || null,
+          required_area: calculations.requiredArea,
+          // Dados comerciais
+          payment_method: formData.paymentMethod,
+          notes: formData.observations,
+          valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          status: 'draft' as const
+        };
+        await saveProposal(baseProposalData);
+      } catch (error) {
+        // Error handling is feito no hook
+      }
+    };
+    return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} onSaveProposal={handleSaveProposal} />;
   }
   return <div className="min-h-screen p-4">
         <div className="max-w-screen-4xl mx-auto animate-fade-in">

@@ -13,11 +13,16 @@ import { formatCurrency, formatDateShort } from '@/utils/formatters';
 import { calculateEconomyData, calculateRealMetrics, calculateSolarROI } from '@/utils/calculations';
 import { CONNECTION_TYPES, COMPANY_DATA } from '@/constants/solarData';
 
-const ProposalPreview: React.FC<ProposalPreviewProps> = ({
+interface ProposalPreviewPropsExtended extends ProposalPreviewProps {
+  onSaveProposal?: () => void;
+}
+
+const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
   formData,
   calculations,
   onEdit,
-  onGeneratePDF
+  onGeneratePDF,
+  onSaveProposal
 }) => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const calculateYearlySavings = () => calculations.monthlySavings * 12;
@@ -51,10 +56,16 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
             <ArrowLeft className="h-4 w-4" />
             Editar Dados
           </Button>
-          <Button onClick={handleGeneratePDF} disabled={isGeneratingPDF} className="gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
-            <FileDown className="h-4 w-4" />
-            {isGeneratingPDF ? 'Gerando PDF...' : 'Gerar PDF'}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleGeneratePDF} disabled={isGeneratingPDF} className="gap-2 bg-gradient-to-r from-[#ffbf06] to-[#ffbf06]/80 text-[#022136] hover:from-[#ffbf06]/90 hover:to-[#ffbf06]/70 shadow-lg transition-all duration-300">
+              <FileDown className="h-4 w-4" />
+              {isGeneratingPDF ? 'Gerando PDF...' : 'Gerar PDF'}
+            </Button>
+            <Button onClick={onSaveProposal} className="gap-2 bg-gradient-to-r from-[#06d6a0] to-[#06d6a0]/80 text-[#022136] hover:from-[#06d6a0]/90 hover:to-[#06d6a0]/70 shadow-lg transition-all duration-300">
+              <CheckCircle className="h-4 w-4" />
+              Salvar Proposta
+            </Button>
+          </div>
         </div>
       </div>
 
