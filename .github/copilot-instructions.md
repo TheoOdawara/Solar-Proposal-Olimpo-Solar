@@ -23,6 +23,7 @@ Para as demais páginas, utilize o padrão anterior com `olimpoLogo` azul, salvo
 
 Este documento orienta como o assistente deve operar neste repositório para agilizar entregas com segurança e padrão.
 
+
 ## Visão rápida do projeto
 - Stack: React 18 + TypeScript + Vite + Tailwind + shadcn/ui
 - Estado/Fetch: TanStack Query (react-query)
@@ -30,7 +31,7 @@ Este documento orienta como o assistente deve operar neste repositório para agi
 - Backend: Supabase (`src/integrations/supabase`)
 - Lint: ESLint 9 (flat config em `eslint.config.js`)
 - Build: Vite
-- Manager: bun.lockb presente (preferir Bun), mas `npm` também pode ser usado
+- Manager: **usar apenas npm** (NÃO usar bun, mesmo que lockfile esteja presente)
 - SO/Terminal: Windows + PowerShell (use `;` para encadear comandos)
 
 ## Organização de código
@@ -48,16 +49,16 @@ Este documento orienta como o assistente deve operar neste repositório para agi
 - Nomes de arquivos em `camelCase`/`PascalCase` conforme contexto (componentes em `PascalCase`).
 - Evitar side-effects em módulos; preferir funções puras em `utils`.
 
+
 ## Execução de tarefas (PowerShell)
-- Dev: `bun dev` ou `npm run dev`
-- Build: `bun run build` ou `npm run build`
-- Preview: `bun run preview` ou `npm run preview`
+- Dev: `npm run dev`
+- Build: `npm run build`
+- Preview: `npm run preview`
 - Lint (sem instalar globalmente):
-  - Bun: `bunx eslint@9 .`
-  - npm: `npx eslint@9 .`
+  - `npx eslint@9 .`
 - Encadear no PowerShell: `comando1 ; comando2`
 
-Observação: se ocorrer conflito de dependências ao instalar com npm, preferir `bun install` ou rodar ferramentas via `bunx`/`npx` sem instalar tudo.
+Observação: **NÃO usar bun** para nada. Sempre preferir npm, mesmo que lockfile do bun esteja presente.
 
 ## Convenções ao implementar mudanças
 1. Explique rapidamente o que será feito e execute (evitar perguntas desnecessárias).

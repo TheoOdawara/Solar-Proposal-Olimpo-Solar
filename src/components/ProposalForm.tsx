@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Calculator, FileDown, Zap, Home, MapPin, Phone, Settings, Save, History, Eye, CheckCircle, AlertTriangle } from "lucide-react";
+import { Calculator, Zap, Save, History, Eye, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
 
 import { useProposals, ProposalData } from "@/hooks/useProposals";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,10 +18,15 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 // Importar tipos e utilitários centralizados
-import type { FormData, Calculations, ProposalFormProps } from '@/types/proposal';
+import type { FormData, ProposalFormProps } from '@/types/proposal';
 import { useProposalCalculations } from '@/hooks/useProposalCalculations';
-import { formatCurrency, formatPhone, formatCep } from '@/utils/formatters';
+import { formatPhone, formatCep } from '@/utils/formatters';
 import { SOLAR_CONSTANTS } from '@/constants/solarData';
+import { mapFormToProposalPayload, mapProposalToForm, extractCalculationsFromProposal } from '@/utils/proposalMapping';
+
+// Importar componentes modulares do formulário
+import { ClientDataSection, ProjectDataSection, WarrantiesSection } from '@/components/proposal-form';
+
 const ProposalForm = ({
   onProposalDataChange
 }: ProposalFormProps) => {
@@ -62,7 +64,15 @@ const ProposalForm = ({
     averageBill: 0,
     connectionType: '',
     paymentMethod: '',
-    observations: ''
+    observations: '',
+    // Novos campos adicionados
+    structureType: '',
+    monitoring: '',
+    moduleWarranty: '25 anos de eficiência e 12 anos fabricação',
+    inverterWarranty: '',
+    microInverterWarranty: '',
+    structureWarranty: '',
+    installationWarranty: ''
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
   const [hasNoAddress, setHasNoAddress] = useState(false);
@@ -96,7 +106,7 @@ const ProposalForm = ({
     if (Object.keys(derivedFields).length > 0) {
       setFormData(prev => ({ ...prev, ...derivedFields }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [formData.monthlyConsumption, formData.desiredKwh, formData.modulePower]);
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
@@ -143,7 +153,7 @@ const ProposalForm = ({
         title: "Endereço encontrado!",
         description: "Dados preenchidos automaticamente via CEP.",
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Erro ao buscar CEP",
         description: "Não foi possível buscar o endereço. Tente novamente.",
@@ -264,6 +274,14 @@ const ProposalForm = ({
   const isExtrasComplete = () => {
     return formData.paymentMethod.trim() !== '';
   };
+
+  const isWarrantiesComplete = () => {
+    // Considera completo se pelo menos um campo de garantia ou característica estiver preenchido
+    return formData.structureType.trim() !== '' || 
+           formData.monitoring.trim() !== '' ||
+           formData.moduleWarranty.trim() !== '';
+  };
+
   const generateProposal = () => {
     if (!validateForm()) return;
     setShowPreview(true);
@@ -277,7 +295,6 @@ const generatePDFFromHTML = async () => {
       }
 
       const hiddenEls = Array.from(container.querySelectorAll('[data-hide-in-pdf]')) as HTMLElement[];
-      const prevVisibilities = hiddenEls.map((el) => el.style.visibility);
       hiddenEls.forEach((el) => (el.style.visibility = 'hidden'));
 
       const pages = Array.from(container.querySelectorAll('.a4-page')) as HTMLElement[];
@@ -347,111 +364,37 @@ const generatePDFFromHTML = async () => {
   const saveCurrentProposal = async () => {
     if (!validateForm()) return;
     try {
-      // Criar objeto base com campos que sabemos que existem
-      const baseProposalData: Omit<ProposalData, 'id' | 'created_at' | 'updated_at'> = {
-        client_name: formData.clientName,
-        system_power: formData.systemPower,
-        monthly_generation: calculations.monthlyGeneration,
-        monthly_savings: calculations.monthlySavings,
-        total_value: calculations.totalValue,
-        seller_name: user?.email?.split('@')[0] || 'Vendedor',
-        seller_id: user?.id,
-        
-        // Dados básicos do cliente
-        cep: formData.cep,
-        address: `${formData.address}, ${formData.number}`.trim(),
-        city: formData.city,
-        state: formData.state,
-        neighborhood: formData.neighborhood,
-        complement: formData.complement,
-        phone: formData.phone,
-        email: formData.email,
-        
-        // Dados técnicos do sistema (apenas campos que existem)
-        monthly_consumption: formData.monthlyConsumption,
-        desired_kwh: formData.desiredKwh,
-        average_bill: formData.averageBill,
-        module_brand: formData.moduleBrand,
-        module_model: formData.moduleBrand, // Usando module_brand como fallback
-        module_power: formData.modulePower,
-        module_quantity: formData.moduleQuantity,
-        inverter_brand: formData.inverterBrand,
-        inverter_model: formData.inverterBrand, // Usando inverter_brand como fallback
-        inverter_power: formData.inverterPower > 0 ? formData.inverterPower : null,
-        connection_type: formData.connectionType || null,
-        required_area: calculations.requiredArea,
-        
-        // Dados comerciais
-        payment_method: formData.paymentMethod,
-        notes: formData.observations,
-        valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 dias a partir de hoje
-        
-        status: 'draft' as const
-      };
+      // Usar o mapeamento centralizado para converter FormData → ProposalData
+      const proposalPayload = mapFormToProposalPayload(
+        formData, 
+        calculations,
+        {
+          seller_id: user?.id,
+          seller_name: user?.email?.split('@')[0] || 'Vendedor'
+        }
+      );
 
-      await saveProposal(baseProposalData);
-    } catch (error) {
+      await saveProposal(proposalPayload);
+    } catch {
       // Error handling is done in the hook
     }
   };
   const loadProposal = (proposal: ProposalData) => {
-    // Extrair número do endereço se disponível
-    const extractNumberFromAddress = (address: string) => {
-      if (!address) return '';
-      const match = address.match(/,\s*(\d+)$/);
-      return match ? match[1] : '';
-    };
-
-    // Extrair endereço sem número
-    const extractAddressWithoutNumber = (address: string) => {
-      if (!address) return '';
-      return address.replace(/,\s*\d+$/, '').trim();
-    };
-
+    // Usar mapeamento centralizado para converter DB → Form
+    const mappedFormData = mapProposalToForm(proposal);
+    
     setFormData(prev => ({
       ...prev,
-      clientName: proposal.client_name,
-      systemPower: proposal.system_power,
-      
-      // Carregar dados expandidos se disponíveis (convertendo de snake_case)
-      desiredKwh: proposal.desired_kwh || proposal.monthly_generation || prev.desiredKwh,
-      modulePower: proposal.module_power || prev.modulePower,
-      moduleQuantity: proposal.module_quantity || prev.moduleQuantity,
-      moduleBrand: proposal.module_brand || prev.moduleBrand,
-      inverterBrand: proposal.inverter_brand || prev.inverterBrand,
-      inverterPower: proposal.inverter_power || prev.inverterPower,
-      paymentMethod: proposal.payment_method || prev.paymentMethod,
-      
-      // Dados do cliente
-      averageBill: proposal.average_bill || prev.averageBill,
-      monthlyConsumption: proposal.monthly_consumption || prev.monthlyConsumption,
-      phone: proposal.phone || prev.phone,
-      email: proposal.email || prev.email,
-      
-      // Endereço - extrair número do endereço se disponível
-      address: extractAddressWithoutNumber(proposal.address || ''),
-      number: extractNumberFromAddress(proposal.address || ''),
-      city: proposal.city || prev.city,
-      state: proposal.state || prev.state,
-      cep: proposal.cep || prev.cep,
-      neighborhood: proposal.neighborhood || prev.neighborhood,
-      complement: proposal.complement || prev.complement,
-      
-      // Tipo de ligação - usar connection_type primeiro, payment_conditions como fallback
-      connectionType: proposal.connection_type || proposal.payment_conditions || prev.connectionType,
-      
-      // Observações
-      observations: proposal.notes || prev.observations,
+      ...mappedFormData
     }));
 
     // Update parent component (os cálculos serão feitos automaticamente pelo hook)
     if (onProposalDataChange) {
+      const calculationsData = extractCalculationsFromProposal(proposal);
       onProposalDataChange({
         clientName: proposal.client_name,
         systemPower: proposal.system_power,
-        monthlyGeneration: proposal.monthly_generation,
-        monthlySavings: proposal.monthly_savings,
-        totalValue: proposal.total_value
+        ...calculationsData
       });
     }
     setShowHistory(false);
@@ -463,45 +406,12 @@ const generatePDFFromHTML = async () => {
 
   // Se está no modo preview, mostra o componente de visualização
   if (showPreview) {
-    // Função para salvar proposta
+    // Função para salvar proposta (usa mapeamento centralizado)
     const handleSaveProposal = async () => {
       try {
-        const baseProposalData = {
-          client_name: formData.clientName,
-          system_power: formData.systemPower,
-          monthly_generation: calculations.monthlyGeneration,
-          monthly_savings: calculations.monthlySavings,
-          total_value: calculations.totalValue,
-          // Dados básicos do cliente
-          cep: formData.cep,
-          address: `${formData.address}, ${formData.number}`.trim(),
-          city: formData.city,
-          state: formData.state,
-          neighborhood: formData.neighborhood,
-          complement: formData.complement,
-          phone: formData.phone,
-          email: formData.email,
-          // Dados técnicos do sistema (apenas campos que existem)
-          monthly_consumption: formData.monthlyConsumption,
-          desired_kwh: formData.desiredKwh,
-          average_bill: formData.averageBill,
-          module_brand: formData.moduleBrand,
-          module_model: formData.moduleBrand, // fallback
-          module_power: formData.modulePower,
-          module_quantity: formData.moduleQuantity,
-          inverter_brand: formData.inverterBrand,
-          inverter_model: formData.inverterBrand, // fallback
-          inverter_power: formData.inverterPower > 0 ? formData.inverterPower : null,
-          connection_type: formData.connectionType || null,
-          required_area: calculations.requiredArea,
-          // Dados comerciais
-          payment_method: formData.paymentMethod,
-          notes: formData.observations,
-          valid_until: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          status: 'draft' as const
-        };
-        await saveProposal(baseProposalData);
-      } catch (error) {
+        const proposalPayload = mapFormToProposalPayload(formData, calculations);
+        await saveProposal(proposalPayload);
+      } catch {
         // Error handling is feito no hook
       }
     };
@@ -525,234 +435,24 @@ const generatePDFFromHTML = async () => {
 
             {/* Accordion Form Structure */}
             <Accordion type="single" collapsible defaultValue="client" className="space-y-4">
-              {/* Client data section */}
-              <AccordionItem value="client" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
-                      <Home className="h-5 w-5 text-white" />
-                    </div>
-                    <span className="text-xl font-inter font-semibold">Dados do Cliente</span>
-                    {isClientDataComplete() && (
-                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-6">
-                  <div className="space-y-4">
-                    <div className="md:col-span-2">
-                      <Label htmlFor="clientName">Nome do Cliente *</Label>
-                      <Input 
-                        id="clientName" 
-                        value={formData.clientName} 
-                        onChange={e => handleInputChange('clientName', e.target.value)} 
-                        placeholder="Nome completo do cliente" 
-                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                      />
-                    </div>
+              {/* Client data section - Componente Modular */}
+              <ClientDataSection
+                formData={formData}
+                onFieldChange={handleInputChange}
+                onPhoneChange={handlePhoneChange}
+                onCepChange={handleCepChange}
+                hasNoAddress={hasNoAddress}
+                onNoAddressChange={handleNoAddressChange}
+                isLoadingCep={isLoadingCep}
+                isComplete={isClientDataComplete()}
+              />
 
-                    <div>
-                      <Label htmlFor="phone">Telefone *</Label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          id="phone" 
-                          value={formData.phone} 
-                          onChange={e => handlePhoneChange(e.target.value)} 
-                          placeholder="(67) 99999-9999" 
-                          className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                          maxLength={15}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="email">E-mail</Label>
-                      <Input 
-                        id="email" 
-                        type="email"
-                        value={formData.email} 
-                        onChange={e => handleInputChange('email', e.target.value)} 
-                        placeholder="cliente@email.com" 
-                        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                      />
-                    </div>
-
-                    {/* Endereço opcional */}
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox 
-                          id="hasNoAddress" 
-                          checked={hasNoAddress} 
-                          onCheckedChange={handleNoAddressChange}
-                        />
-                        <Label htmlFor="hasNoAddress" className="text-sm font-medium text-muted-foreground">
-                          Não tenho o endereço agora
-                        </Label>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="cep">CEP {!hasNoAddress && "*"}</Label>
-                          <div className="relative">
-                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                              id="cep" 
-                              value={formData.cep} 
-                              onChange={e => handleCepChange(e.target.value)} 
-                              placeholder="00000-000" 
-                              className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                              disabled={isLoadingCep || hasNoAddress}
-                            />
-                            {isLoadingCep && (
-                              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="address">Endereço</Label>
-                          <Input 
-                            id="address" 
-                            value={formData.address} 
-                            onChange={e => handleInputChange('address', e.target.value)} 
-                            placeholder="Rua, Avenida..." 
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                            disabled={hasNoAddress}
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="number">Número</Label>
-                          <Input 
-                            id="number" 
-                            value={formData.number} 
-                            onChange={e => handleInputChange('number', e.target.value)} 
-                            placeholder="123" 
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                            disabled={hasNoAddress}
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="neighborhood">Bairro</Label>
-                          <Input 
-                            id="neighborhood" 
-                            value={formData.neighborhood} 
-                            onChange={e => handleInputChange('neighborhood', e.target.value)} 
-                            placeholder="Nome do bairro" 
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                            disabled={hasNoAddress}
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="city">Cidade</Label>
-                          <Input 
-                            id="city" 
-                            value={formData.city} 
-                            onChange={e => handleInputChange('city', e.target.value)} 
-                            placeholder="Campo Grande" 
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                            disabled={hasNoAddress}
-                          />
-                        </div>
-
-                        <div>
-                          <Label htmlFor="state">Estado</Label>
-                          <Input 
-                            id="state" 
-                            value={formData.state} 
-                            onChange={e => handleInputChange('state', e.target.value)} 
-                            placeholder="MS" 
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                            maxLength={2}
-                            disabled={hasNoAddress}
-                          />
-                        </div>
-
-                        <div>
-                          <Label htmlFor="complement">Complemento</Label>
-                          <Input 
-                            id="complement" 
-                            value={formData.complement} 
-                            onChange={e => handleInputChange('complement', e.target.value)} 
-                            placeholder="Apto 101, Bloco A..." 
-                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                            disabled={hasNoAddress}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* Projeto Solar section */}
-              <AccordionItem value="project" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
-                <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-secondary to-secondary-hover rounded-lg">
-                      <Settings className="h-5 w-5 text-primary" />
-                    </div>
-                    <span className="text-xl font-inter font-semibold">Dados do Projeto Solar</span>
-                    {isProjectDataComplete() && (
-                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
-                    )}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-6">
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="monthlyConsumption">Consumo Médio Mensal (kWh) *</Label>
-                        <Input id="monthlyConsumption" type="number" step="1" value={formData.monthlyConsumption || ''} onChange={e => handleInputChange('monthlyConsumption', parseFloat(e.target.value) || 0)} placeholder="800" />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="desiredKwh">Quantidade de kWh desejados/mês *</Label>
-                        <Input id="desiredKwh" type="number" step="1" value={formData.desiredKwh || ''} onChange={e => handleInputChange('desiredKwh', parseFloat(e.target.value) || 0)} placeholder="600" />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="modulePower">Potência do Módulo (W) *</Label>
-                        <Input id="modulePower" type="number" value={formData.modulePower || ''} onChange={e => handleInputChange('modulePower', parseInt(e.target.value) || 0)} placeholder="450" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="moduleBrand">Marca dos Módulos *</Label>
-                      <Input id="moduleBrand" value={formData.moduleBrand} onChange={e => handleInputChange('moduleBrand', e.target.value)} placeholder="Canadian Solar" />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="inverterBrand">Marca do Inversor *</Label>
-                        <Input id="inverterBrand" value={formData.inverterBrand} onChange={e => handleInputChange('inverterBrand', e.target.value)} placeholder="Fronius" />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="inverterPower">Potência do Inversor (W) *</Label>
-                        <Input id="inverterPower" type="number" value={formData.inverterPower || ''} onChange={e => handleInputChange('inverterPower', parseInt(e.target.value) || 0)} placeholder="5000" />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="pricePerKwp">Preço por kWp (R$) *</Label>
-                        <Input 
-                          id="pricePerKwp" 
-                          type="number" 
-                          step="0.01"
-                          value={formData.pricePerKwp || ''} 
-                          onChange={e => handleInputChange('pricePerKwp', parseFloat(e.target.value) || 0)} 
-                          placeholder="2450.00" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+              {/* Project data section - Componente Modular */}
+              <ProjectDataSection
+                formData={formData}
+                onFieldChange={handleInputChange}
+                isComplete={isProjectDataComplete()}
+              />
 
               {/* Economia section */}
               <AccordionItem value="economy" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
@@ -848,6 +548,13 @@ const generatePDFFromHTML = async () => {
                   </div>
                 </AccordionContent>
               </AccordionItem>
+
+              {/* Warranties section - NOVA SEÇÃO */}
+              <WarrantiesSection
+                formData={formData}
+                onFieldChange={handleInputChange}
+                isComplete={isWarrantiesComplete()}
+              />
             </Accordion>
 
             {/* Desktop sticky actions */}

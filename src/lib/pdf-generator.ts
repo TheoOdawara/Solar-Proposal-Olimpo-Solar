@@ -1,39 +1,6 @@
 import jsPDF from 'jspdf';
-import logoUrl from '@/assets/olimpo-solar-logo.png';
-import bgCover from '@/assets/bg-cover.jpg';
-import bgSection from '@/assets/bg-section.jpg';
-
-export interface FormData {
-  clientName: string;
-  address: string;
-  number: string;
-  neighborhood: string;
-  city: string;
-  phone: string;
-  systemPower: number;
-  moduleQuantity: number;
-  modulePower: number;
-  moduleBrand: string;
-  inverterBrand: string;
-  inverterPower: number;
-  paymentMethod: string;
-  observations: string;
-  // Campos adicionais para as novas seções
-  structureType?: string;
-  monitoring?: string;
-  moduleWarranty?: string;
-  inverterWarranty?: string;
-  microInverterWarranty?: string;
-  structureWarranty?: string;
-  installationWarranty?: string;
-}
-
-export interface Calculations {
-  monthlyGeneration: number;
-  monthlySavings: number;
-  requiredArea: number;
-  totalValue: number;
-}
+import type { FormData, Calculations } from '@/types/proposal';
+import { formatCurrency } from '@/utils/formatters';
 
 // Brand colors
 const BRAND = {
@@ -96,9 +63,6 @@ export const generateProposalPDF = async (
   const setColor = (c: { r: number; g: number; b: number }) => {
     pdf.setTextColor(c.r, c.g, c.b);
   };
-
-  const formatCurrency = (value: number) =>
-    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   const isPresent = (v: unknown) => {
     if (v === null || v === undefined) return false;
@@ -213,7 +177,6 @@ export const generateProposalPDF = async (
     addText('SEU PROJETO', FONT_SIZES.TITLE, 'bold', 'center', 'SECTION', 'accent');
     
     // Grid de ícones 2x3
-    const iconSize = 25;
     const cardSize = 35;
     const cardSpacing = 8;
     const startX = (pageWidth - (3 * cardSize + 2 * cardSpacing)) / 2;

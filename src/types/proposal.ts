@@ -34,6 +34,17 @@ export interface FormData {
   // Complementos
   paymentMethod: string;
   observations: string;
+  
+  // Características do projeto
+  structureType: string;
+  monitoring: string;
+  
+  // Garantias
+  moduleWarranty: string;
+  inverterWarranty: string;
+  microInverterWarranty: string;
+  structureWarranty: string;
+  installationWarranty: string;
 }
 
 export interface Calculations {
@@ -84,6 +95,17 @@ export interface ProposalData {
   // Campos técnicos adicionais que existem no banco
   desired_kwh?: number; // ESTE CAMPO EXISTE NO BANCO!
   price_per_kwp?: number;
+  
+  // Campos de características do projeto
+  structure_type?: string;
+  monitoring?: string;
+  
+  // Campos de garantias
+  module_warranty?: string;
+  inverter_warranty?: string;
+  micro_inverter_warranty?: string;
+  structure_warranty?: string;
+  installation_warranty?: string;
 }
 
 export interface CompanyData {
