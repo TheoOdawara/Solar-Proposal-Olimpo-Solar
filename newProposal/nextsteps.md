@@ -1,12 +1,126 @@
 # Next Steps – Substituição do Modelo de Proposta
 
-## 1. Análise e Mapeamento
-- [ ] Abrir o novo PDF em `newProposal` e identificar:
-   - Todas as seções, campos dinâmicos e elementos fixos.
-   - Quais dados vêm do backend/Supabase e quais são estáticos.
-- [ ] Listar todos os campos do PDF que precisam ser preenchidos dinamicamente.
+> **Status Atual:** Refatoração estrutural concluída. Próximo: implementar novo layout do PDF.
 
-### 1.1 Mapeamento de Campos Dinâmicos (Proposta Nova)
+---
+
+## ✅ Concluído
+
+### 1. Análise e Mapeamento de Dados
+- ✅ Identificados 7 novos campos necessários (garantias + características)
+- ✅ Migration SQL criada e aplicada (`add_proposal_extended_fields.sql`)
+- ✅ Tipos `ProposalData` e `FormData` atualizados em `src/types/proposal.ts`
+- ✅ Mapeamento de campos dinâmicos do PDF novo documentado
+
+### 2. Refatoração Estrutural
+- ✅ Utilitários de mapeamento centralizados (`src/utils/proposalMapping.ts`)
+  - `mapFormToProposalPayload()` - form → DB
+  - `mapProposalToForm()` - DB → form
+  - `extractCalculationsFromProposal()` - extrai cálculos
+- ✅ ProposalForm.tsx modularizado em componentes:
+  - `ClientDataSection.tsx` (185 linhas)
+  - `ProjectDataSection.tsx` (104 linhas)
+  - `WarrantiesSection.tsx` (135 linhas) - NOVO com 7 campos
+- ✅ Funções de salvamento refatoradas para usar mapeamento centralizado
+  - `saveCurrentProposal()` - reduzido de 50 para 6 linhas
+  - `handleSaveProposal()` - reduzido de 40 para 6 linhas
+  - `loadProposal()` - refatorado para usar `mapProposalToForm()`
+- ✅ `pdf-generator.ts` refatorado:
+  - Removida duplicação de tipos (usa `@/types/proposal`)
+  - Removida duplicação de formatadores (usa `@/utils/formatters`)
+  - Código limpo e lint passando
+
+### 3. Validação Técnica
+- ✅ TypeScript: 0 erros de compilação
+- ✅ ESLint: 0 problemas
+- ✅ Build: Sucesso em ~10.6s
+- ✅ Redução total: ~350 linhas de código
+
+---
+
+## 🔄 Em Progresso
+
+### 4. Implementação do Novo Layout PDF
+**Status:** Pronto para iniciar
+
+**Próximas ações:**
+1. Analisar cada página do novo PDF (`newProposal/novaApresentacaoPorPag/`)
+2. Refatorar `ProposalPreview.tsx` para seguir novo layout:
+   - Página 1: Capa com especificações
+   - Página 2: Quem Somos (estático)
+   - Página 3: Como Funciona (estático)
+   - Página 4: Benefícios (lista)
+   - Página 5: Nossos Projetos (grid - futuro dinâmico)
+   - Página 6: Sua Economia (comparativo)
+   - Página 7: Seu Retorno (gráfico payback)
+   - Página 8: Rentabilidade (comparativo investimentos)
+   - Página 9: Capacidade de Geração (gráfico sazonal)
+   - Página 10: Seu Investimento (tabela financiamento)
+   - Página 11: Termo de Compromisso (assinaturas)
+3. Integrar novos campos de garantias no preview
+4. Aplicar novo padrão de logo (`.github/copilot-instructions.md`)
+
+### 5. Atualização da Logo
+**Status:** Arquivos disponíveis em `newProposal/Logo/`, aguardando integração
+
+**Padrão definido:**
+```jsx
+<div className="w-full flex justify-end pt-2 pb-8">
+  <div className="w-[400px] h-[160px] flex items-center justify-end">
+    <img
+      src="/lovable-uploads/LogoBranca.png"
+      alt="Olimpo Solar"
+      className="max-w-full max-h-full object-contain"
+    />
+  </div>
+</div>
+```
+
+---
+
+## 📋 Pendente
+
+### 6. Integração Completa dos Novos Campos
+- [ ] Testar salvamento com campos de garantias
+- [ ] Testar carregamento de proposta salva
+- [ ] Validar que todos os 7 campos aparecem no PDF gerado
+
+### 7. Testes End-to-End
+- [ ] Criar proposta nova com todos os campos preenchidos
+- [ ] Salvar no banco (verificar dados no Supabase)
+- [ ] Carregar proposta salva
+- [ ] Gerar PDF e validar conteúdo completo
+- [ ] Testar responsividade (mobile/desktop)
+
+### 8. Ajustes Finais
+- [ ] Revisar toda a jornada do usuário
+- [ ] Validar textos e formatações
+- [ ] Documentar mudanças no README
+- [ ] Preparar para deploy
+
+---
+
+## 📊 Métricas de Progresso
+
+| Etapa | Status | Linhas Economizadas |
+|-------|--------|---------------------|
+| Migration SQL | ✅ | — |
+| Tipos atualizados | ✅ | — |
+| Mapeamento centralizado | ✅ | ~130 linhas |
+| Componentes modulares | ✅ | ~220 linhas |
+| pdf-generator refatorado | ✅ | ~37 linhas |
+| **Total** | **67% concluído** | **~387 linhas** |
+
+---
+
+## 🎯 Próximo Passo Imediato
+
+**Implementar novo layout do PDF em `ProposalPreview.tsx`**
+- Começar pela página 1 (Capa)
+- Seguir estrutura do PDF em `newProposal/novaApresentacaoPorPag/`
+- Aplicar padrão de logo definido em `copilot-instructions.md`
+- Integrar novos campos de garantias e características
+
 
 Legenda Origem:
 - DB = campo já existente no banco (tabela `proposals` ou derivado de cálculos)
