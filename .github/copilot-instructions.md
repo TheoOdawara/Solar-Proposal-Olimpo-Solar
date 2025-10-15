@@ -1,24 +1,30 @@
-## Padrão de logo no ProposalPreview
 
+## Novo padrão de logo Olimpo Solar
 
-### Padrão para LogoBranca.png 
-Sempre que for usada a imagem `LogoBranca.png` no componente `ProposalPreview` (exemplo: página "SEU INVESTIMENTO"), utilize o seguinte padrão de posicionamento e tamanho:
+**A partir de outubro/2025, toda referência à logo deve usar a nova identidade visual presente em `newProposal/Logo` (SVG preferencialmente).**
 
-```jsx
-<div className="w-full flex justify-end pt-2 pb-8">
-  <div className="w-[400px] h-[160px] flex items-center justify-end">
-    <img
-      src="/lovable-uploads/LogoBranca.png"
-      alt="Olimpo Solar"
-      className="max-w-full max-h-full object-contain"
-    />
-  </div>
-</div>
+- Utilize o arquivo SVG principal (`newProposal/Logo/SVG/LogoOlimpo.svg`) para máxima qualidade e responsividade.
+- Crie um componente React para a logo (ex: `LogoOlimpo.tsx` em `src/components`).
+- Exemplo de uso:
+
+```tsx
+import { ReactComponent as OlimpoLogo } from "@/../newProposal/Logo/SVG/LogoOlimpo.svg";
+
+export function LogoOlimpo({ className = "" }: { className?: string }) {
+  return (
+    <div className={`w-full flex justify-end pt-2 pb-8 ${className}`}>
+      <div className="w-[320px] max-w-full h-[120px] flex items-center justify-end">
+        <OlimpoLogo className="w-full h-full object-contain" aria-label="Olimpo Solar" />
+      </div>
+    </div>
+  );
+}
 ```
 
-Esse padrão garante destaque visual, alinhamento à direita e proporção adequada para a logo branca. Use este padrão sempre que a logo branca for solicitada explicitamente.
+- Substitua todos os usos antigos de `LogoBranca.png` ou padrões anteriores pelo novo componente.
+- Garanta responsividade e alinhamento visual conforme o layout.
 
-Para as demais páginas, utilize o padrão anterior com `olimpoLogo` azul, salvo exceções explicitamente solicitadas.
+**Não usar mais o padrão antigo de logo branca.**
 # Instruções para Assistente (GitHub Copilot)
 
 Este documento orienta como o assistente deve operar neste repositório para agilizar entregas com segurança e padrão.
