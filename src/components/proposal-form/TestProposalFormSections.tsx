@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Accordion } from "@/components/ui/accordion";
-import { ClientDataSection, ProjectDataSection, WarrantiesSection } from '@/components/proposal-form';
+import { ClientDataSection, ProjectDataSection } from '@/components/proposal-form';
 import type { FormData } from '@/types/proposal';
 import { formatPhone, formatCep } from '@/utils/formatters';
 import { SOLAR_CONSTANTS } from '@/constants/solarData';
@@ -75,11 +75,7 @@ export const TestProposalFormSections = () => {
            formData.pricePerKwp > 0;
   };
 
-  const isWarrantiesComplete = () => {
-    return formData.structureType.trim() !== '' || 
-           formData.monitoring.trim() !== '' ||
-           formData.moduleWarranty.trim() !== '';
-  };
+
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -103,11 +99,7 @@ export const TestProposalFormSections = () => {
           isComplete={isProjectDataComplete()}
         />
 
-        <WarrantiesSection
-          formData={formData}
-          onFieldChange={handleInputChange}
-          isComplete={isWarrantiesComplete()}
-        />
+
       </Accordion>
 
       {/* Debug: Mostrar estado atual */}

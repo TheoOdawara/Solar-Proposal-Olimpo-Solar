@@ -25,7 +25,7 @@ import { SOLAR_CONSTANTS } from '@/constants/solarData';
 import { mapFormToProposalPayload, mapProposalToForm, extractCalculationsFromProposal } from '@/utils/proposalMapping';
 
 // Importar componentes modulares do formulário
-import { ClientDataSection, ProjectDataSection, WarrantiesSection } from '@/components/proposal-form';
+import { ClientDataSection, ProjectDataSection } from '@/components/proposal-form';
 
 const ProposalForm = ({
   onProposalDataChange
@@ -275,12 +275,7 @@ const ProposalForm = ({
     return formData.paymentMethod.trim() !== '';
   };
 
-  const isWarrantiesComplete = () => {
-    // Considera completo se pelo menos um campo de garantia ou característica estiver preenchido
-    return formData.structureType.trim() !== '' || 
-           formData.monitoring.trim() !== '' ||
-           formData.moduleWarranty.trim() !== '';
-  };
+
 
   const generateProposal = () => {
     if (!validateForm()) return;
@@ -549,12 +544,7 @@ const generatePDFFromHTML = async () => {
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Warranties section - NOVA SEÇÃO */}
-              <WarrantiesSection
-                formData={formData}
-                onFieldChange={handleInputChange}
-                isComplete={isWarrantiesComplete()}
-              />
+              
             </Accordion>
 
             {/* Desktop sticky actions */}

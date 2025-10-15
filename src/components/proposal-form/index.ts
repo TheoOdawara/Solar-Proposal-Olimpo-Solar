@@ -5,4 +5,3 @@
 
 export { ClientDataSection } from './ClientDataSection';
 export { ProjectDataSection } from './ProjectDataSection';
-export { WarrantiesSection } from './WarrantiesSection';
