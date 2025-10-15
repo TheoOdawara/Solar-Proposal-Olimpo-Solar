@@ -1,30 +1,3 @@
-
-## Novo padrão de logo Olimpo Solar
-
-**A partir de outubro/2025, toda referência à logo deve usar a nova identidade visual presente em `newProposal/Logo` (SVG preferencialmente).**
-
-- Utilize o arquivo SVG principal (`newProposal/Logo/SVG/LogoOlimpo.svg`) para máxima qualidade e responsividade.
-- Crie um componente React para a logo (ex: `LogoOlimpo.tsx` em `src/components`).
-- Exemplo de uso:
-
-```tsx
-import { ReactComponent as OlimpoLogo } from "@/../newProposal/Logo/SVG/LogoOlimpo.svg";
-
-export function LogoOlimpo({ className = "" }: { className?: string }) {
-  return (
-    <div className={`w-full flex justify-end pt-2 pb-8 ${className}`}>
-      <div className="w-[320px] max-w-full h-[120px] flex items-center justify-end">
-        <OlimpoLogo className="w-full h-full object-contain" aria-label="Olimpo Solar" />
-      </div>
-    </div>
-  );
-}
-```
-
-- Substitua todos os usos antigos de `LogoBranca.png` ou padrões anteriores pelo novo componente.
-- Garanta responsividade e alinhamento visual conforme o layout.
-
-**Não usar mais o padrão antigo de logo branca.**
 # Instruções para Assistente (GitHub Copilot)
 
 Este documento orienta como o assistente deve operar neste repositório para agilizar entregas com segurança e padrão.
@@ -114,5 +87,15 @@ Observação: **NÃO usar bun** para nada. Sempre preferir npm, mesmo que lockfi
 - Em caso de conflitos do npm, prefira Bun (`bun install`, `bunx ...`).
 - Em PowerShell, use `;` para executar vários comandos em sequência.
 
----
+
+## Paleta de cores
+🎨 Paleta oficial (extraída do logo)
+- Uso sugerido	Cor	Código HEX	Observação
+- Primária	Azul escuro	#0D3B66	Cor principal (botões, links, ícones, destaques)
+- Secundária	Azul médio	#2A6F97	Hover de botões, detalhes gráficos, bordas leves
+- Apoio / Gradiente	Azul claro	#468FAF	Efeitos sutis, fundos secundários
+- Texto principal	Preto / Cinza escuro	#111111	Títulos e corpo de texto
+- Fundo geral	Branco	#FFFFFF	Fundo limpo e minimalista
+- Fundo alternativo	Cinza muito claro	#F6F6F6	Seções alternadas ou blocos destacados
+
 Se algo aqui conflitar com decisões futuras do time, atualizar este arquivo para manter o assistente alinhado.

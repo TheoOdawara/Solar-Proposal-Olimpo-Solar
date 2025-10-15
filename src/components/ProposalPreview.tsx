@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf, FileText } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell, ReferenceLine } from 'recharts';
-import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
+import { LogoOlimpo } from "@/components/LogoOlimpo";
 import ProposalCoverPage from "./ProposalCoverPage";
 import Footer from "./Footer";
 
@@ -152,7 +152,7 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
 
           {/* Logo no canto superior direito */}
           <div className="w-[400px] ml-auto mr-10 flex items-center justify-end pt-2 pb-8">
-            <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
+            <LogoOlimpo className="h-[80px] w-auto" />
           </div>
 
           {/* Conteúdo centralizado e espaçado */}
@@ -228,7 +228,7 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
             <div className="flex-1 flex flex-col" style={{ padding: '8mm 15mm 15mm 15mm' }}>
               {/* Logo igual à página 6 */}
               <div className="w-full flex justify-end pt-2 pb-8">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
+                <LogoOlimpo className="h-[80px] w-auto" />
               </div>
 
               {/* Conteúdo movido para cima */}
@@ -388,7 +388,7 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
           <div className="flex-1 flex flex-col" style={{ padding: '15mm' }}>
             {/* Logo igual à página 6 */}
             <div className="w-full flex justify-end pt-2 pb-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-[80px] w-auto" />
+              <LogoOlimpo className="h-[80px] w-auto" />
             </div>
 
             {/* Conteúdo centralizado */}
@@ -570,7 +570,7 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
           <div className="flex-1 flex flex-col" style={{ padding: '8mm 15mm 15mm 15mm' }}>
             {/* Logo igual às outras páginas */}
             <div className="w-full flex justify-end pt-2 pb-8">
-              <img src={olimpoLogo} alt="Olimpo Solar" className="h-20 w-auto" />
+              <LogoOlimpo className="h-20 w-auto" />
             </div>
 
             {/* Vertical Bar Chart - Capacidade de Geração */}

@@ -173,8 +173,6 @@ export const useAuth = () => {
         description: "Bem-vindo de volta!",
       });
       
-      // Force page reload for clean state
-      window.location.href = '/';
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
       errorLogger.logAuthError(err, { context: 'signin', email });

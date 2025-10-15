@@ -5,45 +5,55 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Mail, Lock, UserPlus, LogIn, ArrowLeft } from "lucide-react";
-import olimpoLogo from "/lovable-uploads/568489ba-4d5c-47e2-a032-5a3030b5507b.png";
+import { Mail, Lock, UserPlus, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { signIn, signUp, signInWithGoogle, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    try { await signIn(email, password); } catch (err) { console.debug('Sign-in failed'); }
+    try {
+      await signIn(email, password);
+      navigate("/dashboard"); // ou "/" se preferir
+    } catch {
+      console.debug('Sign-in failed');
+    }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !confirmPassword) return;
     if (password !== confirmPassword) return;
-    try { await signUp(email, password); } catch (err) { console.debug('Sign-up failed'); }
+    try {
+      await signUp(email, password);
+      navigate("/dashboard"); // ou "/" se preferir
+    } catch {
+      console.debug('Sign-up failed');
+    }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-    } catch (error) {
+    } catch {
       // Error handling is done in the useAuth hook
     }
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#022136]">
+    <div className="min-h-screen relative overflow-hidden bg-[#0D3B66]">
       {/* Elementos de fundo */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 -left-20 w-40 h-40 opacity-10 animate-float bg-[#ffbf06]" />
-        <div className="absolute bottom-1/4 -right-20 w-32 h-32 opacity-15 animate-float bg-[#ffbf06]" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-3/4 left-1/4 w-24 h-24 opacity-20 animate-float bg-[#ffbf06]" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 -left-20 w-40 h-40 opacity-10 animate-float bg-[#468FAF]" />
+        <div className="absolute bottom-1/4 -right-20 w-32 h-32 opacity-15 animate-float bg-[#468FAF]" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-3/4 left-1/4 w-24 h-24 opacity-20 animate-float bg-[#468FAF]" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="relative flex items-center justify-center p-4 min-h-screen">
@@ -52,34 +62,34 @@ const AuthPage = () => {
           {/* Logo */}
           <div className="text-center space-y-6">
             <div className="flex flex-col items-center space-y-4 animate-scale-in">
-              <div className="p-6 bg-white/10 backdrop-blur-sm rounded-xl shadow-lg">
-                <img src={olimpoLogo} alt="Olimpo Solar" className="h-16 w-auto" />
+              <div className="p-4 bg-[#468FAF] backdrop-blur-sm rounded-2xl shadow-[0_20px_60px_rgba(13,59,102,0.4)] border-2 border-[#2A6F97] transform hover:scale-105 transition-all duration-300 relative z-10">
+                <img src="./public/svg/4.svg" alt="Olimpo Solar" className="h-40 w-auto drop-shadow-lg" />
               </div>
               <h1 className="text-3xl font-bold text-white drop-shadow-lg">Olimpo Solar</h1>
               <p className="text-white/90 text-sm font-medium">Sistema de Propostas Comerciais</p>
             </div>
-            <div className="h-px w-2/3 mx-auto bg-[#ffbf06] opacity-50" />
+            <div className="h-px w-2/3 mx-auto bg-[#468FAF] opacity-70" />
           </div>
 
           {/* Card de autenticação */}
           <Card className="bg-white/95 backdrop-blur-md shadow-floating border-0 animate-slide-up">
             <CardContent className="p-6">
               <div className="text-center mb-6">
-                <h2 className="text-xl font-semibold text-[#022136]">Acesso ao Sistema</h2>
-                <p className="text-gray-600 text-sm mt-1">Entre ou crie sua conta para continuar</p>
+                <h2 className="text-xl font-semibold text-[#0D3B66]">Acesso ao Sistema</h2>
+                <p className="text-[#111111] text-sm mt-1">Entre ou crie sua conta para continuar</p>
               </div>
 
               <Tabs defaultValue="login" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-2 bg-gray-100">
+                <TabsList className="grid w-full grid-cols-2 bg-[#F6F6F6]">
                   <TabsTrigger
                     value="login"
-                    className="flex items-center gap-2 text-gray-600 data-[state=active]:bg-[#ffbf06] data-[state=active]:text-[#022136] transition-smooth"
+                    className="flex items-center gap-2 text-[#111111] data-[state=active]:bg-[#0D3B66] data-[state=active]:text-white transition-smooth"
                   >
                     <LogIn className="h-4 w-4" /> Entrar
                   </TabsTrigger>
                   <TabsTrigger
                     value="register"
-                    className="flex items-center gap-2 text-gray-600 data-[state=active]:bg-[#ffbf06] data-[state=active]:text-[#022136] transition-smooth"
+                    className="flex items-center gap-2 text-[#111111] data-[state=active]:bg-[#0D3B66] data-[state=active]:text-white transition-smooth"
                   >
                     <UserPlus className="h-4 w-4" /> Cadastrar
                   </TabsTrigger>
@@ -90,14 +100,14 @@ const AuthPage = () => {
                   <form onSubmit={handleSignIn} className="space-y-4">
                     {/* E-mail */}
                     <div className="space-y-2">
-                      <Label htmlFor="login-email" className="font-medium text-[#022136]">E-mail</Label>
+                      <Label htmlFor="login-email" className="font-medium text-[#0D3B66]">E-mail</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                           id="login-email"
                           type="email"
                           placeholder="seu@email.com"
-                          className="pl-10 border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200"
+                          className="pl-10 border-gray-300 focus:border-[#2A6F97] focus:ring-2 focus:ring-[#468FAF]/20"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
@@ -106,14 +116,14 @@ const AuthPage = () => {
                     </div>
                     {/* Senha */}
                     <div className="space-y-2">
-                      <Label htmlFor="login-password" className="font-medium text-[#022136]">Senha</Label>
+                      <Label htmlFor="login-password" className="font-medium text-[#0D3B66]">Senha</Label>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                           id="login-password"
                           type="password"
                           placeholder="••••••••"
-                          className="pl-10 border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200"
+                          className="pl-10 border-gray-300 focus:border-[#2A6F97] focus:ring-2 focus:ring-[#468FAF]/20"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
@@ -123,12 +133,12 @@ const AuthPage = () => {
                     {/* Botão Entrar */}
                     <Button
                       type="submit"
-                      className="w-full mt-6 transform hover:scale-[1.02] transition-smooth font-semibold bg-[#ffbf06] text-[#022136] border-none"
+                      className="w-full mt-6 transform hover:scale-[1.02] transition-smooth font-semibold bg-[#0D3B66] hover:bg-[#2A6F97] text-white border-none"
                       disabled={loading}
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <div className="animate-spin h-4 w-4 border-2 rounded-full border-[#022136] border-t-transparent"></div>
+                          <div className="animate-spin h-4 w-4 border-2 rounded-full border-white border-t-transparent"></div>
                           Entrando no sistema...
                         </div>
                       ) : (
@@ -235,12 +245,12 @@ const AuthPage = () => {
                     {/* Botão Criar Conta */}
                     <Button
                       type="submit"
-                      className="w-full mt-6 transform hover:scale-[1.02] transition-smooth font-semibold bg-[#ffbf06] text-[#022136] border-none"
+                      className="w-full mt-6 transform hover:scale-[1.02] transition-smooth font-semibold bg-[#0D3B66] hover:bg-[#2A6F97] text-white border-none"
                       disabled={loading || password !== confirmPassword}
                     >
                       {loading ? (
                         <div className="flex items-center gap-2">
-                          <div className="animate-spin h-4 w-4 border-2 rounded-full border-[#022136] border-t-transparent"></div>
+                          <div className="animate-spin h-4 w-4 border-2 rounded-full border-white border-t-transparent"></div>
                           Criando sua conta...
                         </div>
                       ) : (
@@ -285,19 +295,6 @@ const AuthPage = () => {
                   </div>
                 </TabsContent>
               </Tabs>
-
-              {/* Voltar */}
-              <div className="mt-6 pt-4">
-                <Separator />
-                <div className="text-center">
-                  <Link to="/">
-                    <Button variant="ghost" className="text-[#022136] hover:bg-gray-100 transition-smooth">
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Voltar ao gerador
-                    </Button>
-                  </Link>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
