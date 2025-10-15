@@ -1,0 +1,83 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.customers (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  email text,
+  phone text,
+  cep text,
+  address text,
+  city text,
+  state text,
+  neighborhood text,
+  complement text,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  user_id uuid,
+  CONSTRAINT customers_pkey PRIMARY KEY (id),
+  CONSTRAINT customers_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.proposal_attachments (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  proposal_id uuid NOT NULL,
+  file_name text NOT NULL,
+  file_path text NOT NULL,
+  file_type text NOT NULL,
+  file_size integer,
+  uploaded_by uuid,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT proposal_attachments_pkey PRIMARY KEY (id),
+  CONSTRAINT proposal_attachments_proposal_id_fkey FOREIGN KEY (proposal_id) REFERENCES public.proposals(id),
+  CONSTRAINT proposal_attachments_uploaded_by_fkey FOREIGN KEY (uploaded_by) REFERENCES auth.users(id)
+);
+CREATE TABLE public.proposals (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid,
+  client_name text NOT NULL,
+  system_power numeric NOT NULL,
+  monthly_generation numeric NOT NULL,
+  monthly_savings numeric NOT NULL,
+  total_value numeric NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  seller_name text,
+  seller_id uuid,
+  status text DEFAULT 'draft'::text CHECK (status = ANY (ARRAY['draft'::text, 'sent'::text, 'approved'::text, 'rejected'::text, 'closed'::text])),
+  cep text,
+  address text,
+  city text,
+  state text,
+  neighborhood text,
+  complement text,
+  monthly_consumption numeric,
+  average_bill numeric,
+  module_brand text,
+  module_model text,
+  module_power numeric,
+  module_quantity integer,
+  inverter_brand text,
+  inverter_model text,
+  payment_method text,
+  payment_conditions text,
+  valid_until date DEFAULT (CURRENT_DATE + '30 days'::interval),
+  notes text,
+  required_area numeric,
+  phone text,
+  email text,
+  connection_type text,
+  desired_kwh numeric,
+  price_per_kwp numeric,
+  inverter_power numeric,
+  CONSTRAINT proposals_pkey PRIMARY KEY (id),
+  CONSTRAINT proposals_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
+  CONSTRAINT proposals_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES auth.users(id)
+);
+CREATE TABLE public.user_roles (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  role USER-DEFINED NOT NULL DEFAULT 'user'::app_role,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT user_roles_pkey PRIMARY KEY (id),
+  CONSTRAINT user_roles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);

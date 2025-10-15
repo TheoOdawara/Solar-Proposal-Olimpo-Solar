@@ -1,78 +1,44 @@
 #!/usr/bin/env python3
 """
-Script para converter PDFs para PNG usando PyMuPDF (não precisa de Poppler)
+Script para converter todos os PDFs da pasta pdf/ para PNGs na pasta png/ usando PyMuPDF.
 Requisitos: pip install PyMuPDF pillow
 """
 
 import os
 from pathlib import Path
 import fitz  # PyMuPDF
-from PIL import Image
 
-# Mudar para a raiz do projeto
-script_dir = Path(__file__).parent
-project_root = script_dir.parent.parent.parent
-os.chdir(project_root)
+# Caminhos relativos ao projeto
+PDF_DIR = Path("public/novaApresentacaoPorPag/pdf")
+OUTPUT_DIR = Path("public/novaApresentacaoPorPag/png")
 
-print(f"📁 Diretório de trabalho: {os.getcwd()}\n")
-
-# Diretórios
-PDF_DIR = Path("newProposal/novaApresentacaoPorPag")
-OUTPUT_DIR = Path("public/lovable-uploads")
-
-# Criar diretório de saída se não existir
+# Garante que a pasta de saída existe
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Lista de PDFs para converter
-pdfs_to_convert = [
-    "Pagina1.pdf",
-    "Pagina2.pdf",
-    "Pagina3.pdf",
-    "Pagina4.pdf",
-    "Pagina5.pdf",
-    "Pagina6.pdf",
-    "Pagina7.pdf",
-]
+print(f"🔄 Procurando PDFs em: {PDF_DIR.resolve()}")
 
-print("🔄 Iniciando conversão de PDFs para PNG (PyMuPDF)...\n")
+pdf_files = list(PDF_DIR.glob("*.pdf"))
+if not pdf_files:
+    print("⚠️  Nenhum PDF encontrado na pasta.")
+    exit(1)
 
-for pdf_name in pdfs_to_convert:
-    pdf_path = PDF_DIR / pdf_name
-    
-    if not pdf_path.exists():
-        print(f"⚠️  Arquivo não encontrado: {pdf_path}")
-        continue
-    
+for pdf_path in pdf_files:
     try:
-        print(f"📄 Convertendo {pdf_name}...")
-        
-        # Abrir PDF
+        print(f"📄 Convertendo: {pdf_path.name}")
         pdf_document = fitz.open(str(pdf_path))
-        
-        # Pegar primeira página
-        page = pdf_document[0]
-        
-        # Renderizar em alta resolução (300 DPI = zoom de 4.17)
-        # 72 DPI é padrão, então 300/72 = 4.17
-        zoom = 300 / 72
-        mat = fitz.Matrix(zoom, zoom)
-        pix = page.get_pixmap(matrix=mat)
-        
-        # Salvar como PNG
-        output_name = pdf_name.replace('.pdf', '.png')
-        output_path = OUTPUT_DIR / output_name
-        
-        pix.save(str(output_path))
-        
-        # Fechar PDF
+        for page_number in range(len(pdf_document)):
+            page = pdf_document[page_number]
+            zoom = 300 / 72  # 300 DPI
+            mat = fitz.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=mat)
+            output_name = f"{pdf_path.stem}_page_{page_number+1}.png"
+            output_path = OUTPUT_DIR / output_name
+            pix.save(str(output_path))
+            size_mb = output_path.stat().st_size / (1024 * 1024)
+            print(f"   ✅ Página {page_number+1} salva: {output_name} ({size_mb:.2f} MB)")
         pdf_document.close()
-        
-        # Mostrar tamanho do arquivo
-        size_mb = output_path.stat().st_size / (1024 * 1024)
-        print(f"   ✅ Salvo: {output_path} ({size_mb:.2f} MB)")
-        
     except Exception as e:
-        print(f"   ❌ Erro ao converter {pdf_name}: {e}")
+        print(f"   ❌ Erro ao converter {pdf_path.name}: {e}")
 
 print("\n✨ Conversão concluída!")
-print(f"📁 Imagens salvas em: {OUTPUT_DIR.absolute()}")
+print(f"📁 Imagens salvas em: {OUTPUT_DIR.resolve()}")
