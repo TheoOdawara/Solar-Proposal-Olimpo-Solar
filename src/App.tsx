@@ -4,7 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AppSidebar } from "@/components/AppSidebar";
+import AppHeader from "@/components/AppHeader";
+import DesktopSidebar from "@/components/DesktopSidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
@@ -12,6 +13,8 @@ import Dashboard from "./pages/Dashboard";
 import Metrics from "./pages/Metrics";
 import ProposalsHistory from "./pages/ProposalsHistory";
 import AuthPage from "./pages/AuthPage";
+import EmailConfirmation from "./pages/EmailConfirmation";
+import VerifyEmail from "./pages/VerifyEmail";
 import NotFound from "./pages/NotFound";
 
 // Configuração simplificada do QueryClient
@@ -58,13 +61,16 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/email-confirmation" element={<EmailConfirmation />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route
               path="/*"
               element={
                 <ProtectedRoute>
-                  <div className="min-h-screen flex flex-col md:flex-row w-full">
-                    <AppSidebar />
-                    <main className="flex-1">
+                  <div className="min-h-screen flex flex-col w-full">
+                    <AppHeader />
+                    <DesktopSidebar />
+                    <main className="flex-1 pt-16 md:pl-64">
                       <Routes>
                         <Route path="/" element={<Index />} />
                         <Route path="/dashboard" element={<Dashboard />} />

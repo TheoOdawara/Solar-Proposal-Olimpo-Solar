@@ -295,6 +295,18 @@ const AuthPage = () => {
                   </div>
                 </TabsContent>
               </Tabs>
+
+              {/* Link para verificação por código */}
+              <div className="mt-6 pt-4 border-t border-gray-200 text-center">
+                <p className="text-sm text-[#111111] mb-2">Recebeu um código de verificação?</p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/verify-email')}
+                  className="text-sm font-medium text-[#2A6F97] hover:text-[#0D3B66] underline transition-colors"
+                >
+                  Verificar por código
+                </button>
+              </div>
             </CardContent>
           </Card>
         </div>

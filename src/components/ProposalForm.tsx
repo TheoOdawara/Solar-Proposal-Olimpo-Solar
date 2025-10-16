@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, Zap, Save, History, Eye, CheckCircle } from "lucide-react";
+import { Calculator, Zap, History, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -277,8 +277,10 @@ const ProposalForm = ({
 
 
 
-  const generateProposal = () => {
+  // Novo handler: salva e mostra prévia
+  const handleGenerateProposal = async () => {
     if (!validateForm()) return;
+    await saveCurrentProposal();
     setShowPreview(true);
   };
 const generatePDFFromHTML = async () => {
@@ -550,20 +552,15 @@ const generatePDFFromHTML = async () => {
             {/* Desktop sticky actions */}
             <div className="hidden sm:block sticky-actions">
               <div className="flex gap-4 justify-center">
-                <Button onClick={saveCurrentProposal} size="lg" variant="secondary" className="px-6 py-3 transition-smooth">
-                  <Save className="mr-2 h-5 w-5" />
-                  Salvar Proposta
-                </Button>
-                
                 <Button 
-                  onClick={generateProposal} 
-                  size="lg" 
-                  disabled={!isFormValid()} 
-                  className="px-8 py-3 text-lg font-semibold transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
-                  title={!isFormValid() ? "Complete todos os campos obrigatórios para pré-visualizar" : ""}
+                  onClick={handleGenerateProposal}
+                  size="lg"
+                  disabled={!isFormValid()}
+                  className="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-[#0D3B66] to-[#2A6F97] text-white shadow-lg transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={!isFormValid() ? "Complete todos os campos obrigatórios para gerar proposta" : ""}
                 >
-                  <Eye className="mr-2 h-5 w-5" />
-                  Pré-visualizar Proposta
+                  <CheckCircle className="mr-2 h-5 w-5" />
+                  Gerar Proposta
                 </Button>
               </div>
             </div>
@@ -584,11 +581,13 @@ const generatePDFFromHTML = async () => {
         {/* Barra de ações fixa no mobile */}
         <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t border-border p-3">
           <div className="max-w-screen-3xl mx-auto flex gap-3">
-            <Button onClick={saveCurrentProposal} variant="secondary" className="flex-1">
-              <Save className="mr-2 h-5 w-5" /> Salvar
-            </Button>
-            <Button onClick={generateProposal} disabled={!isFormValid()} className="flex-1">
-              <Eye className="mr-2 h-5 w-5" /> Pré-visualizar
+            <Button 
+              onClick={handleGenerateProposal}
+              disabled={!isFormValid()}
+              className="flex-1 bg-gradient-to-r from-[#0D3B66] to-[#2A6F97] text-white shadow-lg transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+              title={!isFormValid() ? "Complete todos os campos obrigatórios para gerar proposta" : ""}
+            >
+              <CheckCircle className="mr-2 h-5 w-5" /> Gerar Proposta
             </Button>
           </div>
         </div>

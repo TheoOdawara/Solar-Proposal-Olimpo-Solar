@@ -47,7 +47,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
               value={formData.clientName} 
               onChange={e => onFieldChange('clientName', e.target.value)} 
               placeholder="Nome completo do cliente" 
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
             />
           </div>
 
@@ -60,7 +60,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                 value={formData.phone} 
                 onChange={e => onPhoneChange(e.target.value)} 
                 placeholder="(67) 99999-9999" 
-                className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                  className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                 maxLength={15}
               />
             </div>
@@ -74,7 +74,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
               value={formData.email} 
               onChange={e => onFieldChange('email', e.target.value)} 
               placeholder="cliente@email.com" 
-              className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
             />
           </div>
 
@@ -101,7 +101,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                     value={formData.cep} 
                     onChange={e => onCepChange(e.target.value)} 
                     placeholder="00000-000" 
-                    className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                     disabled={isLoadingCep || hasNoAddress}
                   />
                   {isLoadingCep && (
@@ -119,7 +119,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                   value={formData.address} 
                   onChange={e => onFieldChange('address', e.target.value)} 
                   placeholder="Rua, Avenida..." 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                   disabled={hasNoAddress}
                 />
               </div>
@@ -131,7 +131,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                   value={formData.number} 
                   onChange={e => onFieldChange('number', e.target.value)} 
                   placeholder="123" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                   disabled={hasNoAddress}
                 />
               </div>
@@ -143,7 +143,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                   value={formData.neighborhood} 
                   onChange={e => onFieldChange('neighborhood', e.target.value)} 
                   placeholder="Nome do bairro" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                   disabled={hasNoAddress}
                 />
               </div>
@@ -155,7 +155,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                   value={formData.city} 
                   onChange={e => onFieldChange('city', e.target.value)} 
                   placeholder="Campo Grande" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                   disabled={hasNoAddress}
                 />
               </div>
@@ -167,7 +167,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                   value={formData.state} 
                   onChange={e => onFieldChange('state', e.target.value)} 
                   placeholder="MS" 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                   maxLength={2}
                   disabled={hasNoAddress}
                 />
@@ -180,7 +180,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
                   value={formData.complement} 
                   onChange={e => onFieldChange('complement', e.target.value)} 
                   placeholder="Apto 101, Bloco A..." 
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
                   disabled={hasNoAddress}
                 />
               </div>

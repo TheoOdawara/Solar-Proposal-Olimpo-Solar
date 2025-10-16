@@ -39,6 +39,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
                 value={formData.monthlyConsumption || ''} 
                 onChange={e => onFieldChange('monthlyConsumption', parseFloat(e.target.value) || 0)} 
                 placeholder="800" 
+                className="placeholder:text-gray-400"
               />
             </div>
             
@@ -51,6 +52,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
                 value={formData.desiredKwh || ''} 
                 onChange={e => onFieldChange('desiredKwh', parseFloat(e.target.value) || 0)} 
                 placeholder="600" 
+                className="placeholder:text-gray-400"
               />
             </div>
             
@@ -62,6 +64,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
                 value={formData.modulePower || ''} 
                 onChange={e => onFieldChange('modulePower', parseInt(e.target.value) || 0)} 
                 placeholder="450" 
+                className="placeholder:text-gray-400"
               />
             </div>
           </div>
@@ -73,6 +76,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
               value={formData.moduleBrand} 
               onChange={e => onFieldChange('moduleBrand', e.target.value)} 
               placeholder="Canadian Solar" 
+              className="placeholder:text-gray-400"
             />
           </div>
 
@@ -84,6 +88,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
                 value={formData.inverterBrand} 
                 onChange={e => onFieldChange('inverterBrand', e.target.value)} 
                 placeholder="Fronius" 
+                className="placeholder:text-gray-400"
               />
             </div>
             
@@ -95,6 +100,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
                 value={formData.inverterPower || ''} 
                 onChange={e => onFieldChange('inverterPower', parseInt(e.target.value) || 0)} 
                 placeholder="5000" 
+                className="placeholder:text-gray-400"
               />
             </div>
 
@@ -107,6 +113,7 @@ export const ProjectDataSection: React.FC<ProjectDataSectionProps> = ({
                 value={formData.pricePerKwp || ''} 
                 onChange={e => onFieldChange('pricePerKwp', parseFloat(e.target.value) || 0)} 
                 placeholder="2450.00" 
+                className="placeholder:text-gray-400"
               />
             </div>
           </div>

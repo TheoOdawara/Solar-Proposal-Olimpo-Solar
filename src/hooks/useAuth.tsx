@@ -83,7 +83,7 @@ export const useAuth = () => {
     try {
       setLoading(true);
       
-      // Clean existing auth state before signup
+      // Clean existing auth state before signup (não loga senha)
       const cleanupAuthState = () => {
         Object.keys(localStorage).forEach((key) => {
           if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
@@ -91,19 +91,20 @@ export const useAuth = () => {
           }
         });
       };
-      
+
       cleanupAuthState();
-      
+
       // Attempt to sign out any existing session
       try {
         await supabase.auth.signOut({ scope: 'global' });
       } catch (err) {
-        // Continue even if this fails
+        // Continue even if this fails, mas nunca logar senha
         errorLogger.logAuthError(err, { context: 'signup_cleanup' });
       }
-      
-      const redirectUrl = `${window.location.origin}/`;
-      
+
+      const redirectUrl = `${window.location.origin}/email-confirmation`;
+
+      // Nunca logar senha em nenhum momento
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -113,13 +114,14 @@ export const useAuth = () => {
       });
       
       if (error) {
+        // Nunca logar senha
         errorLogger.logAuthError(error, { context: 'signup', email });
         throw error;
       }
       
       toast({
         title: "Conta criada com sucesso!",
-        description: "Você foi logado automaticamente.",
+        description: "Confirme o cadastro no email.",
       });
     } catch (error: unknown) {
       const err = error instanceof Error ? error : new Error(String(error));
@@ -139,7 +141,7 @@ export const useAuth = () => {
     try {
       setLoading(true);
       
-      // Clean existing auth state before signin
+      // Clean existing auth state before signin (não loga senha)
       const cleanupAuthState = () => {
         Object.keys(localStorage).forEach((key) => {
           if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
@@ -147,23 +149,25 @@ export const useAuth = () => {
           }
         });
       };
-      
+
       cleanupAuthState();
-      
+
       // Attempt to sign out any existing session
       try {
         await supabase.auth.signOut({ scope: 'global' });
       } catch (err) {
-        // Continue even if this fails
+        // Continue even se falhar, mas nunca logar senha
         errorLogger.logAuthError(err, { context: 'signin_cleanup' });
       }
-      
+
+      // Nunca logar senha
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       if (error) {
+        // Nunca logar senha
         errorLogger.logAuthError(error, { context: 'signin', email });
         throw error;
       }

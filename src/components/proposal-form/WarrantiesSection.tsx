@@ -78,6 +78,7 @@ export const WarrantiesSection: React.FC<WarrantiesSectionProps> = ({
                   value={formData.moduleWarranty} 
                   onChange={e => onFieldChange('moduleWarranty', e.target.value)} 
                   placeholder="Ex: 25 anos de eficiência e 12 anos fabricação" 
+                  className="placeholder:text-gray-400"
                 />
               </div>
 
@@ -88,6 +89,7 @@ export const WarrantiesSection: React.FC<WarrantiesSectionProps> = ({
                   value={formData.inverterWarranty} 
                   onChange={e => onFieldChange('inverterWarranty', e.target.value)} 
                   placeholder="Ex: 10 anos" 
+                  className="placeholder:text-gray-400"
                 />
               </div>
 
@@ -98,6 +100,7 @@ export const WarrantiesSection: React.FC<WarrantiesSectionProps> = ({
                   value={formData.microInverterWarranty} 
                   onChange={e => onFieldChange('microInverterWarranty', e.target.value)} 
                   placeholder="Ex: 25 anos" 
+                  className="placeholder:text-gray-400"
                 />
               </div>
 
@@ -108,6 +111,7 @@ export const WarrantiesSection: React.FC<WarrantiesSectionProps> = ({
                   value={formData.structureWarranty} 
                   onChange={e => onFieldChange('structureWarranty', e.target.value)} 
                   placeholder="Ex: 10 anos" 
+                  className="placeholder:text-gray-400"
                 />
               </div>
 
@@ -118,6 +122,7 @@ export const WarrantiesSection: React.FC<WarrantiesSectionProps> = ({
                   value={formData.installationWarranty} 
                   onChange={e => onFieldChange('installationWarranty', e.target.value)} 
                   placeholder="Ex: 5 anos" 
+                  className="placeholder:text-gray-400"
                 />
               </div>
             </div>

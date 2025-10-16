@@ -13,59 +13,50 @@ export function mapFormToProposalPayload(
   calculations: Calculations,
   sellerData?: { seller_id?: string; seller_name?: string }
 ): Omit<ProposalData, 'id' | 'created_at' | 'updated_at'> {
+  // Se não tem endereço, enviar null nos campos de endereço
+  const hasNoAddress = !formData.cep && !formData.address && !formData.city && !formData.state && !formData.neighborhood;
   return {
-    // Dados do cliente
     client_name: formData.clientName,
     phone: formData.phone,
     email: formData.email,
-    cep: formData.cep,
-    address: formData.address,
-    city: formData.city,
-    state: formData.state,
-    neighborhood: formData.neighborhood,
-    complement: formData.complement,
+    cep: hasNoAddress ? null : formData.cep || null,
+    address: hasNoAddress ? null : formData.address || null,
+    city: hasNoAddress ? null : formData.city || null,
+    state: hasNoAddress ? null : formData.state || null,
+    neighborhood: hasNoAddress ? null : formData.neighborhood || null,
+    complement: hasNoAddress ? null : formData.complement || null,
 
-    // Dados do sistema
     system_power: formData.systemPower,
     module_quantity: formData.moduleQuantity,
     module_power: formData.modulePower,
     module_brand: formData.moduleBrand,
     inverter_brand: formData.inverterBrand,
     inverter_power: formData.inverterPower,
-    
-    // Características do projeto
     structure_type: formData.structureType,
     monitoring: formData.monitoring,
 
-    // Dados de consumo e conexão
     monthly_consumption: formData.monthlyConsumption,
     desired_kwh: formData.desiredKwh,
     average_bill: formData.averageBill,
     connection_type: formData.connectionType,
 
-    // Cálculos
     monthly_generation: calculations.monthlyGeneration,
     monthly_savings: calculations.monthlySavings,
     required_area: calculations.requiredArea,
     total_value: calculations.totalValue,
 
-    // Dados comerciais
     payment_method: formData.paymentMethod,
     price_per_kwp: formData.pricePerKwp,
     notes: formData.observations,
 
-    // Garantias
     module_warranty: formData.moduleWarranty,
     inverter_warranty: formData.inverterWarranty,
     micro_inverter_warranty: formData.microInverterWarranty,
     structure_warranty: formData.structureWarranty,
     installation_warranty: formData.installationWarranty,
 
-    // Dados do vendedor (se fornecidos)
     seller_id: sellerData?.seller_id,
     seller_name: sellerData?.seller_name,
-
-    // Status padrão
     status: 'draft',
   };
 }
