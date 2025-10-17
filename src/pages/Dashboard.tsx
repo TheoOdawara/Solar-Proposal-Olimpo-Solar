@@ -52,7 +52,7 @@ const CHART_COLORS = ['#022136', '#ffbf06', '#034a5c', '#ffd43d', '#045f73'];
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
-  const { hasAdminAccess, loading: adminLoading, adminEmail } = useAdminAccess();
+  const { hasAdminAccess, loading: adminLoading, adminEmail, role } = useAdminAccess();
   const {
     proposals,
     allProposals,
@@ -196,8 +196,14 @@ const Dashboard = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Restrict access only to specific admin email
-  if (!hasAdminAccess) {
+  // Emails permitidos para admin
+  const allowedAdmins = [
+    "theoodawara@gmail.com",
+    "marketing.olimposolar@gmail.com"
+  ];
+
+  // Restrição: só admin e emails permitidos podem acessar
+  if (!hasAdminAccess || role !== "admin" || !allowedAdmins.includes(user?.email ?? "")) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center">
         <Card className="max-w-lg">
@@ -207,10 +213,11 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">
-              Esta área é exclusiva para administradores autorizados.
+              Esta área é exclusiva para administradores autorizados.<br />
+              Seu perfil não tem permissão para acessar o dashboard.
             </p>
             <p className="text-sm text-muted-foreground">
-              Apenas o email <strong>{adminEmail}</strong> tem acesso a este painel.
+              Apenas os emails <strong>theoodawara@gmail.com</strong> e <strong>marketing.olimposolar@gmail.com</strong> têm acesso a este painel.
             </p>
             <div className="flex gap-2 justify-center">
               <Button asChild variant="outline">

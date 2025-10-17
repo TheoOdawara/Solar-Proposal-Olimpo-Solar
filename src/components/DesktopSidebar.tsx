@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { Home, FileText, History, LogOut } from "lucide-react";
 
 const links = [
@@ -10,6 +11,7 @@ const links = [
 
 export const DesktopSidebar: React.FC = () => {
   const location = useLocation();
+  const { signOut, loading } = useAuth();
   return (
     <aside className="hidden md:flex flex-col w-64 h-screen bg-white border-r-2 border-[#E5EAF1] shadow-lg fixed top-0 left-0 z-40 pt-0">
       {/* Logo no topo */}
@@ -36,9 +38,15 @@ export const DesktopSidebar: React.FC = () => {
       </div>
       {/* Área de sair */}
       <div className="flex flex-col items-center px-4 pb-6">
-        <Link to="#" className="flex items-center gap-2 text-[#2A6F97] hover:text-[#0D3B66] text-sm font-semibold px-3 py-2 rounded transition-colors">
+        <button
+          type="button"
+          className="flex items-center gap-2 text-[#2A6F97] hover:text-[#0D3B66] text-sm font-semibold px-3 py-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-[#0D3B66]"
+          onClick={signOut}
+          disabled={loading}
+          aria-label="Sair do sistema"
+        >
           <LogOut className="h-5 w-5" /> Sair
-        </Link>
+        </button>
       </div>
     </aside>
   );

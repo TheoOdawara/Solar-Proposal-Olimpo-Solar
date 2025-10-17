@@ -12,6 +12,17 @@ export const useProposals = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  const getErrorMessage = (error: unknown) => {
+    if (!error) return 'Erro desconhecido';
+    if (error instanceof Error) return error.message;
+    try {
+      const e: any = error as any;
+      return e?.message || e?.details || e?.hint || JSON.stringify(e);
+    } catch {
+      return String(error);
+    }
+  };
+
   const fetchProposals = useCallback(async () => {
     try {
       setLoading(true);
@@ -47,11 +58,12 @@ export const useProposals = () => {
         status: item.status as ProposalData['status'] || 'draft'
       })));
     } catch (error: unknown) {
-      console.error('Error fetching proposals:', error);
-      errorLogger.logDatabaseError(error, { context: 'fetchProposals' });
+      const message = getErrorMessage(error);
+      console.error('Error fetching proposals:', message, error);
+      errorLogger.logDatabaseError(error, { context: 'fetchProposals', message });
       toast({
         title: "Erro ao carregar propostas",
-        description: error instanceof Error ? error.message : "Erro desconhecido ao carregar propostas",
+        description: message,
         variant: "destructive"
       });
     } finally {
@@ -81,12 +93,14 @@ export const useProposals = () => {
       // Refresh the list
       await fetchProposals();
       return data;
-  } catch (error: unknown) {
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
       toast({
         title: "Erro ao salvar proposta",
-    description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description: message,
         variant: "destructive"
       });
+      errorLogger.logDatabaseError(error, { context: 'saveProposal', message });
       throw error;
     } finally {
       setLoading(false);
@@ -113,12 +127,14 @@ export const useProposals = () => {
       } : p));
       
       return data;
-  } catch (error: unknown) {
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
       toast({
         title: "Erro ao atualizar proposta",
-    description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description: message,
         variant: "destructive"
       });
+      errorLogger.logDatabaseError(error, { context: 'updateProposal', message });
       throw error;
     } finally {
       setLoading(false);
@@ -150,8 +166,10 @@ export const useProposals = () => {
         // Update existing proposal
         return await updateProposal(id, proposalData);
       }
-  } catch (error: unknown) {
-      console.error("Auto-save failed:", error);
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
+      console.error("Auto-save failed:", message, error);
+      errorLogger.logDatabaseError(error, { context: 'autoSaveProposal', message });
       // Don't show toast for auto-save failures to avoid annoying user
       throw error;
     }
@@ -174,12 +192,14 @@ export const useProposals = () => {
 
       // Refresh the list
       await fetchProposals();
-  } catch (error: unknown) {
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
       toast({
         title: "Erro ao excluir proposta",
-    description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description: message,
         variant: "destructive"
       });
+      errorLogger.logDatabaseError(error, { context: 'deleteProposal', message });
     } finally {
       setLoading(false);
     }
