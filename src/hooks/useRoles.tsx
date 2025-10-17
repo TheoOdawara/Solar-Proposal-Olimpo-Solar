@@ -3,7 +3,7 @@ import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
 
-type AppRole = 'admin' | 'user';
+type AppRole = 'admin' | 'vendedor' | 'cliente' | 'user';
 
 export const useRoles = () => {
   const { user } = useAuth();
@@ -69,12 +69,16 @@ export const useRoles = () => {
   };
 
   const isAdmin = userRole === 'admin';
+  const isVendedor = userRole === 'vendedor';
+  const isCliente = userRole === 'cliente';
   const isUser = userRole === 'user';
 
   return {
     userRole,
     loading,
     isAdmin,
+    isVendedor,
+    isCliente,
     isUser,
     assignRole,
     refresh: loadUserRole
