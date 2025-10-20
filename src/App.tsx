@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Metrics from "./pages/Metrics";
 import ProposalsHistory from "./pages/ProposalsHistory";
+import GerenciarPerfis from "./pages/GerenciarPerfis";
 import AuthPage from "./pages/AuthPage";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -76,6 +77,7 @@ const App = () => (
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/metrics" element={<Metrics />} />
                         <Route path="/historico" element={<ProposalsHistory />} />
+                        <Route path="/gerenciar-perfis" element={<GerenciarPerfis />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>

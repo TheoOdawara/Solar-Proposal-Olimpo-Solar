@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
-const ADMIN_EMAILS = [
-  'marketing.olimposolar@gmail.com',
-  'theoodawara@gmail.com'
-];
 
 export const useAdminAccess = () => {
   const { user, loading: authLoading } = useAuth();
@@ -15,12 +11,6 @@ export const useAdminAccess = () => {
   useEffect(() => {
     const checkAccess = async () => {
       if (user?.email) {
-        // Permite se email autorizado
-        if (ADMIN_EMAILS.includes(user.email)) {
-          setHasAdminAccess(true);
-          setRole('admin');
-          return;
-        }
         // Busca role do usuário no banco via API Supabase
         try {
           const { data, error } = await supabase
@@ -50,7 +40,6 @@ export const useAdminAccess = () => {
   return {
     hasAdminAccess,
     loading: authLoading,
-    adminEmail: ADMIN_EMAILS.join(', '),
     role
   };
 };

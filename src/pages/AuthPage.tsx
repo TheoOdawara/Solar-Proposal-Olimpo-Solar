@@ -13,6 +13,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const { signIn, signUp, signInWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -29,10 +30,10 @@ const AuthPage = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password || !confirmPassword) return;
+    if (!fullName || !email || !password || !confirmPassword) return;
     if (password !== confirmPassword) return;
     try {
-      await signUp(email, password);
+      await signUp(email, password, fullName);
       navigate("/dashboard"); // ou "/" se preferir
     } catch {
       console.debug('Sign-up failed');
@@ -186,6 +187,21 @@ const AuthPage = () => {
                 {/* Conteúdo Cadastro */}
                 <TabsContent value="register" className="space-y-4 mt-6">
                   <form onSubmit={handleSignUp} className="space-y-4">
+                    {/* Nome completo */}
+                    <div className="space-y-2">
+                      <Label htmlFor="register-fullname" className="font-medium text-[#022136]">Nome completo</Label>
+                      <div className="relative">
+                        <Input
+                          id="register-fullname"
+                          type="text"
+                          placeholder="Nome completo"
+                          className="pl-4 border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200"
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
                     {/* E-mail */}
                     <div className="space-y-2">
                       <Label htmlFor="register-email" className="font-medium text-[#022136]">E-mail</Label>

@@ -3,6 +3,7 @@ import { supabase } from "../integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 import { useToast } from "@/hooks/use-toast";
 import { setupFirstAdmin } from '@/utils/adminSetup';
+import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import { errorLogger } from '@/utils/errorLogger';
 
 export const useAuth = () => {
@@ -27,20 +28,34 @@ export const useAuth = () => {
         
         setSession(session);
         setUser(session?.user ?? null);
-        
+
+        // Após login, cria perfil se não existir
         if (event === 'SIGNED_IN' && session?.user) {
-          console.log('🟢 [Auth State] Login bem-sucedido para:', session.user.email);
-          console.log('🔵 [Auth State] Configurando primeiro admin...');
-          
-          // Set up roles for users
-          setTimeout(async () => {
-            try {
-              await setupFirstAdmin(session.user.id);
-              console.log('🟢 [Auth State] Primeiro admin configurado com sucesso');
-            } catch (error) {
-              console.error('🔴 [Auth State] Erro ao configurar primeiro admin:', error);
-            }
-          }, 0);
+          const userId = session.user.id;
+          const email = session.user.email;
+          const fullName = session.user.user_metadata?.full_name || '';
+
+          // Cria perfil se não existir
+          const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('id')
+            .eq('id', userId)
+            .single();
+          if (!profile && fullName) {
+            await supabaseClient.from('profiles').insert({ id: userId, full_name: fullName });
+          }
+
+          // Garante que emails admin recebam role 'admin' automaticamente
+          const adminEmails = [
+            'theoodawara@gmail.com',
+            'marketing.olimposolar@gmail.com'
+          ];
+          if (adminEmails.includes(email)) {
+            await supabaseClient.from('user_roles').upsert({ user_id: userId, role: 'admin' });
+          } else {
+            await setupFirstAdmin(userId);
+          }
+
           setTimeout(() => {
             setLoading(false);
           }, 0);
@@ -79,7 +94,7 @@ export const useAuth = () => {
     };
   }, []);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string, fullName?: string) => {
     try {
       setLoading(true);
       
@@ -105,20 +120,31 @@ export const useAuth = () => {
       const redirectUrl = `${window.location.origin}/email-confirmation`;
 
       // Nunca logar senha em nenhum momento
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl
+          emailRedirectTo: redirectUrl,
+          data: fullName ? { full_name: fullName } : undefined
         }
       });
-      
+
       if (error) {
-        // Nunca logar senha
         errorLogger.logAuthError(error, { context: 'signup', email });
         throw error;
       }
-      
+
+      // Cria perfil na tabela profiles se cadastro OK e user.id disponível
+      const userId = data?.user?.id;
+      if (userId && fullName) {
+        const { error: profileError } = await supabaseClient
+          .from('profiles')
+          .insert({ id: userId, full_name: fullName });
+        if (profileError) {
+          errorLogger.logAuthError(profileError, { context: 'profile_insert', userId, fullName });
+        }
+      }
+
       toast({
         title: "Conta criada com sucesso!",
         description: "Confirme o cadastro no email.",
