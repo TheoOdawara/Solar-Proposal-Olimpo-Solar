@@ -14,7 +14,8 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // place toasts bottom-right on all viewports to avoid blocking top content on mobile
+      "fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-[420px] p-4",
       className
     )}
     {...props}

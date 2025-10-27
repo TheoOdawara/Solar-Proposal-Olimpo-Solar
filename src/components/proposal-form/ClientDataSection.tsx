@@ -1,193 +1,205 @@
 import React from 'react';
-import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Home, Phone, MapPin, CheckCircle } from "lucide-react";
-import type { FormData } from '@/types/proposal';
+import { Phone, MapPin } from "lucide-react";
+import { useFormContext, Controller } from 'react-hook-form';
+import { formatPhone, formatCep } from '@/utils/formatters';
 
 interface ClientDataSectionProps {
-  formData: FormData;
-  onFieldChange: (field: keyof FormData, value: string | number) => void;
-  onPhoneChange: (value: string) => void;
-  onCepChange: (value: string) => void;
   hasNoAddress: boolean;
   onNoAddressChange: (checked: boolean) => void;
   isLoadingCep: boolean;
-  isComplete: boolean;
+  fetchAddressByCep?: (cep: string) => Promise<void>;
 }
 
 export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
-  formData,
-  onFieldChange,
-  onPhoneChange,
-  onCepChange,
   hasNoAddress,
   onNoAddressChange,
   isLoadingCep,
-  isComplete
+  fetchAddressByCep
 }) => {
+  const { register, control, setValue } = useFormContext();
+
+  const handleNoAddressToggle = (checked: boolean) => {
+    onNoAddressChange(checked);
+    if (checked) {
+      setValue('cep', '');
+      setValue('address', '');
+      setValue('number', '');
+      setValue('neighborhood', '');
+      setValue('city', '');
+      setValue('state', '');
+      setValue('complement', '');
+    }
+  };
+
   return (
-    <AccordionItem value="client" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
-      <AccordionTrigger className="px-6 py-4 hover:no-underline">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg">
-            <Home className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-xl font-inter font-semibold">Dados do Cliente</span>
-          {isComplete && <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />}
+    <div className="bg-[#F6F6F6] border border-[#E0E7EF] shadow-lg rounded-2xl overflow-hidden px-8 pt-6 pb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+        {/* Nome */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="clientName" className="text-xs font-semibold text-[#2A6F97] uppercase">Nome do Cliente *</Label>
+          <Input
+            id="clientName"
+            placeholder="Nome completo do cliente"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            {...register('clientName')}
+          />
         </div>
-      </AccordionTrigger>
-      <AccordionContent className="px-6 pb-6">
-        <div className="space-y-4">
-          <div className="md:col-span-2">
-            <Label htmlFor="clientName">Nome do Cliente *</Label>
-            <Input 
-              id="clientName" 
-              value={formData.clientName} 
-              onChange={e => onFieldChange('clientName', e.target.value)} 
-              placeholder="Nome completo do cliente" 
-                className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
+
+        {/* Telefone */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="phone" className="text-xs font-semibold text-[#2A6F97] uppercase">Telefone *</Label>
+          <div className="relative">
+            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#468FAF]" />
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  id="phone"
+                  placeholder="(67) 99999-9999"
+                  className="pl-10 text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+                  maxLength={15}
+                  value={field.value || ''}
+                  onChange={(e) => {
+                    const v = formatPhone(e.target.value);
+                    field.onChange(v);
+                  }}
+                />
+              )}
             />
           </div>
+        </div>
 
-          <div>
-            <Label htmlFor="phone">Telefone *</Label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                id="phone" 
-                value={formData.phone} 
-                onChange={e => onPhoneChange(e.target.value)} 
-                placeholder="(67) 99999-9999" 
-                  className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                maxLength={15}
-              />
-            </div>
-          </div>
+        {/* E-mail */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="email" className="text-xs font-semibold text-[#2A6F97] uppercase">E-mail</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="cliente@email.com"
+            className="text-base text-[#468FAF] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            {...register('email')}
+          />
+        </div>
 
-          <div>
-            <Label htmlFor="email">E-mail</Label>
-            <Input 
-              id="email" 
-              type="email"
-              value={formData.email} 
-              onChange={e => onFieldChange('email', e.target.value)} 
-              placeholder="cliente@email.com" 
-                className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
+        {/* Checkbox endereço */}
+        <div className="flex items-center gap-2 col-span-1 sm:col-span-2 lg:col-span-3 mt-2">
+          <Checkbox
+            id="hasNoAddress"
+            checked={hasNoAddress}
+            onCheckedChange={handleNoAddressToggle}
+            className="accent-[#0D3B66] w-4 h-4"
+          />
+          <Label htmlFor="hasNoAddress" className="text-[#2A6F97] text-sm font-medium">Não tenho o endereço agora</Label>
+        </div>
+
+        {/* CEP */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="cep" className="text-xs font-semibold text-[#2A6F97] uppercase">CEP {!hasNoAddress && "*"}</Label>
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#468FAF]" />
+            <Controller
+              name="cep"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  id="cep"
+                  placeholder="00000-000"
+                  className="pl-10 text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+                  disabled={isLoadingCep || hasNoAddress}
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(formatCep(e.target.value))}
+                  onBlur={() => {
+                    const clean = (field.value || '').replace(/\D/g, '');
+                    if (clean.length === 8 && !hasNoAddress && fetchAddressByCep) fetchAddressByCep(field.value || '');
+                  }}
+                />
+              )}
             />
-          </div>
-
-          {/* Endereço opcional */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="hasNoAddress" 
-                checked={hasNoAddress} 
-                onCheckedChange={onNoAddressChange}
-              />
-              <Label htmlFor="hasNoAddress" className="text-sm font-medium text-muted-foreground">
-                Não tenho o endereço agora
-              </Label>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="cep">CEP {!hasNoAddress && "*"}</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    id="cep" 
-                    value={formData.cep} 
-                    onChange={e => onCepChange(e.target.value)} 
-                    placeholder="00000-000" 
-                      className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                    disabled={isLoadingCep || hasNoAddress}
-                  />
-                  {isLoadingCep && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    </div>
-                  )}
-                </div>
+            {isLoadingCep && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0D3B66]"></div>
               </div>
-
-              <div>
-                <Label htmlFor="address">Endereço</Label>
-                <Input 
-                  id="address" 
-                  value={formData.address} 
-                  onChange={e => onFieldChange('address', e.target.value)} 
-                  placeholder="Rua, Avenida..." 
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                  disabled={hasNoAddress}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="number">Número</Label>
-                <Input 
-                  id="number" 
-                  value={formData.number} 
-                  onChange={e => onFieldChange('number', e.target.value)} 
-                  placeholder="123" 
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                  disabled={hasNoAddress}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="neighborhood">Bairro</Label>
-                <Input 
-                  id="neighborhood" 
-                  value={formData.neighborhood} 
-                  onChange={e => onFieldChange('neighborhood', e.target.value)} 
-                  placeholder="Nome do bairro" 
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                  disabled={hasNoAddress}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="city">Cidade</Label>
-                <Input 
-                  id="city" 
-                  value={formData.city} 
-                  onChange={e => onFieldChange('city', e.target.value)} 
-                  placeholder="Campo Grande" 
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                  disabled={hasNoAddress}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="state">Estado</Label>
-                <Input 
-                  id="state" 
-                  value={formData.state} 
-                  onChange={e => onFieldChange('state', e.target.value)} 
-                  placeholder="MS" 
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                  maxLength={2}
-                  disabled={hasNoAddress}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="complement">Complemento</Label>
-                <Input 
-                  id="complement" 
-                  value={formData.complement} 
-                  onChange={e => onFieldChange('complement', e.target.value)} 
-                  placeholder="Apto 101, Bloco A..." 
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 placeholder:text-gray-400"
-                  disabled={hasNoAddress}
-                />
-              </div>
-            </div>
+            )}
           </div>
         </div>
-      </AccordionContent>
-    </AccordionItem>
+
+        {/* Endereço */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="address" className="text-xs font-semibold text-[#2A6F97] uppercase">Endereço</Label>
+          <Input
+            id="address"
+            placeholder="Rua, Avenida..."
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            disabled={hasNoAddress}
+            {...register('address')}
+          />
+        </div>
+
+        {/* Número */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="number" className="text-xs font-semibold text-[#2A6F97] uppercase">Número</Label>
+          <Input
+            id="number"
+            placeholder="123"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            disabled={hasNoAddress}
+            {...register('number')}
+          />
+        </div>
+
+        {/* Bairro */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="neighborhood" className="text-xs font-semibold text-[#2A6F97] uppercase">Bairro</Label>
+          <Input
+            id="neighborhood"
+            placeholder="Nome do bairro"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            disabled={hasNoAddress}
+            {...register('neighborhood')}
+          />
+        </div>
+
+        {/* Cidade */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="city" className="text-xs font-semibold text-[#2A6F97] uppercase">Cidade</Label>
+          <Input
+            id="city"
+            placeholder="Campo Grande"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            disabled={hasNoAddress}
+            {...register('city')}
+          />
+        </div>
+
+        {/* Estado */}
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="state" className="text-xs font-semibold text-[#2A6F97] uppercase">Estado</Label>
+          <Input
+            id="state"
+            placeholder="MS"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            maxLength={2}
+            disabled={hasNoAddress}
+            {...register('state')}
+          />
+        </div>
+
+        {/* Complemento */}
+        <div className="flex flex-col gap-1 lg:col-span-3 sm:col-span-2">
+          <Label htmlFor="complement" className="text-xs font-semibold text-[#2A6F97] uppercase">Complemento</Label>
+          <Input
+            id="complement"
+            placeholder="Apto 101, Bloco A..."
+            className="text-base text-[#468FAF] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            disabled={hasNoAddress}
+            {...register('complement')}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

@@ -1,95 +1,94 @@
 import { useState, useEffect } from 'react';
-import { supabase } from "../integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 import { useToast } from "@/hooks/use-toast";
 import { setupFirstAdmin } from '@/utils/adminSetup';
-import { supabase as supabaseClient } from '@/integrations/supabase/client';
 import { errorLogger } from '@/utils/errorLogger';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log('🔵 [Auth State] Configurando listener de mudanças de estado...');
-    
-    // Set up auth state listener FIRST
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    timeoutId = setTimeout(() => {
+      setError('Não foi possível conectar ao servidor. Verifique a conexão com o Supabase.');
+      setLoading(false);
+    }, 10000); // 10 segundos
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔵 [Auth State] Mudança detectada:', { event, userId: session?.user?.id });
-        console.log('🔵 [Auth State] Detalhes da sessão:', {
-          hasSession: !!session,
-          hasUser: !!session?.user,
-          userEmail: session?.user?.email,
-          provider: session?.user?.app_metadata?.provider
-        });
-        
+        clearTimeout(timeoutId);
         setSession(session);
         setUser(session?.user ?? null);
+        try {
+          if (event === 'SIGNED_IN' && session?.user) {
+            const userId = session.user.id;
+            const email = session.user.email;
+            const fullName = session.user.user_metadata?.full_name || '';
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('id', userId)
+              .single();
+            if (!profile && fullName) {
+              await supabase.from('profiles').insert({ id: userId, full_name: fullName });
+            }
+            const adminEmails = [
+              'theoodawara@gmail.com',
+              'marketing.olimposolar@gmail.com'
+            ];
+            if (adminEmails.includes(email)) {
+              // Avoid PostgREST 409 conflict by checking existing row first.
+              const { data: existingRole } = await supabase
+                .from('user_roles')
+                .select('id, role')
+                .eq('user_id', userId)
+                .maybeSingle();
 
-        // Após login, cria perfil se não existir
-        if (event === 'SIGNED_IN' && session?.user) {
-          const userId = session.user.id;
-          const email = session.user.email;
-          const fullName = session.user.user_metadata?.full_name || '';
-
-          // Cria perfil se não existir
-          const { data: profile } = await supabaseClient
-            .from('profiles')
-            .select('id')
-            .eq('id', userId)
-            .single();
-          if (!profile && fullName) {
-            await supabaseClient.from('profiles').insert({ id: userId, full_name: fullName });
-          }
-
-          // Garante que emails admin recebam role 'admin' automaticamente
-          const adminEmails = [
-            'theoodawara@gmail.com',
-            'marketing.olimposolar@gmail.com'
-          ];
-          if (adminEmails.includes(email)) {
-            await supabaseClient.from('user_roles').upsert({ user_id: userId, role: 'admin' });
-          } else {
-            await setupFirstAdmin(userId);
-          }
-
-          setTimeout(() => {
+              if (existingRole && existingRole.id) {
+                // update role if needed
+                await supabase
+                  .from('user_roles')
+                  .update({ role: 'admin' })
+                  .eq('user_id', userId);
+              } else {
+                // insert new role
+                await supabase.from('user_roles').insert({ user_id: userId, role: 'admin' });
+              }
+            } else {
+              await setupFirstAdmin(userId);
+            }
+            setTimeout(() => {
+              setLoading(false);
+            }, 0);
+          } else if (event === 'SIGNED_OUT') {
             setLoading(false);
-          }, 0);
-        } else if (event === 'SIGNED_OUT') {
-          console.log('🟡 [Auth State] Usuário deslogado');
+          }
+        } catch (err) {
+          const e = err instanceof Error ? err : new Error(String(err));
+          errorLogger.logAuthError(e, { context: 'auth_onChange' });
+          setError('Erro ao conectar ao Supabase.');
           setLoading(false);
-        } else if (event === 'TOKEN_REFRESHED') {
-          console.log('🔵 [Auth State] Token renovado');
-        } else {
-          console.log('🔵 [Auth State] Evento não tratado:', event);
         }
       }
     );
 
-    // THEN check for existing session
-    console.log('🔵 [Auth State] Verificando sessão existente...');
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('🔴 [Auth State] Erro ao obter sessão:', error);
-      } else {
-        console.log('🔵 [Auth State] Sessão existente:', {
-          hasSession: !!session,
-          hasUser: !!session?.user,
-          userEmail: session?.user?.email
-        });
+    supabase.auth.getSession().then(({ data: { session }, error: sessionError }) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (sessionError) {
+        setError('Erro ao obter sessão do Supabase.');
       }
-      
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
     return () => {
-      console.log('🔵 [Auth State] Removendo listener de autenticação');
+      if (timeoutId) clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);
@@ -137,7 +136,7 @@ export const useAuth = () => {
       // Cria perfil na tabela profiles se cadastro OK e user.id disponível
       const userId = data?.user?.id;
       if (userId && fullName) {
-        const { error: profileError } = await supabaseClient
+        const { error: profileError } = await supabase
           .from('profiles')
           .insert({ id: userId, full_name: fullName });
         if (profileError) {
@@ -333,6 +332,7 @@ export const useAuth = () => {
     user,
     session,
     loading,
+    error,
     signUp,
     signIn,
     signInWithGoogle,

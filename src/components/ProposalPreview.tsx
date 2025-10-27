@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, FileDown, MapPin, Calendar, Zap, CheckCircle, Star, Globe, Shield, Wrench, Clock, Battery, BarChart3, TrendingUp, Lightbulb, DollarSign, Home, Leaf, FileText } from "lucide-react";
+import { ArrowLeft, FileDown, CheckCircle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, Cell, ReferenceLine } from 'recharts';
 import { LogoOlimpo } from "@/components/LogoOlimpo";
 import ProposalCoverPage from "./ProposalCoverPage";
-import Footer from "./Footer";
 
 // Importar tipos e utilitários centralizados
-import type { FormData, Calculations, ProposalPreviewProps } from '@/types/proposal';
+import type { ProposalPreviewProps } from '@/types/proposal';
 import { formatCurrency, formatDateShort } from '@/utils/formatters';
-import { calculateEconomyData, calculateRealMetrics, calculateSolarROI } from '@/utils/calculations';
-import { CONNECTION_TYPES, COMPANY_DATA } from '@/constants/solarData';
+import { calculateEconomyData, calculateRealMetrics } from '@/utils/calculations';
+import { CONNECTION_TYPES } from '@/constants/solarData';
 
 interface ProposalPreviewPropsExtended extends ProposalPreviewProps {
   onSaveProposal?: () => void;
@@ -25,8 +23,6 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
   onSaveProposal
 }) => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
-  const calculateYearlySavings = () => calculations.monthlySavings * 12;
-  const calculateCurrentBill = () => calculations.monthlySavings;
 
   // Usar utilitários centralizados para cálculos
   const economyData = calculateEconomyData({
@@ -35,7 +31,52 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
   });
 
   const metricas = calculateRealMetrics(formData);
-  const solarROI = calculateSolarROI(calculations.monthlySavings, calculations.totalValue);
+  // Memoize heavy derived datasets to avoid recomputation on every render
+  const annualSavings = economyData?.savingsPerYear || 0;
+  const investmentValue = calculations?.totalValue || 0;
+
+  const paybackYears = useMemo(() => {
+    if (!annualSavings || annualSavings === 0) return 0;
+    return Math.ceil(investmentValue / annualSavings);
+  }, [investmentValue, annualSavings]);
+
+  const returnData = useMemo(() => {
+    const data = [] as Array<{ year: string; accumulated: number; color: string }>;
+    let cumulativeReturn = -investmentValue;
+    for (let year = 0; year <= 25; year++) {
+      if (year === 0) {
+        data.push({ year: `Ano ${year}`, accumulated: cumulativeReturn, color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e' });
+      } else {
+        cumulativeReturn += annualSavings;
+        data.push({ year: `Ano ${year}`, accumulated: cumulativeReturn, color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e' });
+      }
+    }
+    return data;
+  }, [investmentValue, annualSavings]);
+
+  const monthlyData = useMemo(() => {
+    const baseGeneration = formData.systemPower * 5.0 * 30;
+    const baseConsumption = calculations.monthlyGeneration;
+    const seasonalVariations = [
+      { month: 'Jan', genVar: 1.15, consVar: 1.1 },
+      { month: 'Fev', genVar: 1.1, consVar: 1.05 },
+      { month: 'Mar', genVar: 1.0, consVar: 1.0 },
+      { month: 'Abr', genVar: 0.95, consVar: 0.9 },
+      { month: 'Mai', genVar: 0.85, consVar: 0.8 },
+      { month: 'Jun', genVar: 0.8, consVar: 0.75 },
+      { month: 'Jul', genVar: 0.85, consVar: 0.8 },
+      { month: 'Ago', genVar: 0.9, consVar: 0.85 },
+      { month: 'Set', genVar: 1.0, consVar: 0.95 },
+      { month: 'Out', genVar: 1.1, consVar: 1.05 },
+      { month: 'Nov', genVar: 1.15, consVar: 1.1 },
+      { month: 'Dez', genVar: 1.2, consVar: 1.15 },
+    ];
+    return seasonalVariations.map(({ month, genVar, consVar }) => ({
+      month,
+      generation: Math.round(baseGeneration * genVar),
+      consumption: Math.round(baseConsumption * consVar),
+    }));
+  }, [formData.systemPower, calculations.monthlyGeneration]);
   
   // Handler para geração do PDF com feedback visual
   const handleGeneratePDF = async () => {
@@ -236,32 +277,8 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
                {/* GRÁFICO 1: SEU RETORNO - OTIMIZADO PARA A4 */}
                <div className="mb-4">
                 {(() => {
-              // Calcular dados do retorno
-              const annualSavings = economyData.savingsPerYear;
-              const investmentValue = calculations.totalValue;
-              const paybackYears = Math.ceil(investmentValue / annualSavings);
-
-              // Gerar dados para 25 anos
-              const returnData = [];
-              let cumulativeReturn = -investmentValue; // Começar negativo (investimento)
-
-              for (let year = 0; year <= 25; year++) {
-                if (year === 0) {
-                  returnData.push({
-                    year: `Ano ${year}`,
-                    accumulated: cumulativeReturn,
-                    color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e'
-                  });
-                } else {
-                  cumulativeReturn += annualSavings;
-                  returnData.push({
-                    year: `Ano ${year}`,
-                    accumulated: cumulativeReturn,
-                    color: cumulativeReturn < 0 ? '#ef4444' : '#22c55e'
-                  });
-                }
-              }
-              return <>
+                // usando returnData e paybackYears memoizados definidos mais acima
+                return <>
                       <h2 className="text-3xl font-bold text-center mb-3" style={{
                   color: '#ffffff'
                 }}>
@@ -601,79 +618,7 @@ const ProposalPreview: React.FC<ProposalPreviewPropsExtended> = ({
 
               <div className="h-80 mb-8">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={(() => {
-                  // Calcular variação sazonal baseada no padrão de irradiação solar
-                  const baseGeneration = formData.systemPower * 5.0 * 30;
-                  const baseConsumption = calculations.monthlyGeneration;
-                  const monthlyData = [];
-
-                  // Variações sazonais de irradiação para Campo Grande
-                  const seasonalVariations = [{
-                    month: 'Jan',
-                    genVar: 1.15,
-                    consVar: 1.1
-                  },
-                  // Verão - mais geração e consumo
-                  {
-                    month: 'Fev',
-                    genVar: 1.1,
-                    consVar: 1.05
-                  }, {
-                    month: 'Mar',
-                    genVar: 1.0,
-                    consVar: 1.0
-                  }, {
-                    month: 'Abr',
-                    genVar: 0.95,
-                    consVar: 0.9
-                  }, {
-                    month: 'Mai',
-                    genVar: 0.85,
-                    consVar: 0.8
-                  },
-                  // Inverno - menos geração
-                  {
-                    month: 'Jun',
-                    genVar: 0.8,
-                    consVar: 0.75
-                  }, {
-                    month: 'Jul',
-                    genVar: 0.85,
-                    consVar: 0.8
-                  }, {
-                    month: 'Ago',
-                    genVar: 0.9,
-                    consVar: 0.85
-                  }, {
-                    month: 'Set',
-                    genVar: 1.0,
-                    consVar: 0.95
-                  }, {
-                    month: 'Out',
-                    genVar: 1.1,
-                    consVar: 1.05
-                  }, {
-                    month: 'Nov',
-                    genVar: 1.15,
-                    consVar: 1.1
-                  }, {
-                    month: 'Dez',
-                    genVar: 1.2,
-                    consVar: 1.15
-                  }];
-                  seasonalVariations.forEach(({
-                    month,
-                    genVar,
-                    consVar
-                  }) => {
-                    monthlyData.push({
-                      month,
-                      generation: Math.round(baseGeneration * genVar),
-                      consumption: Math.round(baseConsumption * consVar)
-                    });
-                  });
-                  return monthlyData;
-                })()} margin={{
+                  <BarChart data={monthlyData} margin={{
                   top: 20,
                   right: 30,
                   left: 20,

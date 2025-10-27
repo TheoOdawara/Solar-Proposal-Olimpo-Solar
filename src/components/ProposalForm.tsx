@@ -1,28 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, Zap, History, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-import { useProposals, ProposalData } from "@/hooks/useProposals";
+import { useProposals } from "@/hooks/useProposals";
 import { useAuth } from "@/hooks/useAuth";
-import ProposalsHistory from "@/components/ProposalsHistory";
-import ProposalPreview from "@/components/ProposalPreview";
+const ProposalPreview = React.lazy(() => import('@/components/ProposalPreview'));
 import { SplineHero } from "@/components/SplineHero";
 import ProposalSummary from "@/components/ProposalSummary";
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+// html2canvas and jsPDF are heavy; load them on demand inside generatePDFFromHTML
 
 // Importar tipos e utilitários centralizados
 import type { FormData, ProposalFormProps } from '@/types/proposal';
 import { useProposalCalculations } from '@/hooks/useProposalCalculations';
-import { formatPhone, formatCep } from '@/utils/formatters';
+import { /*formatPhone, formatCep*/ } from '@/utils/formatters';
+import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { SOLAR_CONSTANTS } from '@/constants/solarData';
-import { mapFormToProposalPayload, mapProposalToForm, extractCalculationsFromProposal } from '@/utils/proposalMapping';
+import { mapFormToProposalPayload } from '@/utils/proposalMapping';
 
 // Importar componentes modulares do formulário
 import { ClientDataSection, ProjectDataSection } from '@/components/proposal-form';
@@ -38,8 +39,7 @@ const ProposalForm = ({
   } = useAuth();
   const {
     saveProposal
-  } = useProposals();
-  const [showHistory, setShowHistory] = useState(false);
+  } = useProposals({ autoFetch: false });
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     clientName: '',
@@ -76,6 +76,73 @@ const ProposalForm = ({
   });
   const [isLoadingCep, setIsLoadingCep] = useState(false);
   const [hasNoAddress, setHasNoAddress] = useState(false);
+
+  // Zod schemas for per-section validation
+  const numberPreprocess = (val: unknown) => {
+    if (typeof val === 'string') {
+      const cleaned = val.replace(/[^0-9.,-]/g, '').replace(',', '.');
+      const num = cleaned === '' ? undefined : Number(cleaned);
+      return isNaN(num) ? val : num;
+    }
+    return val;
+  };
+
+  const clientSchema = z.object({
+    clientName: z.string().min(1, 'Nome do cliente é obrigatório'),
+    phone: z.string().min(1, 'Telefone é obrigatório'),
+    email: z.string().email().optional().or(z.string().optional()),
+    cep: z.string().optional(),
+    address: z.string().optional(),
+    number: z.string().optional(),
+    neighborhood: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    complement: z.string().optional()
+  });
+
+  const projectSchema = z.object({
+    monthlyConsumption: z.preprocess(numberPreprocess, z.number().min(1, 'Consumo deve ser maior que 0')),
+    desiredKwh: z.preprocess(numberPreprocess, z.number().min(1, 'kWh desejados devem ser maior que 0')),
+    modulePower: z.preprocess(numberPreprocess, z.number().min(1, 'Potência do módulo é obrigatória')),
+    moduleBrand: z.string().min(1, 'Marca do módulo é obrigatória'),
+    inverterBrand: z.string().min(1, 'Marca do inversor é obrigatória'),
+    inverterPower: z.preprocess(numberPreprocess, z.number().min(1, 'Potência do inversor é obrigatória')),
+    pricePerKwp: z.preprocess(numberPreprocess, z.number().min(0.01, 'Preço por kWp deve ser maior que 0'))
+  });
+
+  const formSchema = clientSchema.merge(projectSchema).extend({
+    // keep other fields optional
+    observations: z.string().optional(),
+    connectionType: z.string().optional(),
+    paymentMethod: z.string().optional(),
+    averageBill: z.preprocess(numberPreprocess, z.number().min(0).optional())
+  });
+
+  const methods = useForm({
+    resolver: zodResolver(formSchema),
+    mode: 'onChange',
+    defaultValues: formData
+  });
+
+  // Sync react-hook-form values into local state used elsewhere (calculations, saving)
+  useEffect(() => {
+    const unsub = methods.watch((values) => {
+      setFormData((prev) => ({ ...prev, ...(values as Partial<FormData>) }));
+    });
+    return () => {
+      try {
+        // unsub can be a function or an object with unsubscribe
+        if (typeof (unsub as unknown) === 'function') {
+          (unsub as unknown as () => void)();
+        } else {
+          const sub = unsub as unknown as { unsubscribe?: () => void };
+          sub.unsubscribe?.();
+        }
+      } catch {
+        // ignore
+      }
+    };
+  }, [methods]);
 
   // Usar hook centralizado para cálculos
   const handleCalculationsChange = useCallback((newCalculations) => {
@@ -115,11 +182,6 @@ const ProposalForm = ({
       [field]: value
     }));
   };
-  const handlePhoneChange = (value: string) => {
-    const formatted = formatPhone(value);
-    handleInputChange('phone', formatted);
-  };
-
   // Busca endereço via ViaCEP
   const fetchAddressByCep = async (cep: string) => {
     const cleanCep = cep.replace(/\D/g, "");
@@ -164,16 +226,7 @@ const ProposalForm = ({
     }
   };
 
-  const handleCepChange = (value: string) => {
-    const formatted = formatCep(value);
-    handleInputChange('cep', formatted);
-    
-    // Busca automaticamente quando CEP tiver 8 dígitos e não estiver com "não tenho endereço" marcado
-    const cleanCep = formatted.replace(/\D/g, "");
-    if (cleanCep.length === 8 && !hasNoAddress) {
-      fetchAddressByCep(formatted);
-    }
-  };
+  // CEP handling is performed inside ClientDataSection via fetchAddressByCep prop
 
   const handleNoAddressChange = (checked: boolean) => {
     setHasNoAddress(checked);
@@ -253,33 +306,24 @@ const ProposalForm = ({
   };
 
   // Validações específicas para cada seção
-  const isClientDataComplete = () => {
-    return formData.clientName.trim() !== '' && formData.phone.trim() !== '';
-  };
-
-  const isProjectDataComplete = () => {
-    return formData.desiredKwh > 0 && 
-           formData.modulePower > 0 && 
-           formData.moduleBrand.trim() !== '' &&
-           formData.inverterBrand.trim() !== '' &&
-           formData.inverterPower > 0 &&
-           formData.pricePerKwp > 0;
-  };
-
-  const isEconomyDataComplete = () => {
-    return formData.connectionType.trim() !== '' && 
-           formData.averageBill > 0;
-  };
-
-  const isExtrasComplete = () => {
-    return formData.paymentMethod.trim() !== '';
-  };
+  // (removed isClientDataComplete / isProjectDataComplete - child sections are self-contained now)
 
 
 
-  // Novo handler: salva e mostra prévia
+
+
+  // Novo handler: salva e mostra prévia - usa validação do react-hook-form
   const handleGenerateProposal = async () => {
-    if (!validateForm()) return;
+    const valid = await methods.trigger();
+    if (!valid) {
+      toast({
+        title: 'Há campos obrigatórios faltando',
+        description: 'Por favor, corrija os erros nas seções antes de gerar a proposta.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    // sync form values are already set via watch
     await saveCurrentProposal();
     setShowPreview(true);
   };
@@ -287,6 +331,9 @@ const generatePDFFromHTML = async () => {
     // Ocultar elementos sticky/nav apenas durante a captura
     const container = document.getElementById('pdf-content');
     try {
+      // carregar dependências pesadas sob demanda
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDF = (await import('jspdf')).default;
       if (!container) {
         throw new Error('Elemento de proposta não encontrado');
       }
@@ -351,7 +398,6 @@ const generatePDFFromHTML = async () => {
       });
     } finally {
       // Restaurar visibilidade
-      const container = document.getElementById('pdf-content');
       if (container) {
         const hiddenEls = Array.from(container.querySelectorAll('[data-hide-in-pdf]')) as HTMLElement[];
         hiddenEls.forEach((el) => (el.style.visibility = ''));
@@ -376,30 +422,7 @@ const generatePDFFromHTML = async () => {
       // Error handling is done in the hook
     }
   };
-  const loadProposal = (proposal: ProposalData) => {
-    // Usar mapeamento centralizado para converter DB → Form
-    const mappedFormData = mapProposalToForm(proposal);
-    
-    setFormData(prev => ({
-      ...prev,
-      ...mappedFormData
-    }));
-
-    // Update parent component (os cálculos serão feitos automaticamente pelo hook)
-    if (onProposalDataChange) {
-      const calculationsData = extractCalculationsFromProposal(proposal);
-      onProposalDataChange({
-        clientName: proposal.client_name,
-        systemPower: proposal.system_power,
-        ...calculationsData
-      });
-    }
-    setShowHistory(false);
-    toast({
-      title: "Proposta carregada!",
-      description: "Os dados foram preenchidos automaticamente."
-    });
-  };
+  // loadProposal removed: proposal history is accessed on the dedicated history page
 
   // Se está no modo preview, mostra o componente de visualização
   if (showPreview) {
@@ -412,56 +435,71 @@ const generatePDFFromHTML = async () => {
         // Error handling is feito no hook
       }
     };
-    return <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} onSaveProposal={handleSaveProposal} />;
+    return (
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Carregando pré-visualização...</div>}>
+        <ProposalPreview formData={formData} calculations={calculations} onEdit={() => setShowPreview(false)} onGeneratePDF={generatePDFFromHTML} onSaveProposal={handleSaveProposal} />
+      </Suspense>
+    );
   }
-  return <div className="min-h-screen p-4">
+  return (
+    <FormProvider {...methods}>
+      <div className="min-h-screen p-4">
         <div className="max-w-screen-4xl mx-auto animate-fade-in">
           {/* Spline Hero Section */}
           <div className="mb-8">
             <SplineHero />
-          </div>        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Form - 3 columns */}
           <div className="lg:col-span-3 space-y-6">
-            {/* História de propostas */}
-            <div className="flex justify-end">
-              <Button variant="outline" size="sm" onClick={() => setShowHistory(!showHistory)} className="hover:bg-primary/5 hover:border-primary/40 transition-smooth">
-                <History className="h-4 w-4 mr-2" />
-                {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
-              </Button>
-            </div>
+            {/* (Histórico removido desta página) */}
 
             {/* Accordion Form Structure */}
-            <Accordion type="single" collapsible defaultValue="client" className="space-y-4">
+              <Accordion type="single" collapsible defaultValue="client" className="space-y-4">
+
               {/* Client data section - Componente Modular */}
-              <ClientDataSection
-                formData={formData}
-                onFieldChange={handleInputChange}
-                onPhoneChange={handlePhoneChange}
-                onCepChange={handleCepChange}
-                hasNoAddress={hasNoAddress}
-                onNoAddressChange={handleNoAddressChange}
-                isLoadingCep={isLoadingCep}
-                isComplete={isClientDataComplete()}
-              />
+              <AccordionItem value="client" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg shadow-sm bg-[#0D3B66]">
+                      <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#fff"/></svg>
+                    </div>
+                    <span className="text-xl font-inter font-semibold text-foreground">Dados do Cliente</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <ClientDataSection
+                    hasNoAddress={hasNoAddress}
+                    onNoAddressChange={handleNoAddressChange}
+                    isLoadingCep={isLoadingCep}
+                    fetchAddressByCep={fetchAddressByCep}
+                  />
+                </AccordionContent>
+              </AccordionItem>
 
               {/* Project data section - Componente Modular */}
-              <ProjectDataSection
-                formData={formData}
-                onFieldChange={handleInputChange}
-                isComplete={isProjectDataComplete()}
-              />
+              <AccordionItem value="project" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
+                <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg shadow-sm bg-[#FFD600]">
+                      <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 4V2m0 20v-2m8-8h2M2 12H4m15.07-7.07l-1.41 1.41M6.34 17.66l-1.41 1.41M17.66 17.66l-1.41-1.41M6.34 6.34L4.93 4.93M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="#0D3B66" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </div>
+                    <span className="text-xl font-inter font-semibold text-foreground">Dados do Projeto Solar</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <ProjectDataSection />
+                </AccordionContent>
+              </AccordionItem>
 
               {/* Economia section */}
               <AccordionItem value="economy" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-6 py-4 hover:no-underline">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-primary to-primary-hover rounded-lg shadow-sm">
-                      <Calculator className="h-5 w-5 text-white" />
+                    <div className="p-2 rounded-lg shadow-sm bg-[#2A6F97]">
+                      <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M8 17v-1a4 4 0 014-4h0a4 4 0 014 4v1M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                     <span className="text-xl font-inter font-semibold text-foreground">Dados de Economia</span>
-                    {isEconomyDataComplete() && (
-                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
-                    )}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
@@ -513,13 +551,10 @@ const generatePDFFromHTML = async () => {
               <AccordionItem value="extras" className="bg-white border-0 shadow-card rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-6 py-4 hover:no-underline">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-accent to-accent rounded-lg">
-                      <Zap className="h-5 w-5 text-accent-foreground" />
+                    <div className="p-2 rounded-lg shadow-sm bg-[#468FAF]">
+                      <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
-                    <span className="text-xl font-inter font-semibold">Complementos</span>
-                    {isExtrasComplete() && (
-                      <CheckCircle className="h-5 w-5 text-green-500 ml-auto" />
-                    )}
+                    <span className="text-xl font-inter font-semibold text-foreground">Complementos</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
@@ -575,25 +610,28 @@ const generatePDFFromHTML = async () => {
         </div>
 
 
-        {/* Histórico de Propostas */}
-        {showHistory && <ProposalsHistory onLoadProposal={loadProposal} />}
+  {/* Histórico de Propostas removido desta tela (mantido em página dedicada) */}
 
-        {/* Barra de ações fixa no mobile */}
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-background/95 backdrop-blur border-t border-border p-3">
-          <div className="max-w-screen-3xl mx-auto flex gap-3">
-            <Button 
-              onClick={handleGenerateProposal}
-              disabled={!isFormValid()}
-              className="flex-1 bg-gradient-to-r from-[#0D3B66] to-[#2A6F97] text-white shadow-lg transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
-              title={!isFormValid() ? "Complete todos os campos obrigatórios para gerar proposta" : ""}
-            >
-              <CheckCircle className="mr-2 h-5 w-5" /> Gerar Proposta
-            </Button>
+        {/* Barra de ações fixa no mobile (elevada acima do footer) */}
+        <div className="sm:hidden fixed bottom-20 left-0 right-0 z-40">
+          <div className="max-w-screen-3xl mx-auto px-4">
+            <div className="bg-white/95 backdrop-blur-sm border border-border rounded-t-xl shadow-lg p-3 flex items-center justify-center" style={{paddingBottom: 'env(safe-area-inset-bottom)'}}>
+              <Button
+                onClick={handleGenerateProposal}
+                disabled={!isFormValid()}
+                className="w-full max-w-md mx-auto bg-gradient-to-r from-[#0D3B66] to-[#2A6F97] text-white rounded-lg py-3 shadow-lg transition-smooth disabled:opacity-50 disabled:cursor-not-allowed"
+                title={!isFormValid() ? "Complete todos os campos obrigatórios para gerar proposta" : ""}
+              >
+                <CheckCircle className="mr-2 h-5 w-5" /> Gerar Proposta
+              </Button>
+            </div>
           </div>
         </div>
 
         <div className="pb-24"></div>
       </div>
-    </div>;
-  };
-  export default ProposalForm;
+    </div>
+    </FormProvider>
+  );
+};
+export default ProposalForm;

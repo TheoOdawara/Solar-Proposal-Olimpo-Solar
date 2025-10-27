@@ -7,11 +7,11 @@ import React, { useState } from 'react';
 import { Accordion } from "@/components/ui/accordion";
 import { ClientDataSection, ProjectDataSection } from '@/components/proposal-form';
 import type { FormData } from '@/types/proposal';
-import { formatPhone, formatCep } from '@/utils/formatters';
 import { SOLAR_CONSTANTS } from '@/constants/solarData';
+import { useForm, FormProvider } from 'react-hook-form';
 
 export const TestProposalFormSections = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const defaultValues: FormData = ({
     clientName: '',
     address: '',
     number: '',
@@ -48,32 +48,7 @@ export const TestProposalFormSections = () => {
   const [hasNoAddress, setHasNoAddress] = useState(false);
   const [isLoadingCep] = useState(false); // Estado controlado pelo componente pai no uso real
 
-  const handleInputChange = (field: keyof FormData, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handlePhoneChange = (value: string) => {
-    const formatted = formatPhone(value);
-    handleInputChange('phone', formatted);
-  };
-
-  const handleCepChange = (value: string) => {
-    const formatted = formatCep(value);
-    handleInputChange('cep', formatted);
-  };
-
-  const isClientDataComplete = () => {
-    return formData.clientName.trim() !== '' && formData.phone.trim() !== '';
-  };
-
-  const isProjectDataComplete = () => {
-    return formData.desiredKwh > 0 && 
-           formData.modulePower > 0 && 
-           formData.moduleBrand.trim() !== '' &&
-           formData.inverterBrand.trim() !== '' &&
-           formData.inverterPower > 0 &&
-           formData.pricePerKwp > 0;
-  };
+  const methods = useForm({ defaultValues });
 
 
 
@@ -81,32 +56,31 @@ export const TestProposalFormSections = () => {
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Teste dos Componentes Modulares</h1>
       
-      <Accordion type="single" collapsible defaultValue="client" className="space-y-4">
-        <ClientDataSection
-          formData={formData}
-          onFieldChange={handleInputChange}
-          onPhoneChange={handlePhoneChange}
-          onCepChange={handleCepChange}
-          hasNoAddress={hasNoAddress}
-          onNoAddressChange={setHasNoAddress}
-          isLoadingCep={isLoadingCep}
-          isComplete={isClientDataComplete()}
-        />
+      <FormProvider {...methods}>
+        <Accordion type="single" collapsible defaultValue="client" className="space-y-4">
+          <ClientDataSection
+            hasNoAddress={hasNoAddress}
+            onNoAddressChange={setHasNoAddress}
+            isLoadingCep={isLoadingCep}
+            fetchAddressByCep={async (cep: string) => {
+              // Simple stub: set city/state based on CEP (for test only)
+              methods.setValue('cep', cep);
+              if (cep.replace(/\D/g, '').length === 8) {
+                methods.setValue('city', 'TesteCity');
+                methods.setValue('state', 'TS');
+              }
+            }}
+          />
 
-        <ProjectDataSection
-          formData={formData}
-          onFieldChange={handleInputChange}
-          isComplete={isProjectDataComplete()}
-        />
-
-
-      </Accordion>
+          <ProjectDataSection />
+        </Accordion>
+      </FormProvider>
 
       {/* Debug: Mostrar estado atual */}
       <div className="mt-8 p-4 bg-gray-100 rounded-lg">
         <h3 className="font-bold mb-2">Estado Atual (Debug):</h3>
         <pre className="text-xs overflow-auto max-h-96">
-          {JSON.stringify(formData, null, 2)}
+          {JSON.stringify(methods.getValues(), null, 2)}
         </pre>
       </div>
     </div>

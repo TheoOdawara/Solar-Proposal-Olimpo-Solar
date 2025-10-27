@@ -54,9 +54,8 @@ const WhatsAppButton = ({ proposalData }: WhatsAppButtonProps) => {
     <div className="fixed bottom-6 right-6 z-50">
       <Button
         onClick={handleWhatsAppClick}
-        variant="whatsapp"
         size="lg"
-        className="rounded-full p-4 h-16 w-16 shadow-floating hover:scale-110 transition-all duration-300"
+        className="rounded-full p-4 h-16 w-16 shadow-floating bg-[#25D366] text-white hover:scale-110 transition-all duration-300"
         title={hasProposalData ? "Compartilhar proposta via WhatsApp" : "Suporte via WhatsApp"}
       >
         {hasProposalData ? (

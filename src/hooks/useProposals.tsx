@@ -7,7 +7,8 @@ import type { ProposalData } from '@/types/proposal';
 // Re-export ProposalData para manter compatibilidade
 export type { ProposalData };
 
-export const useProposals = () => {
+export const useProposals = (options?: { autoFetch?: boolean }) => {
+  const autoFetch = options?.autoFetch ?? true;
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -15,12 +16,17 @@ export const useProposals = () => {
   const getErrorMessage = (error: unknown) => {
     if (!error) return 'Erro desconhecido';
     if (error instanceof Error) return error.message;
-    try {
-      const e: any = error as any;
-      return e?.message || e?.details || e?.hint || JSON.stringify(e);
-    } catch {
-      return String(error);
+    if (typeof error === 'object' && error !== null) {
+      const e = error as Record<string, unknown>;
+      const maybeMessage = e['message'] || e['details'] || e['hint'];
+      if (typeof maybeMessage === 'string') return maybeMessage;
+      try {
+        return JSON.stringify(e);
+      } catch {
+        return String(e);
+      }
     }
+    return String(error);
   };
 
   const fetchProposals = useCallback(async () => {
@@ -206,8 +212,8 @@ export const useProposals = () => {
   };
 
   useEffect(() => {
-    fetchProposals();
-  }, [fetchProposals]);
+    if (autoFetch) fetchProposals();
+  }, [fetchProposals, autoFetch]);
 
   return {
     proposals,
