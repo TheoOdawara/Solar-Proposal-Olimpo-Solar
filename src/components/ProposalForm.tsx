@@ -22,7 +22,6 @@ import { /*formatPhone, formatCep*/ } from '@/utils/formatters';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { SOLAR_CONSTANTS } from '@/constants/solarData';
 import { mapFormToProposalPayload } from '@/utils/proposalMapping';
 
 // Importar componentes modulares do formulário
@@ -60,7 +59,7 @@ const ProposalForm = ({
     moduleBrand: '',
     inverterBrand: '',
     inverterPower: 0,
-  pricePerKwp: '',
+  pricePerKwp: undefined,
     averageBill: 0,
     connectionType: '',
     paymentMethod: '',
