@@ -158,7 +158,7 @@ const ProposalForm = ({
     }
   }, [onProposalDataChange, formData.clientName, formData.systemPower]);
 
-  const { calculations, calculateDerivedFields } = useProposalCalculations({
+  const { calculations, calculateDerivedFields, getCalculatedAverageBill } = useProposalCalculations({
     formData,
     onCalculationsChange: handleCalculationsChange
   });
@@ -503,45 +503,37 @@ const generatePDFFromHTML = async () => {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="averageBill" className="text-sm font-medium text-foreground">
-                        Valor médio da conta de luz (R$/mês) *
-                      </Label>
-                      <p className="text-xs text-muted-foreground">
-                        Calculado automaticamente com base no consumo
-                      </p>
-                      <Input 
-                        id="averageBill" 
-                        type="number" 
-                        step="0.01"
-                        value={formData.averageBill || ''} 
-                        readOnly
-                        className="bg-muted/30 cursor-not-allowed border-muted"
-                        placeholder="Será calculado automaticamente" 
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="connectionType" className="text-sm font-medium text-foreground">
-                        Tipo de ligação elétrica *
-                      </Label>
-                      <p className="text-xs text-muted-foreground invisible">
-                        &nbsp;
-                      </p>
-                      <Select value={formData.connectionType} onValueChange={value => handleInputChange('connectionType', value)}>
-                        <SelectTrigger className="bg-muted/30 border-muted hover:bg-muted/40 focus:bg-muted/30">
-                          <SelectValue placeholder="Selecione o tipo de ligação" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border shadow-lg">
-                          <SelectItem value="bifasico" className="hover:bg-muted focus:bg-muted">
-                            Bifásico (220V)
-                          </SelectItem>
-                          <SelectItem value="trifasico" className="hover:bg-muted focus:bg-muted">
-                            Trifásico (380V)
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                  <div className="bg-[#F6F6F6] border border-[#E0E7EF] shadow-lg rounded-2xl overflow-hidden px-8 pt-6 pb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                      {/* Valor médio da conta de luz */}
+                      <div className="flex flex-col gap-1">
+                        <Label htmlFor="averageBill" className="text-xs font-semibold text-[#2A6F97] uppercase">Valor médio da conta de luz (R$/mês) *</Label>
+                        <span className="text-xs text-muted-foreground mb-1">Calculado automaticamente com base no consumo</span>
+                          <Input
+                            id="averageBill"
+                            type="number"
+                            step="0.01"
+                            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-muted/30 cursor-not-allowed border-muted"
+                            value={formData.monthlyConsumption > 0 ? getCalculatedAverageBill(formData.monthlyConsumption).toFixed(2) : ''}
+                            readOnly
+                            placeholder="Será calculado automaticamente"
+                          />
+                      </div>
+
+                      {/* Tipo de ligação elétrica */}
+                      <div className="flex flex-col gap-1">
+                        <Label htmlFor="connectionType" className="text-xs font-semibold text-[#2A6F97] uppercase">Tipo de ligação elétrica *</Label>
+                        <span className="text-xs text-muted-foreground mb-1">Selecione conforme o padrão do imóvel</span>
+                        <select
+                          id="connectionType"
+                          className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+                          {...methods.register('connectionType', { required: true })}
+                        >
+                          <option value="">Selecione o tipo de ligação</option>
+                          <option value="bifasico">Bifásico (220V)</option>
+                          <option value="trifasico">Trifásico (380V)</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </AccordionContent>
@@ -558,24 +550,27 @@ const generatePDFFromHTML = async () => {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="paymentMethod">Forma de Pagamento *</Label>
-                      <Select value={formData.paymentMethod} onValueChange={value => handleInputChange('paymentMethod', value)}>
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="Selecione a forma de pagamento" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white z-50">
-                          <SelectItem value="pix">PIX</SelectItem>
-                          <SelectItem value="cartao">Cartão de Crédito</SelectItem>
-                          <SelectItem value="financiamento">Financiamento</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="observations">Observações Gerais</Label>
-                      <Textarea id="observations" value={formData.observations} onChange={e => handleInputChange('observations', e.target.value)} placeholder="Informações adicionais sobre o projeto..." className="min-h-[100px]" />
+                  <div className="bg-[#F6F6F6] border border-[#E0E7EF] shadow-lg rounded-2xl overflow-hidden px-8 pt-6 pb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                      <div className="flex flex-col gap-1">
+                        <Label htmlFor="paymentMethod" className="text-xs font-semibold text-[#2A6F97] uppercase">Forma de Pagamento *</Label>
+                        <span className="text-xs text-muted-foreground mb-1">Selecione a forma de pagamento</span>
+                        <Select value={formData.paymentMethod} onValueChange={value => handleInputChange('paymentMethod', value)}>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder="Selecione a forma de pagamento" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white z-50">
+                            <SelectItem value="pix">PIX</SelectItem>
+                            <SelectItem value="cartao">Cartão de Crédito</SelectItem>
+                            <SelectItem value="financiamento">Financiamento</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <Label htmlFor="observations" className="text-xs font-semibold text-[#2A6F97] uppercase">Observações Gerais</Label>
+                        <span className="text-xs text-muted-foreground mb-1">Informações adicionais sobre o projeto...</span>
+                        <Textarea id="observations" value={formData.observations} onChange={e => handleInputChange('observations', e.target.value)} placeholder="Informações adicionais sobre o projeto..." className="min-h-[100px]" />
+                      </div>
                     </div>
                   </div>
                 </AccordionContent>
