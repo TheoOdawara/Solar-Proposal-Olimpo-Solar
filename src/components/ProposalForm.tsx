@@ -60,7 +60,7 @@ const ProposalForm = ({
     moduleBrand: '',
     inverterBrand: '',
     inverterPower: 0,
-    pricePerKwp: SOLAR_CONSTANTS.DEFAULT_PRICE_PER_KWP,
+  pricePerKwp: '',
     averageBill: 0,
     connectionType: '',
     paymentMethod: '',
@@ -185,15 +185,11 @@ const ProposalForm = ({
   // Busca endereço via ViaCEP
   const fetchAddressByCep = async (cep: string) => {
     const cleanCep = cep.replace(/\D/g, "");
-    
     if (cleanCep.length !== 8) return;
-    
     setIsLoadingCep(true);
-    
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
       const data = await response.json();
-      
       if (data.erro) {
         toast({
           title: "CEP não encontrado",
@@ -202,7 +198,7 @@ const ProposalForm = ({
         });
         return;
       }
-      
+      // Atualiza tanto o estado local quanto o RHF
       setFormData((prev) => ({
         ...prev,
         city: data.localidade || "",
@@ -210,7 +206,10 @@ const ProposalForm = ({
         neighborhood: data.bairro || prev.neighborhood,
         address: data.logradouro || prev.address,
       }));
-
+      methods.setValue('city', data.localidade || "");
+      methods.setValue('state', data.uf || "");
+      methods.setValue('neighborhood', data.bairro || "");
+      methods.setValue('address', data.logradouro || "");
       toast({
         title: "Endereço encontrado!",
         description: "Dados preenchidos automaticamente via CEP.",
@@ -524,15 +523,20 @@ const generatePDFFromHTML = async () => {
                       <div className="flex flex-col gap-1">
                         <Label htmlFor="connectionType" className="text-xs font-semibold text-[#2A6F97] uppercase">Tipo de ligação elétrica *</Label>
                         <span className="text-xs text-muted-foreground mb-1">Selecione conforme o padrão do imóvel</span>
-                        <select
-                          id="connectionType"
-                          className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
-                          {...methods.register('connectionType', { required: true })}
-                        >
-                          <option value="">Selecione o tipo de ligação</option>
-                          <option value="bifasico">Bifásico (220V)</option>
-                          <option value="trifasico">Trifásico (380V)</option>
-                        </select>
+                        <div className="w-full">
+                          <Select
+                            value={methods.getValues('connectionType')}
+                            onValueChange={value => methods.setValue('connectionType', value)}
+                          >
+                            <SelectTrigger id="connectionType" className="bg-white text-base text-[#111111] font-medium border border-[#E0E7EF] rounded-lg focus:ring-2 focus:ring-[#468FAF]/20">
+                              <SelectValue placeholder="Selecione o tipo de ligação" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white z-50">
+                              <SelectItem value="bifasico">Bifásico (220V)</SelectItem>
+                              <SelectItem value="trifasico">Trifásico (380V)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -80,7 +80,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
             id="email"
             type="email"
             placeholder="cliente@email.com"
-            className="text-base text-[#468FAF] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
             {...register('email')}
           />
         </div>
@@ -194,7 +194,7 @@ export const ClientDataSection: React.FC<ClientDataSectionProps> = ({
           <Input
             id="complement"
             placeholder="Apto 101, Bloco A..."
-            className="text-base text-[#468FAF] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
+            className="text-base text-[#111111] font-medium transition-all duration-200 focus:ring-2 focus:ring-[#468FAF]/20 placeholder:text-gray-400 rounded-lg border border-[#E0E7EF] bg-white"
             disabled={hasNoAddress}
             {...register('complement')}
           />

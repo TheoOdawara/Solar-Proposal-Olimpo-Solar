@@ -4,7 +4,16 @@ import { Label } from "@/components/ui/label";
 import { useFormContext } from 'react-hook-form';
 
 export const ProjectDataSection: React.FC = () => {
-  const { register } = useFormContext();
+  const { register, getValues, setValue } = useFormContext();
+
+  // Limpa campos numéricos se valor for zero
+  React.useEffect(() => {
+    const fields = ['monthlyConsumption', 'desiredKwh', 'modulePower', 'inverterPower', 'pricePerKwp'];
+    fields.forEach(field => {
+      const value = getValues(field);
+      if (value === 0 || value === '0') setValue(field, '');
+    });
+  }, []);
 
   return (
     <div className="bg-[#F6F6F6] border border-[#E0E7EF] shadow-lg rounded-2xl overflow-hidden px-8 pt-6 pb-8">
@@ -18,7 +27,9 @@ export const ProjectDataSection: React.FC = () => {
               step="1"
               placeholder="800"
               className="placeholder:text-gray-400"
-              {...register('monthlyConsumption')}
+              {...register('monthlyConsumption', {
+                setValueAs: v => v === '' ? undefined : Number(v)
+              })}
             />
           </div>
 
@@ -30,7 +41,9 @@ export const ProjectDataSection: React.FC = () => {
               step="1"
               placeholder="600"
               className="placeholder:text-gray-400"
-              {...register('desiredKwh')}
+              {...register('desiredKwh', {
+                setValueAs: v => v === '' ? undefined : Number(v)
+              })}
             />
           </div>
 
@@ -41,7 +54,9 @@ export const ProjectDataSection: React.FC = () => {
               type="number"
               placeholder="450"
               className="placeholder:text-gray-400"
-              {...register('modulePower')}
+              {...register('modulePower', {
+                setValueAs: v => v === '' ? undefined : Number(v)
+              })}
             />
           </div>
         </div>
@@ -74,7 +89,9 @@ export const ProjectDataSection: React.FC = () => {
               type="number"
               placeholder="5000"
               className="placeholder:text-gray-400"
-              {...register('inverterPower')}
+              {...register('inverterPower', {
+                setValueAs: v => v === '' ? undefined : Number(v)
+              })}
             />
           </div>
 
@@ -86,7 +103,9 @@ export const ProjectDataSection: React.FC = () => {
               step="0.01"
               placeholder="2450.00"
               className="placeholder:text-gray-400"
-              {...register('pricePerKwp')}
+              {...register('pricePerKwp', {
+                setValueAs: v => v === '' ? undefined : Number(v)
+              })}
             />
           </div>
         </div>
