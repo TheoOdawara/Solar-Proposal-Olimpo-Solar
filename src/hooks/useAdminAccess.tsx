@@ -18,9 +18,9 @@ export const useAdminAccess = () => {
             .select('role')
             .eq('user_id', user.id)
             .single();
-          if (!error && data?.role === 'admin') {
+          if (!error && data?.role === 'administrador') {
             setHasAdminAccess(true);
-            setRole('admin');
+            setRole('administrador');
           } else {
             setHasAdminAccess(false);
             setRole(data?.role || null);

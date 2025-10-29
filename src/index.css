@@ -1,3 +1,12 @@
+/* Oculta o ícone nativo de visualização de senha nos navegadores Chromium/Edge/Chrome */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-input-decoration-container {
+  display: none !important;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -203,7 +212,7 @@ All colors MUST be HSL.
 .print-optimized {
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
-  color-adjust: exact;
+  /* color-adjust removido para evitar aviso de compilação */
 }
 
 /* Remove page-break to prevent white pages in PDF */
@@ -233,9 +242,9 @@ All colors MUST be HSL.
   }
 
   .print-optimized * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  /* color-adjust removido para evitar aviso de compilação */
   }
   
   .page-break {

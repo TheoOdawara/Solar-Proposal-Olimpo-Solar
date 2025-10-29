@@ -3,7 +3,7 @@ import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
 
-type AppRole = 'admin' | 'vendedor' | 'cliente' | 'user';
+type AppRole = 'administrador' | 'vendedor' | 'cliente';
 
 export const useRoles = () => {
   const { user } = useAuth();
@@ -26,7 +26,7 @@ export const useRoles = () => {
         return;
       }
 
-      setUserRole(data?.role || 'user');
+      setUserRole(data?.role || 'cliente');
     } catch (error) {
       console.error('Error loading user role:', error);
     } finally {
@@ -68,10 +68,9 @@ export const useRoles = () => {
     }
   };
 
-  const isAdmin = userRole === 'admin';
+  const isAdmin = userRole === 'administrador';
   const isVendedor = userRole === 'vendedor';
   const isCliente = userRole === 'cliente';
-  const isUser = userRole === 'user';
 
   return {
     userRole,
@@ -79,7 +78,6 @@ export const useRoles = () => {
     isAdmin,
     isVendedor,
     isCliente,
-    isUser,
     assignRole,
     refresh: loadUserRole
   };

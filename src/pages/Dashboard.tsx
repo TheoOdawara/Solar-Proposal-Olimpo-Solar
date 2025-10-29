@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { 
   BarChart3, 
   TrendingUp, 
-  Users, 
   DollarSign, 
   Zap, 
   Trophy, 
@@ -26,8 +25,6 @@ import {
   Eye
 } from "lucide-react";
 import { 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -52,11 +49,10 @@ const CHART_COLORS = ['#022136', '#ffbf06', '#034a5c', '#ffd43d', '#045f73'];
 
 const Dashboard = () => {
   const { user, loading: authLoading } = useAuth();
-  const { hasAdminAccess, loading: adminLoading, adminEmail, role } = useAdminAccess();
+  const { hasAdminAccess, loading: adminLoading, role } = useAdminAccess();
   const {
     proposals,
     allProposals,
-    dailyStats,
     notifications,
     loading: analyticsLoading,
     filters,
@@ -66,18 +62,12 @@ const Dashboard = () => {
     refreshData
   } = useAdvancedAnalytics();
 
-  const [selectedNotification, setSelectedNotification] = useState<string | null>(null);
-
   // Sempre executar hooks antes dos returns condicionais
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
-  };
-
-  const formatDate = (date: string) => {
-    return format(new Date(date), "dd/MM", { locale: ptBR });
   };
 
   // Métricas do dia
@@ -203,7 +193,7 @@ const Dashboard = () => {
   ];
 
   // Restrição: só admin e emails permitidos podem acessar
-  if (!hasAdminAccess || role !== "admin" || !allowedAdmins.includes(user?.email ?? "")) {
+  if (!hasAdminAccess || role !== "administrador" || !allowedAdmins.includes(user?.email ?? "")) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center">
         <Card className="max-w-lg">

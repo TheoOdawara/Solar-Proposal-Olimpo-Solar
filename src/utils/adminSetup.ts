@@ -18,16 +18,16 @@ export const setupFirstAdmin = async (userId: string) => {
     const { data: admins, error: adminError } = await supabase
       .from('user_roles')
       .select('id')
-      .eq('role', 'admin')
+      .eq('role', 'administrador')
       .limit(1);
 
     if (adminError) {
       console.error('Error checking for admins:', adminError);
-      return 'user';
+      return 'cliente';
     }
 
     // If no admins exist, make this user an admin
-    const roleToAssign = (admins && admins.length === 0) ? 'admin' : 'user';
+    const roleToAssign = (admins && admins.length === 0) ? 'administrador' : 'cliente';
 
     const { error } = await supabase
       .from('user_roles')
@@ -35,12 +35,12 @@ export const setupFirstAdmin = async (userId: string) => {
 
     if (error) {
       console.error('Error assigning role:', error);
-      return 'user';
+      return 'cliente';
     }
 
     return roleToAssign;
   } catch (error) {
     console.error('Error in setupFirstAdmin:', error);
-    return 'user';
+    return 'cliente';
   }
 };
