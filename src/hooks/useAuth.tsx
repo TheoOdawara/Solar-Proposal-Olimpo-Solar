@@ -53,11 +53,11 @@ export const useAuth = () => {
                 // update role if needed
                 await supabase
                   .from('user_roles')
-                  .update({ role: 'admin' })
+                  .update({ role: 'administrador' })
                   .eq('user_id', userId);
               } else {
                 // insert new role
-                await supabase.from('user_roles').insert({ user_id: userId, role: 'admin' });
+                await supabase.from('user_roles').insert({ user_id: userId, role: 'administrador' });
               }
             } else {
               await setupFirstAdmin(userId);

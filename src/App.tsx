@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Metrics from "./pages/Metrics";
 import ProposalsHistory from "./pages/ProposalsHistory";
+import GerenciarPerfis from "./pages/GerenciarPerfis";
 import AuthPage from "./pages/AuthPage";
 import EmailConfirmation from "./pages/EmailConfirmation";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -41,6 +42,16 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const ProtectedLayout = ({ children }: { children: React.ReactNode }) => (
+  <div className="min-h-screen flex flex-col w-full">
+    <AppHeader />
+    <DesktopSidebar />
+    <main className="flex-1 pt-16 md:pl-64">
+      {children}
+    </main>
+  </div>
+);
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -53,25 +64,56 @@ const App = () => (
             <Route path="/email-confirmation" element={<EmailConfirmation />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route
-              path="/*"
+              path="/"
               element={
                 <ProtectedRoute>
-                  <div className="min-h-screen flex flex-col w-full">
-                    <AppHeader />
-                    <DesktopSidebar />
-                    <main className="flex-1 pt-16 md:pl-64">
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/metrics" element={<Metrics />} />
-                        <Route path="/historico" element={<ProposalsHistory />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </main>
-                  </div>
+                  <ProtectedLayout>
+                    <Index />
+                  </ProtectedLayout>
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <ProtectedLayout>
+                    <Dashboard />
+                  </ProtectedLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/metrics"
+              element={
+                <ProtectedRoute>
+                  <ProtectedLayout>
+                    <Metrics />
+                  </ProtectedLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/historico"
+              element={
+                <ProtectedRoute>
+                  <ProtectedLayout>
+                    <ProposalsHistory />
+                  </ProtectedLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/gerenciar-perfis"
+              element={
+                <ProtectedRoute>
+                  <ProtectedLayout>
+                    <GerenciarPerfis />
+                  </ProtectedLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>

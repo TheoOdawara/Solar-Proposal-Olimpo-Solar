@@ -15,6 +15,9 @@ export const DesktopSidebar: React.FC = () => {
   const location = useLocation();
   const { signOut, loading } = useAuth();
   const { hasAdminAccess } = useAdminAccess();
+  
+  console.log('DesktopSidebar - hasAdminAccess:', hasAdminAccess, 'location:', location.pathname);
+  
   return (
     <aside className="hidden md:flex flex-col w-64 h-screen bg-white border-r-2 border-[#E5EAF1] shadow-lg fixed top-0 left-0 z-40 pt-0">
       {/* Logo no topo */}
@@ -35,15 +38,18 @@ export const DesktopSidebar: React.FC = () => {
           </Link>
         ))}
         {/* Menu Gerenciar Perfis para admin */}
-        {hasAdminAccess && (
+        {hasAdminAccess ? (
           <Link
             to="/gerenciar-perfis"
+            onClick={() => console.log('🔗 CLICOU EM GERENCIAR PERFIS - Navegando para /gerenciar-perfis')}
             className={`flex items-center py-3 px-4 rounded-xl font-semibold text-base shadow-md transition-all border-2 ${location.pathname === '/gerenciar-perfis' ? 'bg-[#0D3B66] text-white border-[#0D3B66] shadow-lg' : 'bg-white text-[#0D3B66] border-[#E5EAF1] hover:bg-[#468FAF]/20 hover:text-[#0D3B66] hover:border-[#468FAF] hover:shadow-lg focus:bg-[#468FAF]/20 focus:text-[#0D3B66] focus:border-[#468FAF] focus:shadow-lg'}`}
             style={{ boxShadow: location.pathname === '/gerenciar-perfis' ? '0 2px 12px rgba(13,59,102,0.08)' : undefined }}
           >
             <FileText className="h-5 w-5 mr-2 text-[#2A6F97]" />
             Gerenciar Perfis
           </Link>
+        ) : (
+          <div className="text-xs text-gray-400 px-4">Link admin oculto (não é admin)</div>
         )}
       </nav>
       {/* Separador */}
