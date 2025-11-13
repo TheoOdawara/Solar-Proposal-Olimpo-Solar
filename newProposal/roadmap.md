@@ -8,7 +8,7 @@
 
 ## ✅ Fase 1: Levantamento e Infraestrutura (CONCLUÍDO)
 - ✅ Alinhamento de requisitos e escopo
-- ✅ Definição da infraestrutura (Supabase self-hosted via Docker)
+- ✅ Definição da infraestrutura (Supabase self-hosted via Docker) — *legacy*
 - ✅ Mapeamento completo dos campos e regras de negócio
 - ✅ Migration SQL para novos campos de garantias
 
@@ -19,7 +19,7 @@
 ## ✅ Fase 2: Setup e Configuração (CONCLUÍDO)
 - ✅ Repositório configurado e ambiente de desenvolvimento pronto
 - ✅ Stack: Vite + React 18 + TypeScript + Tailwind + shadcn/ui
-- ✅ Integração com Supabase (PostgreSQL, Auth, RLS, Policies, Triggers)
+- ✅ Integração com Supabase (PostgreSQL, Auth, RLS, Policies, Triggers) — *legacy*
 - ✅ Docker Compose para desenvolvimento local
 
 **Tempo gasto:** ~6h
@@ -55,7 +55,7 @@
 
 ## ✅ Tela de Login (CONCLUÍDO)
 - Implementação completa da tela de login responsiva
-- Integração com Supabase Auth (login, cadastro, Google)
+- Integração com Supabase Auth (login, cadastro, Google) — *legacy* (agora migrado para API REST)
 - Validação visual, acessibilidade e responsividade
 - Padrão de logo e paleta aplicados conforme instruções
 
@@ -112,7 +112,7 @@
 
 ### 6.1 Testes Funcionais
 - [ ] Criar proposta completa (todos os campos)
-- [ ] Salvar no banco (validar Supabase)
+- [ ] Salvar no banco (validar integração com backend/API — anteriormente Supabase)
 - [ ] Carregar proposta salva
 - [ ] Gerar PDF e validar conteúdo
 - [ ] Testar fluxo de aprovação

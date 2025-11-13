@@ -60,7 +60,7 @@ Cada proposta agora registra automaticamente:
 
 - **RLS (Row Level Security)**: Implementado em todas as tabelas
 - **Verificação de permissões**: Acesso restrito apenas para Admins
-- **Políticas do Supabase**: 
+-- **Políticas de segurança (RLS)** (nota: originalmente aplicadas via Supabase policies)
   - Usuários só visualizam suas próprias propostas
   - Admins podem visualizar dados de todos os vendedores
 

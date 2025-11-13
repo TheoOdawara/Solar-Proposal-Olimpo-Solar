@@ -64,8 +64,8 @@ $$;
 
 ## Fluxo de Criação de Usuário
 
-1. Frontend usa `supabaseAdmin` (SERVICE_ROLE_KEY)
-2. Chama `supabaseAdmin.auth.admin.createUser({ email, password, email_confirm: true })`
+1. Frontend usava `supabaseAdmin` (SERVICE_ROLE_KEY) — nota: este padrão é legado da integração com Supabase e foi migrado para chamadas REST ao backend.
+2. Chama (antigo) `supabaseAdmin.auth.admin.createUser({ email, password, email_confirm: true })`
 3. Insere em `profiles` com `id` do usuário criado
 4. Insere em `user_roles` com `user_id` e `role` (administrador/vendedor/cliente)
 5. Política "Service role can insert profiles" permite INSERT via SERVICE_ROLE_KEY
@@ -80,17 +80,17 @@ $$;
 ## Comandos Executados
 
 ```powershell
-# Copiar SQL para container
-docker cp fix_admin_function.sql supabase-db:/tmp/fix_admin_function.sql
+# Copiar SQL para container (substitua `supabase-db` pelo nome do seu container; ex: `olimpo-db`)
+docker cp fix_admin_function.sql olimpo-db:/tmp/fix_admin_function.sql
 
 # Executar no banco
-docker exec supabase-db psql -U supabase_admin -d postgres -f /tmp/fix_admin_function.sql
+docker exec olimpo-db psql -U supabase_admin -d postgres -f /tmp/fix_admin_function.sql
 
 # Validar funções
-docker exec supabase-db psql -U supabase_admin -d postgres -c "SELECT public.is_admin(...);"
+docker exec olimpo-db psql -U supabase_admin -d postgres -c "SELECT public.is_admin(...);"
 
 # Listar políticas
-docker exec supabase-db psql -U supabase_admin -d postgres -c "SELECT tablename, policyname, cmd FROM pg_policies WHERE tablename IN ('user_roles', 'profiles');"
+docker exec olimpo-db psql -U supabase_admin -d postgres -c "SELECT tablename, policyname, cmd FROM pg_policies WHERE tablename IN ('user_roles', 'profiles');"
 ```
 
 ## Próximos Passos

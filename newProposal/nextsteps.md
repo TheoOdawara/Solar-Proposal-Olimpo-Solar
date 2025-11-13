@@ -7,7 +7,7 @@
 
 ## ✅ Tela de Login
 - Implementação finalizada e validada
-- Responsiva, acessível, com integração Supabase Auth
+- Responsiva, acessível, com integração Supabase Auth — *legacy* (agora migrado para chamadas REST ao backend)
 - Paleta e logo aplicadas conforme padrão
 
 ## ✅ Concluído
@@ -221,7 +221,7 @@ Legenda Origem:
 
 2. **Definir Infraestrutura**
    - Escolher provedor de hospedagem (VPS recomendado)
-   - Validar viabilidade do Supabase (plano gratuito ou pago)
+   - Validar viabilidade do Supabase (legacy) — avaliar se manter Supabase em produção é desejável ou migrar totalmente para API REST + PostgreSQL
    - Estruturar banco de dados inicial
 
 3. **Mapear Regras de Negócio**

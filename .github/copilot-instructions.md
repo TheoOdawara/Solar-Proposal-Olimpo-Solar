@@ -86,6 +86,7 @@ Observação: **NÃO usar bun** para nada. Sempre preferir npm, mesmo que lockfi
 - Para rodar lint rápido sem instalar deps: `bunx eslint@9 .` ou `npx eslint@9 .`
 - Em caso de conflitos do npm, prefira Bun (`bun install`, `bunx ...`).
 - Em PowerShell, use `;` para executar vários comandos em sequência.
+- Sempre responda em pt-BR
 
 
 ## Paleta de cores

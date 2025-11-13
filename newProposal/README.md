@@ -5,7 +5,7 @@
 Modernizar o sistema de geração e gestão de propostas comerciais, com nova identidade visual, funcionalidades aprimoradas e infraestrutura robusta baseada em container e VPS.
 
 ## O que será feito
-- Migração do sistema para uma VPS dedicada, com todo o projeto rodando em container (incluindo Supabase).
+- Migração do sistema para uma VPS dedicada, com todo o projeto rodando em container (incluindo Supabase — legacy). O projeto agora pode ser executado usando PostgreSQL e a API REST desenvolvida no backend.
 - Adaptação do visual para a nova identidade da marca (novas cores, logo, ajustes visuais sutis).
 - Reestruturação completa da página de proposta, tornando-a mais profissional e funcional.
 - Inclusão de botão para marcar proposta como "aceita".
@@ -15,12 +15,12 @@ Modernizar o sistema de geração e gestão de propostas comerciais, com nova id
 
 ## Infraestrutura
 - VPS dedicada para hospedagem do sistema.
-- Containerização de toda a stack (aplicação + Supabase).
+- Containerização de toda a stack (aplicação + Supabase — legacy). Atualmente a autenticação e persistência estão suportadas pela API REST e PostgreSQL.
 - Supabase rodando dentro do container para autenticação, banco de dados e storage.
 
 ## Escopo Técnico
 - Front-end: React 18, TypeScript, Vite, Tailwind, shadcn/ui
-- Back-end: Supabase (autenticação, banco de dados, storage)
+- Back-end: API REST + PostgreSQL (substitui a integração legacy com Supabase para autenticação e banco de dados)
 - PDF: Geração e pré-visualização de propostas
 - Usuários: Níveis de permissão (admin, vendedor)
 
